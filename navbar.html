@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script src="navbar.js" defer></script>
+    <script src="router.js" defer></script>
+</head>
+<body>
+    <!---Navigator bar PROTOTYPE-->
+    <nav id="main" class="bg-green-600 h-16 flex items-center px-4">
+
+        <div id="logo" class="bg-green-600 h-12 w-12">
+            <img src="./images/logo.webp" class="h-full w-full" />
+        </div>
+
+        <div class="flex items-center ml-6">
+            <!---Same design for every button-->
+            <div id="nav-home" class="h-16 px-6 flex items-center hover:bg-green-700 cursor-pointer border-l text-white">Home</div>
+            <div id="nav-exam-clock" class="h-16 px-6 flex items-center hover:bg-green-700 cursor-pointer border-l text-white">Exam Clock</div>
+            <div id="nav-class-map" class="h-16 px-6 flex items-center hover:bg-green-700 cursor-pointer border-l text-white">Class Map</div>
+            <div id="nav-report" class="h-16 px-6 flex items-center hover:bg-green-700 cursor-pointer border-l text-white">Report</div>
+            <div id="nav-procedures" class="h-16 px-6 flex items-center hover:bg-green-700 cursor-pointer border-l text-white">Procedures</div>
+            <div id="nav-exam-bot" class="h-16 px-6 flex items-center hover:bg-green-700 cursor-pointer border-l text-white">Exam Bot</div>
+        </div>
+    </nav>
+
+    <!---Here every page will be loaded-->
+    <div id="content" class="p-8 text-xl text-gray-800">
+        Loading...
+    </div>
+</body>
+</html>
