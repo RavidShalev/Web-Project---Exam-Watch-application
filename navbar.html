@@ -6,6 +6,7 @@
     <title>Exam Monitoring</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="router.js" defer></script>
+    <script src="exam-clock.js" defer></script>
 </head>
 <body class="bg-gradient-to-t from-[#93c5fd] to-[#1e3a8a] h-screen">
     <header class="bg-white">
@@ -37,6 +38,22 @@
                 </ul>
             </div>
             <div>
+                <button class="bg-whitte text-black px-3 py-1 rounded hover:text-gray-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M6 12v-3a2 2 0 1 1 4 0v3"></path>
+                    <path d="M10 12V6a2 2 0 1 1 4 0v6"></path>
+                    <path d="M14 12v-2a2 2 0 1 1 4 0v6a6 6 0 0 1-6 6"></path>
+                    <path d="M10 22A6 6 0 0 1 4 16v-2a2 2 0 1 1 4 0"></path>
+                    </svg>
+                </button>
+                <button class="bg-whitte text-black px-3 py-1 rounded hover:text-gray-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 24a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 24zM20 17h-1V9a7 7 0 0 0-14 0v8H4a1 1 0 1 0 0 2h16a1 1 0 1 0 0-2z"/>
+                    </svg>
+                </button> 
+            </div>
+            <div>
+                <button id="startExamBtn" class="bg-blue-500 text-white px-5 py-2 rounded-full hover:bg-blue-600 mr-4">Start Exam</button>
                 <button class="bg-red-500 text-white px-5 py-2 rounded-full hover:bg-red-600">Log Out</button>
             </div>
         </nav>

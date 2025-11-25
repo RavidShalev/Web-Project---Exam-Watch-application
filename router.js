@@ -11,17 +11,32 @@ document.addEventListener("DOMContentLoaded", () => {
             const html = await response.text();
             // load the content into the content div
             document.getElementById("content").innerHTML = html;
-            if (page==="home.html"){
-                const script = document.createElement("script");
-                script.src = "home.js";
-                document.body.appendChild(script);
-            } 
         }catch (err) {
             document.getElementById("content").innerHTML =
                 `<h2 style="color:red;">Error loading page.</h2>`;
             console.error(err);
         }
     }
+
+    async function startTheExam(){
+        didExamStart = true;
+        //update home status text
+        const statusTxt = document.getElementById("status-txt");
+        if(statusTxt){
+            statusTxt.textContent = "Exam has started";
+            statusTxt.style.color = "green";
+        }
+        //start countdown clock
+        if(typeof startCountdown === "function"){
+            startCountdown();
+        }
+        //disable start exam button
+        startExamBtn.disabled = true;
+        startExamBtn.classList.add("bg-gray-400", "cursor-not-allowed");
+        startExamBtn.classList.remove("bg-blue-500", "hover:bg-blue-600");
+    }
+
+
 
     // load home by default
     loadPage("home.html");
@@ -32,6 +47,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const reportBtn = document.getElementById('nav-report');
     const proceduresBtn = document.getElementById('nav-procedures');
     const examBotBtn = document.getElementById('nav-exam-bot');
+    const startExamBtn = document.getElementById('startExamBtn');
+    
+    let didExamStart = false; 
 
     homeBtn.addEventListener('click', () => {
         loadPage("home.html");
@@ -42,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     attSheetBtn.addEventListener('click', () => {       
-        loadPage("attSheet.html");    
+        loadPage("attSheet.html");   
     });
 
     reportBtn.addEventListener('click', () => {
@@ -55,5 +73,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     examBotBtn.addEventListener('click', () => {
         alert('Exam Bot clicked!');
+    });
+
+    startExamBtn.addEventListener('click', () => {
+        startTheExam();
     });
 });
