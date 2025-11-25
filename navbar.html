@@ -3,29 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Exam Monitoring</title>
     <script src="https://cdn.tailwindcss.com"></script>
-
     <script src="router.js" defer></script>
 </head>
-<body>
-    <!---Navigator bar PROTOTYPE-->
-    <nav id="main" class="bg-green-600 h-16 flex items-center px-4">
-
-        <div id="logo" class="bg-green-600 h-12 w-12">
-            <img src="./images/logo.webp" class="h-full w-full" />
-        </div>
-
-        <div class="flex items-center ml-6">
-            <!---Same design for every button-->
-            <div id="nav-home" class="h-16 px-6 flex items-center hover:bg-green-700 cursor-pointer border-l text-white">Home</div>
-            <div id="nav-exam-clock" class="h-16 px-6 flex items-center hover:bg-green-700 cursor-pointer border-l text-white">Exam Clock</div>
-            <div id="nav-class-map" class="h-16 px-6 flex items-center hover:bg-green-700 cursor-pointer border-l text-white">Class Map</div>
-            <div id="nav-report" class="h-16 px-6 flex items-center hover:bg-green-700 cursor-pointer border-l text-white">Report</div>
-            <div id="nav-procedures" class="h-16 px-6 flex items-center hover:bg-green-700 cursor-pointer border-l text-white">Procedures</div>
-            <div id="nav-exam-bot" class="h-16 px-6 flex items-center hover:bg-green-700 cursor-pointer border-l text-white">Exam Bot</div>
-        </div>
-    </nav>
+<body class="bg-gradient-to-t from-[#93c5fd] to-[#1e3a8a] h-screen">
+    <header class="bg-white">
+        <nav class="flex justify-between items-center w-[92%] mx-auto py-4 px-2 border-b">
+            <div>
+                <img class= "w-16" src="./images/new_logo.png" alt="...">
+            </div>
+            <div class="">
+                <!---Create a list for the menu-->
+                <ul class="flex items-center gap-[4vw]">
+                    <li>
+                        <a id="nav-home" class="hover: text-gray-500" href="#">Home</a>
+                    </li>
+                    <li>
+                        <a id="nav-exam-clock"class="hover: text-gray-500" href="#">Exam Clock</a>
+                    </li>
+                    <li>
+                        <a id="nav-class-map" class="hover: text-gray-500" href="#">Class Map</a>
+                    </li>
+                    <li>
+                        <a id="nav-report" class="hover: text-gray-500" href="#">Report</a>
+                    </li>
+                    <li>
+                        <a id="nav-procedures" class="hover: text-gray-500" href="#">Procedures</a>
+                    </li>
+                    <li>
+                        <a id="nav-exam-bot" class="hover: text-gray-500" href="#">Exam Bot</a>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <button class="bg-red-500 text-white px-5 py-2 rounded-full hover:bg-red-600">Log Out</button>
+            </div>
+        </nav>
+    </header>
 
     <!---Here every page will be loaded-->
     <div id="content" class="p-8 text-xl text-gray-800">
