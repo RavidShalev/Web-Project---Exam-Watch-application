@@ -11,7 +11,12 @@ document.addEventListener("DOMContentLoaded", () => {
             const html = await response.text();
             // load the content into the content div
             document.getElementById("content").innerHTML = html;
-        } catch (err) {
+            if (page==="home.html"){
+                const script = document.createElement("script");
+                script.src = "home.js";
+                document.body.appendChild(script);
+            } 
+        }catch (err) {
             document.getElementById("content").innerHTML =
                 `<h2 style="color:red;">Error loading page.</h2>`;
             console.error(err);
@@ -23,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const homeBtn = document.getElementById('nav-home');
     const examClockBtn = document.getElementById('nav-exam-clock');
-    const classMapBtn = document.getElementById('nav-class-map');
+    const attSheetBtn = document.getElementById('nav-attSheet');
     const reportBtn = document.getElementById('nav-report');
     const proceduresBtn = document.getElementById('nav-procedures');
     const examBotBtn = document.getElementById('nav-exam-bot');
@@ -36,8 +41,8 @@ document.addEventListener("DOMContentLoaded", () => {
         loadPage("exam-clock.html");
     });
 
-    classMapBtn.addEventListener('click', () => {       
-        alert('Class Map clicked!');    
+    attSheetBtn.addEventListener('click', () => {       
+        loadPage("attSheet.html");    
     });
 
     reportBtn.addEventListener('click', () => {

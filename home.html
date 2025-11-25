@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Exam Monitoring Home</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="home.js" defer></script>
 </head>
 <body class=" text-black">
     <div class="flex justify-center mt-10">
@@ -22,9 +23,9 @@
             <p><span class="font-bold">Location:</span> L705</p>
             <p><span class="font-bold">Expected Students:</span> 34</p>
             <p><span class="font-bold">Supervisors:</span> Dogma, Lemashal</p>
-            <p class="mt-4"><span class="font-bold">Status:</span> <span class="text-red-600 font-semibold">Not Started</span></p>
+            <p class="mt-4"><span class="font-bold">Status:</span> <span id="status-txt" class="text-red-600 font-semibold">Not Started</span></p>
         </div>
-        <button class="mt-8 px-6 py-2 bg-[#93c5fd] hover:bg-[#1e3a8a] text-white font-semibold rounded-xl shadow">Start Exam</button>
+        <button id="start-btn" class="mt-8 px-6 py-2 bg-[#93c5fd] hover:bg-[#1e3a8a] text-white font-semibold rounded-xl shadow">Start Exam</button>
     </div>
 </body>
 </html>
