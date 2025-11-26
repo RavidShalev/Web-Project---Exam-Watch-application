@@ -64,7 +64,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     reportBtn.addEventListener('click', () => {
-        alert('Report clicked!');
+        loadPage("report.html");
+
     });
 
     proceduresBtn.addEventListener('click', () => {

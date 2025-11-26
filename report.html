@@ -1,0 +1,102 @@
+<div class="flex justify-center mt-10">
+  <div class="bg-white bg-opacity-90 p-6 rounded-xl shadow-xl w-[1000px]">
+    
+    <!-- title -->
+    <h2 class="text-2xl font-bold mb-1 text-center">Exam incidents & report</h2>
+
+    <!-- exam details -->
+    <div class="grid grid-cols-2 gap-4 mb-6 text-sm">
+      <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+        <p><span class="font-semibold">Course:</span> טכנולוגיות WEB מתקדמות</p>
+        <p><span class="font-semibold">Date:</span> 12.12.2025</p>
+        <p><span class="font-semibold">Time:</span> 13:00 - 16:00</p>
+        <p><span class="font-semibold">Room:</span> L705</p>
+      </div>
+      <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+        <p>
+          <span class="font-semibold">Status:</span>
+          <span class="font-semibold text-green-600">In progress</span>
+        </p>
+        <p><span class="font-semibold">Incidents logged:</span> 2</p>
+      </div>
+    </div>
+
+    <!-- this is will be the real tiime table  -->
+    <div class="grid md:grid-cols-2 gap-6">
+      
+      <!--this a quick report with choice -->
+      <div>
+        <h3 class="text-lg font-semibold mb-3">reports and incident (during exam)</h3>
+
+        <label class="block text-sm font-semibold mb-1">Incident type</label>
+        <select
+          id="incident-type"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        >
+          <option value="">Choose...</option>
+          <option>Late arrival</option>
+          <option>Bathroom break</option>
+          <option>Cheating suspicion</option>
+          <option>Noise / disturbance</option>
+          <option>Technical issue</option>
+        </select>
+
+        <label class="block text-sm font-semibold mb-1">Student ID </label>
+        <input
+          id="incident-student"
+          type="text"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          placeholder="ID or seat number"
+        />
+
+        <label class="block text-sm font-semibold mb-1">Short note (optional)</label>
+        <textarea
+          id="incident-note"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          rows="2"
+          placeholder="Only if needed, keep it short."
+        ></textarea>
+
+        <button
+          id="add-report-btn"
+          class="w-full bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold py-2 rounded-lg shadow-md transition"
+        >
+          Add Report
+        </button>
+      </div>
+
+      <!-- the report that contain all reports during the exam -->
+      <div>
+        <h3 class="text-lg font-semibold mb-3">Reports (for lecturer)</h3>
+
+        <div class="overflow-x-auto border border-gray-200 rounded-lg">
+          <table class="min-w-full text-sm">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="px-3 py-2 border-b text-left">Time</th>
+                <th class="px-3 py-2 border-b text-left">Type</th>
+                <th class="px-3 py-2 border-b text-left">Student</th>
+                <th class="px-3 py-2 border-b text-left">Details</th>
+              </tr>
+            </thead>
+            <tbody id="incident-table-body">
+              <tr class="hover:bg-gray-50">
+                <td class="px-3 py-2 border-b">13:25</td>
+                <td class="px-3 py-2 border-b">Late arrival</td>
+                <td class="px-3 py-2 border-b">123456789</td>
+                <td class="px-3 py-2 border-b">Arrived 25 minutes late</td>
+              </tr>
+              <tr class="hover:bg-gray-50">
+                <td class="px-3 py-2 border-b">14:10</td>
+                <td class="px-3 py-2 border-b">Bathroom break</td>
+                <td class="px-3 py-2 border-b">987654321</td>
+                <td class="px-3 py-2 border-b">Normal time</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
