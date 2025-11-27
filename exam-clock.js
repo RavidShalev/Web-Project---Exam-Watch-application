@@ -1,10 +1,11 @@
 
-const EXAM_DURATION_MINUTES = 180; // 3 hours
+const examDurInMin = 180; // 3 hours
 
-let remainingSeconds = EXAM_DURATION_MINUTES * 60;
+let remainingSeconds = examDurInMin * 60;
 let intervalId = null;
 let flag=false;
 
+    /*The function formatTime formats seconds to HH:MM:SS*/
     function formatTime(totalSeconds) {
             const hours   = Math.floor(totalSeconds / 3600);
             const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -17,6 +18,7 @@ let flag=false;
             return `${h}:${m}:${s}`; 
     }
 
+    /*The function startCountdown starts the exam countdown. now the beginnig time is 3 hours*/
     function startCountdown() {
             if (intervalId !== null) return;
 
@@ -43,6 +45,7 @@ let flag=false;
             
     }
 
+    /*The function updateClock update live clock every second */
     function updateClock() {
             if (flag===false){
                 disableStartButton();
@@ -57,6 +60,7 @@ let flag=false;
             
     }
     
+    /*The function disableStartButton make addEventBtn disabled*/
     function disableStartButton(){
         const addEventBtn = document.getElementById("addEventBtn");
         addEventBtn.disabled = true;
