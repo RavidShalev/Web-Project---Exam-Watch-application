@@ -1,4 +1,12 @@
-<div class="flex justify-center mt-10">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div class="flex justify-center mt-10">
   <div class="bg-white bg-opacity-90 p-6 rounded-xl shadow-xl w-[1000px]">
     
     <!-- title -->
@@ -32,6 +40,7 @@
         <select
           id="incident-type"
           class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          required
         >
           <option value="">Choose...</option>
           <option>Late arrival</option>
@@ -47,6 +56,7 @@
           type="text"
           class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
           placeholder="ID or seat number"
+          required
         />
 
         <label class="block text-sm font-semibold mb-1">Short note (optional)</label>
@@ -80,18 +90,7 @@
               </tr>
             </thead>
             <tbody id="incident-table-body">
-              <tr class="hover:bg-gray-50">
-                <td class="px-3 py-2 border-b">13:25</td>
-                <td class="px-3 py-2 border-b">Late arrival</td>
-                <td class="px-3 py-2 border-b">123456789</td>
-                <td class="px-3 py-2 border-b">Arrived 25 minutes late</td>
-              </tr>
-              <tr class="hover:bg-gray-50">
-                <td class="px-3 py-2 border-b">14:10</td>
-                <td class="px-3 py-2 border-b">Bathroom break</td>
-                <td class="px-3 py-2 border-b">987654321</td>
-                <td class="px-3 py-2 border-b">Normal time</td>
-              </tr>
+              
             </tbody>
           </table>
         </div>
@@ -100,3 +99,7 @@
     </div>
   </div>
 </div>
+
+</body>
+</html>
+

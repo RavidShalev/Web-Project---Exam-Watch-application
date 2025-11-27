@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Exam Monitoring</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="router.js" defer></script> <!---load after the main html load --->
+    <script src="router.js" defer></script>
     <script src="exam-clock.js" defer></script>
+    <script src="report.js"></script>
 </head>
 <body class="bg-gradient-to-t from-[#93c5fd] to-[#1e3a8a] h-screen">
     <header class="bg-white">
@@ -18,22 +19,22 @@
                 <!---Create a list for the menu-->
                 <ul class="flex items-center gap-[4vw]">
                     <li>
-                        <a id="nav-home" class="hover:text-gray-500" href="#">Home</a>
+                        <a id="nav-home" class="hover: text-gray-500" href="#">Home</a>
                     </li>
                     <li>
-                        <a id="nav-exam-clock"class="hover:text-gray-500" href="#">Exam Clock</a>
+                        <a id="nav-exam-clock"class="hover: text-gray-500" href="#">Exam Clock</a>
                     </li>
                     <li>
-                        <a id="nav-attSheet" class="hover:text-gray-500" href="#">Attendance Sheet</a>
+                        <a id="nav-attSheet" class="hover: text-gray-500" href="#">Attendance Sheet</a>
                     </li>
                     <li>
-                        <a id="nav-report" class="hover:text-gray-500" href="#">Report</a>
+                        <a id="nav-report" class="hover: text-gray-500" href="#">Report</a>
                     </li>
                     <li>
-                        <a id="nav-procedures" class="hover:text-gray-500" href="#">Procedures</a>
+                        <a id="nav-procedures" class="hover: text-gray-500" href="#">Procedures</a>
                     </li>
                     <li>
-                        <a id="nav-exam-bot" class="hover:text-gray-500" href="#">Exam Bot</a>
+                        <a id="nav-exam-bot" class="hover: text-gray-500" href="#">Exam Bot</a>
                     </li>
                 </ul>
             </div>
@@ -53,7 +54,7 @@
                 </button> 
             </div>
             <div>
-                <button id="startExamBtn" class="bg-blue-500 text-white px-5 py-2 rounded-full hover:bg-blue-600 mr-4 disabled:bg-gray-400 disabled:cursor-not-allowed">Start Exam</button>
+                <button id="startExamBtn" class="bg-blue-500 text-white px-5 py-2 rounded-full hover:bg-blue-600 mr-4">Start Exam</button>
                 <button class="bg-red-500 text-white px-5 py-2 rounded-full hover:bg-red-600">Log Out</button>
             </div>
         </nav>
