@@ -20,6 +20,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function startTheExam(){
         didExamStart = true;
+        //disable start exam button
+        disableStartButton();
         //update home status text
         const statusTxt = document.getElementById("status-txt");
         if(statusTxt){
@@ -30,13 +32,14 @@ document.addEventListener("DOMContentLoaded", () => {
         if(typeof startCountdown === "function"){
             startCountdown();
         }
-        //disable start exam button
-        startExamBtn.disabled = true;
-        startExamBtn.classList.add("bg-gray-400", "cursor-not-allowed");
-        startExamBtn.classList.remove("bg-blue-500", "hover:bg-blue-600");
+        
     }
 
-
+        /*The function disableStartButton make startExamBtn disabled*/
+    function disableStartButton(){
+        const startExamBtn = document.getElementById("startExamBtn");
+        startExamBtn.disabled = true;
+    }
 
     // load home by default
     loadPage("home.html");
@@ -73,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     examBotBtn.addEventListener('click', () => {
-        alert('Exam Bot clicked!');
+        loadPage("exam-bot.html");
     });
 
     startExamBtn.addEventListener('click', () => {

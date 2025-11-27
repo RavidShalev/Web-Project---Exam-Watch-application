@@ -48,7 +48,7 @@ let flag=false;
     /*The function updateClock update live clock every second */
     function updateClock() {
             if (flag===false){
-                disableStartButton();
+                disableEventButton();
                 flag=true;
             }
             const now = new Date();
@@ -61,7 +61,7 @@ let flag=false;
     }
     
     /*The function disableStartButton make addEventBtn disabled*/
-    function disableStartButton(){
+    function disableEventButton(){
         const addEventBtn = document.getElementById("addEventBtn");
         addEventBtn.disabled = true;
         addEventBtn.classList.add("bg-gray-400", "cursor-not-allowed");
