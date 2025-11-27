@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     examBotBtn.addEventListener('click', () => {
-        alert('Exam Bot clicked!');
+        loadPage('exam-bot.html');
     });
 
     startExamBtn.addEventListener('click', () => {
