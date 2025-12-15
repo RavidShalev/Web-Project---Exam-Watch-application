@@ -1,12 +1,13 @@
-import { useState } from 'react';
 import Navbar from './components/Navbar';
+import Login from './components/Login';
 import './App.css';
 
 function App() {
   
   return (
-    <div className='App'>
+    <div>
       <Navbar />
+      <Login /> 
     </div>
   );
 }
