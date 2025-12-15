@@ -35,7 +35,7 @@ function Login() {
     setPassword("");
     setError("");
     
-    // Clear with Refs 
+    // Clear the fields with Refs this is another wat after set "" above...
     if(userRef.current) userRef.current.value = "";
     if(passRef.current) passRef.current.value = "";
     
@@ -48,7 +48,7 @@ function Login() {
     <div className="flex items-center justify-center min-h-[84vh] bg-[#1b2430]">
       
       {/* another container to be the shadow behind the form */}
-      <div className="bg-[#232d3b] p-8 rounded-xl shadow-[0_5px_15px_rgba(0,0,0,0.3)] w-96 border border-[#2e3b4e]">
+      <div className="bg-[#232d3b] p-8 rounded-xl shadow-[0_5px_15px_rgba(0,0,0,0.3)] w-full max-w-sm mx-4 border border-[#2e3b4e]">
         
         {/* header */}
         <h2 className="text-3xl font-bold text-[#17cf97] mb-6 text-center tracking-wide">
