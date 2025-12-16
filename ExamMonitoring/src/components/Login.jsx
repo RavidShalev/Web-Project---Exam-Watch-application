@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'; 
 
-function Login() {
+// onLogin - prop from App component
+function Login({onLogin}) {
   // state hook - for memory
   const [username, setUsername] = useState(''); 
   const [password, setPassword] = useState('');
@@ -27,6 +28,15 @@ function Login() {
       return;
     }
 
+    // TEMPORARY!!!!!!!!!!
+    if (username !== "admin" || password !== "123") {
+      setError("Invalid username or password");
+      return;
+    }
+
+    // Creating a temporary user object
+    const user = { username: "admin", role: "admin" };
+
     // Success Logic: Save to Session Storage in the web browser not in our DB
     sessionStorage.setItem("currentUser", JSON.stringify({ username }));
     
@@ -40,6 +50,9 @@ function Login() {
     if(passRef.current) passRef.current.value = "";
     
     alert("Logged in!");
+
+    // This updates the global login state
+    onLogin(user);
   };
 
   // build the component - what return - in style

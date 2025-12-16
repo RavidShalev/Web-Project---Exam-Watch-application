@@ -1,4 +1,5 @@
 import { Component } from "react";
+import { Link, NavLink } from "react-router-dom";
 
 class Navbar extends Component {
     state={
@@ -19,18 +20,18 @@ class Navbar extends Component {
                     <ul className={this.state.clicked 
                             ? "flex flex-col items-start justify-start fixed top-[90px] right-0 w-[300px] h-screen bg-[#1b2430] z-50 p-8 shadow-lg transition-all duration-300" 
                             : "hidden md:flex items-center justify-center"}>
-                        <li className="list-none px-5 py-4 md:py-0 relative"><a href="index.html" className="no-underline text-[1.3rem] font-semibold text-white transition duration-300 ease-in-out hover:text-[#17cf97] hover:after:content-[''] 
-                    hover:after:absolute hover:after:w-[30%] hover:after:h-[2px] hover:after:bg-[#17cf97] hover:after:bottom-[-4px] hover:after:left-[20px]">Home</a></li>
-                        <li className="list-none px-5 py-4 md:py-0 relative"><a href="index.html" className="no-underline text-[1.3rem] font-semibold text-white transition duration-300 ease-in-out hover:text-[#17cf97] hover:after:content-[''] 
-                    hover:after:absolute hover:after:w-[30%] hover:after:h-[2px] hover:after:bg-[#17cf97] hover:after:bottom-[-4px] hover:after:left-[20px]">Exam Clock</a></li>
-                        <li className="list-none px-5 py-4 md:py-0 relative"><a href="index.html" className="no-underline text-[1.3rem] font-semibold text-white transition duration-300 ease-in-out hover:text-[#17cf97] hover:after:content-[''] 
-                    hover:after:absolute hover:after:w-[30%] hover:after:h-[2px] hover:after:bg-[#17cf97] hover:after:bottom-[-4px] hover:after:left-[20px]">Attendance Sheet</a></li>
-                        <li className="list-none px-5 py-4 md:py-0 relative"><a href="index.html" className="no-underline text-[1.3rem] font-semibold text-white transition duration-300 ease-in-out hover:text-[#17cf97] hover:after:content-[''] 
-                    hover:after:absolute hover:after:w-[30%] hover:after:h-[2px] hover:after:bg-[#17cf97] hover:after:bottom-[-4px] hover:after:left-[20px]">Report</a></li>
-                        <li className="list-none px-5 py-4 md:py-0 relative"><a href="index.html" className="no-underline text-[1.3rem] font-semibold text-white transition duration-300 ease-in-out hover:text-[#17cf97] hover:after:content-[''] 
-                    hover:after:absolute hover:after:w-[30%] hover:after:h-[2px] hover:after:bg-[#17cf97] hover:after:bottom-[-4px] hover:after:left-[20px]">Procedures</a></li>
-                        <li className="list-none px-5 py-4 md:py-0 relative"><a href="index.html" className="no-underline text-[1.3rem] font-semibold text-white transition duration-300 ease-in-out hover:text-[#17cf97] hover:after:content-[''] 
-                    hover:after:absolute hover:after:w-[30%] hover:after:h-[2px] hover:after:bg-[#17cf97] hover:after:bottom-[-4px] hover:after:left-[20px]">Exam Bot</a></li>
+                        <li className="list-none px-5 py-4 md:py-0 relative"><NavLink to="/" className="no-underline text-[1.3rem] font-semibold text-white transition duration-300 ease-in-out hover:text-[#17cf97] hover:after:content-[''] 
+                    hover:after:absolute hover:after:w-[30%] hover:after:h-[2px] hover:after:bg-[#17cf97] hover:after:bottom-[-4px] hover:after:left-[20px]">Home</NavLink></li>
+                        <li className="list-none px-5 py-4 md:py-0 relative"><NavLink to="/exam-clock" className="no-underline text-[1.3rem] font-semibold text-white transition duration-300 ease-in-out hover:text-[#17cf97] hover:after:content-[''] 
+                    hover:after:absolute hover:after:w-[30%] hover:after:h-[2px] hover:after:bg-[#17cf97] hover:after:bottom-[-4px] hover:after:left-[20px]">Exam Clock</NavLink></li>
+                        <li className="list-none px-5 py-4 md:py-0 relative"><NavLink to="/attendance" className="no-underline text-[1.3rem] font-semibold text-white transition duration-300 ease-in-out hover:text-[#17cf97] hover:after:content-[''] 
+                    hover:after:absolute hover:after:w-[30%] hover:after:h-[2px] hover:after:bg-[#17cf97] hover:after:bottom-[-4px] hover:after:left-[20px]">Attendance Sheet</NavLink></li>
+                        <li className="list-none px-5 py-4 md:py-0 relative"><NavLink to="/report" className="no-underline text-[1.3rem] font-semibold text-white transition duration-300 ease-in-out hover:text-[#17cf97] hover:after:content-[''] 
+                    hover:after:absolute hover:after:w-[30%] hover:after:h-[2px] hover:after:bg-[#17cf97] hover:after:bottom-[-4px] hover:after:left-[20px]">Report</NavLink></li>
+                        <li className="list-none px-5 py-4 md:py-0 relative"><NavLink to="/procedures" className="no-underline text-[1.3rem] font-semibold text-white transition duration-300 ease-in-out hover:text-[#17cf97] hover:after:content-[''] 
+                    hover:after:absolute hover:after:w-[30%] hover:after:h-[2px] hover:after:bg-[#17cf97] hover:after:bottom-[-4px] hover:after:left-[20px]">Procedures</NavLink></li>
+                        <li className="list-none px-5 py-4 md:py-0 relative"><NavLink to="/exam-bot" className="no-underline text-[1.3rem] font-semibold text-white transition duration-300 ease-in-out hover:text-[#17cf97] hover:after:content-[''] 
+                    hover:after:absolute hover:after:w-[30%] hover:after:h-[2px] hover:after:bg-[#17cf97] hover:after:bottom-[-4px] hover:after:left-[20px]">Exam Bot</NavLink></li>
                     </ul>
                 </div>
 
