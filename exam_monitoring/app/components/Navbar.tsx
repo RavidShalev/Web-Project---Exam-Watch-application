@@ -34,12 +34,12 @@ const Navbar = () => {
              {/* for big screens (such as computer) */}
             <div>
                 <ul className="hidden md:flex items-center gap-8 list-none">
-                    <li><Link href="/" className={getLinkClass('/')}>Home</Link></li>
-                    <li><Link href="/exam-clock" className={getLinkClass('/exam-clock')}>Exam Clock</Link></li>
-                    <li><Link href="/attendance" className={getLinkClass('/attendance')}>Attendance</Link></li>
-                    <li><Link href="/report" className={getLinkClass('/report')}>Report</Link></li>
-                    <li><Link href="/procedures" className={getLinkClass('/procedures')}>Procedures</Link></li>
-                    <li><Link href="/exam-bot" className={getLinkClass('/exam-bot')}>Exam Bot</Link></li>
+                    <li><Link href="/" className={getLinkClass('/')}>בית</Link></li>
+                    <li><Link href="/exam-clock" className={getLinkClass('/exam-clock')}>שעון בחינה</Link></li>
+                    <li><Link href="/attendance" className={getLinkClass('/attendance')}>נוכחות</Link></li>
+                    <li><Link href="/report" className={getLinkClass('/report')}>דיווח</Link></li>
+                    <li><Link href="/procedures" className={getLinkClass('/procedures')}>נהלים</Link></li>
+                    <li><Link href="/exam-bot" className={getLinkClass('/exam-bot')}>בוט בחינות</Link></li>
                 </ul>
             </div>
 
@@ -49,12 +49,12 @@ const Navbar = () => {
 
             {/* for small screens (such as mobile) */}
             <div className={`${clicked ? "flex" : "hidden"} md:hidden flex-col absolute top-full right-0 w-full bg-[#1b2430] p-6 shadow-lg border-t border-gray-700`}>
-                 <Link href="/" className={`${getLinkClass('/')} py-2 block`} onClick={() => setClicked(false)}>Home</Link>
-                 <Link href="/exam-clock" className={`${getLinkClass('/exam-clock')} py-2 block`} onClick={() => setClicked(false)}>Exam Clock</Link>
-                 <Link href="/attendance" className={`${getLinkClass('/attendance')} py-2 block`} onClick={() => setClicked(false)}>Attendance</Link>
-                 <Link href="/report" className={`${getLinkClass('/report')} py-2 block`} onClick={() => setClicked(false)}>Report</Link>
-                 <Link href="/procedures" className={`${getLinkClass('/procedures')} py-2 block`} onClick={() => setClicked(false)}>Procedures</Link>
-                 <Link href="/exam-bot" className={`${getLinkClass('/exam-bot')} py-2 block`} onClick={() => setClicked(false)}>Exam Bot</Link>
+                 <Link href="/" className={`${getLinkClass('/')} py-2 block`} onClick={() => setClicked(false)}>בית</Link>
+                 <Link href="/exam-clock" className={`${getLinkClass('/exam-clock')} py-2 block`} onClick={() => setClicked(false)}>שעון בחינה</Link>
+                 <Link href="/attendance" className={`${getLinkClass('/attendance')} py-2 block`} onClick={() => setClicked(false)}>נוכחות</Link>
+                 <Link href="/report" className={`${getLinkClass('/report')} py-2 block`} onClick={() => setClicked(false)}>דיווח</Link>
+                 <Link href="/procedures" className={`${getLinkClass('/procedures')} py-2 block`} onClick={() => setClicked(false)}>נהלים</Link>
+                 <Link href="/exam-bot" className={`${getLinkClass('/exam-bot')} py-2 block`} onClick={() => setClicked(false)}>בוט בחינות</Link>
             </div>
         </nav>
     );
