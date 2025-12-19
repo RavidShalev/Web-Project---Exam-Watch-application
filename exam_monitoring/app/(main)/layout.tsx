@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Heebo } from 'next/font/google'
-import "./globals.css";
+import "../globals.css";
+import Navbar from "../components/Navbar";
 
 const heebo = Heebo({ subsets: ['hebrew'] })
 
@@ -29,6 +30,7 @@ export default function RootLayout({
     <html lang="he" dir="rtl">
       <body
         className={heebo.className} >
+        <Navbar />
         {children}
       </body>
     </html>

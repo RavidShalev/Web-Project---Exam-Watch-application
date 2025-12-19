@@ -27,3 +27,5 @@ export async function dbConnect() {
   console.log("MongoDB connected (new connection)");
   return cached.conn;
 }
+
+export default dbConnect;
