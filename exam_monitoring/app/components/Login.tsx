@@ -41,7 +41,7 @@ function Login() {
     method: "POST",
     headers: {
         // Inform the server that the request body is JSON
-        "Content-Type" : "applications/json",
+        "Content-Type" : "application/json",
     },
     // Send username and password as JSON in the request body
     body : JSON.stringify({username,password}),
