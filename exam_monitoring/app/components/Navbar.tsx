@@ -1,27 +1,23 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 
 type CurrentUser = { username: string; role: string };
 
 const Navbar = () => {
   const [clicked, setClicked] = useState(false);
-  const pathname = usePathname();
 
-  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
-
-  // Load current user (username + role) from sessionStorage once
-  useEffect(() => {
+  // Load current user (username + role) from sessionStorage ONCE (no useEffect)
+  const [currentUser] = useState<CurrentUser | null>(() => {
+    if (typeof window === 'undefined') return null; // Next.js server safety
     try {
       const raw = sessionStorage.getItem('currentUser');
-      if (!raw) return;
-      setCurrentUser(JSON.parse(raw));
+      return raw ? (JSON.parse(raw) as CurrentUser) : null;
     } catch {
-      setCurrentUser(null);
+      return null;
     }
-  }, []);
+  });
 
   const isAdmin = currentUser?.role === 'admin';
 
@@ -72,6 +68,7 @@ const Navbar = () => {
       {/* for big screens (such as computer) */}
       <div>
         <ul className="hidden md:flex items-center gap-8 list-none">
+          {/* אם ה"בית" שלכם הוא /home, אפשר לשנות href="/home" */}
           <li><Link href="/" className={getLinkClass('/home')}>בית</Link></li>
           <li><Link href="/exam-clock" className={getLinkClass('/exam-clock')}>שעון בחינה</Link></li>
           <li><Link href="/attendance" className={getLinkClass('/attendance')}>נוכחות</Link></li>
@@ -83,7 +80,7 @@ const Navbar = () => {
           {isAdmin && (
             <li>
               <Link href="/register-user" className={getLinkClass('/register-user')}>
-                Register User
+                רישום משתמש
               </Link>
             </li>
           )}
@@ -112,7 +109,7 @@ const Navbar = () => {
             className={`${getLinkClass('/register-user')} py-2 block`}
             onClick={() => setClicked(false)}
           >
-            Register User
+            רישום משתמש חדש
           </Link>
         )}
       </div>
