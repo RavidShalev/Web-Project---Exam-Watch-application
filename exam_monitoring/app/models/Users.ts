@@ -4,7 +4,7 @@ const ALLOWED_ROLES = ["admin", "proctor", "lecturer", "student"] as const;
 
 const UserSchema = new mongoose.Schema(
   {
-    username: { type: String, required: true, unique: true, trim: true },
+    username: { type: String, required: true, unique: true},
     password: { type: String, required: true },
     role: {
       type: String,
