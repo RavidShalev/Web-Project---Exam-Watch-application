@@ -95,7 +95,7 @@ const Navbar = () => {
       <div
         className={`${clicked ? "flex" : "hidden"} md:hidden flex-col absolute top-full right-0 w-full bg-[#1b2430] p-6 shadow-lg border-t border-gray-700`}
       >
-        <Link href="/" className={`${getLinkClass('/')} py-2 block`} onClick={() => setClicked(false)}>בית</Link>
+        <Link href="/home" className={`${getLinkClass('/home')} py-2 block`} onClick={() => setClicked(false)}>בית</Link>
         <Link href="/exam-clock" className={`${getLinkClass('/exam-clock')} py-2 block`} onClick={() => setClicked(false)}>שעון בחינה</Link>
         <Link href="/attendance" className={`${getLinkClass('/attendance')} py-2 block`} onClick={() => setClicked(false)}>נוכחות</Link>
         <Link href="/report" className={`${getLinkClass('/report')} py-2 block`} onClick={() => setClicked(false)}>דיווח</Link>
