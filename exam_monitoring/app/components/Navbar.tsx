@@ -68,7 +68,6 @@ const Navbar = () => {
       {/* for big screens (such as computer) */}
       <div>
         <ul className="hidden md:flex items-center gap-8 list-none">
-          {/* אם ה"בית" שלכם הוא /home, אפשר לשנות href="/home" */}
           <li><Link href="/home" className={getLinkClass('/home')}>בית</Link></li>
           <li><Link href="/exam-clock" className={getLinkClass('/exam-clock')}>שעון בחינה</Link></li>
           <li><Link href="/attendance" className={getLinkClass('/attendance')}>נוכחות</Link></li>
