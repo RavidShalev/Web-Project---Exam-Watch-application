@@ -9,13 +9,13 @@ export const mockExam: Exam = {
   courseCode: "CS101",
   lecturers: [
     {
-      _id: "lec-1",
+      id: "lec-1",
       name: "ד\"ר יוסי כהן",
       email: "yossi.cohen@college.ac.il",
       phone: "050-1234567",
     },
     {
-      _id: "lec-2",
+      id: "lec-2",
       name: "ד\"ר מיכל לוי",
       email: "michal.levy@college.ac.il",
       phone: "052-7654321",

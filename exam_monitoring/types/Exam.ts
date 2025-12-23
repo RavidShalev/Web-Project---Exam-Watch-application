@@ -14,14 +14,14 @@ export interface ItemOfChecklist{
 }
 
 export interface Lecturer{
-    _id: string;
+    id: string;
     name: string;
     email: string;
     phone: string;
 }
 
 export interface Exam{
-    _id: string;
+    _id?: string;
     courseName: string;
     courseCode: string;
     lecturers: Lecturer[];
