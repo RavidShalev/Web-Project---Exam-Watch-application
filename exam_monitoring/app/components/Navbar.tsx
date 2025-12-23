@@ -83,6 +83,14 @@ const Navbar = () => {
               </Link>
             </li>
           )}
+
+          {isAdmin && (
+            <li>
+              <Link href="/add-exam" className={getLinkClass('/add-exam')}>
+                הוספת בחינה
+              </Link>
+            </li>
+          )}
         </ul>
       </div>
 
@@ -109,6 +117,16 @@ const Navbar = () => {
             onClick={() => setClicked(false)}
           >
             רישום משתמש חדש
+          </Link>
+        )}
+
+        {isAdmin && (
+          <Link
+            href="/add-exam"
+            className={`${getLinkClass('/add-exam')} py-2 block`}
+            onClick={() => setClicked(false)}
+          >
+            הוספת בחינה
           </Link>
         )}
       </div>
