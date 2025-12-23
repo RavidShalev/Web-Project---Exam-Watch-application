@@ -59,12 +59,12 @@ export default function AddExamForm() {
                    rounded-xl shadow-md p-8 space-y-5"
       >
         <h2 className="text-2xl font-semibold text-center mb-4">
-          Create Exam
+          הוספת מבחן
         </h2>
 
         <div>
           <label className="block text-sm font-medium mb-1">
-            Subject Name
+            שם הקורס
           </label>
           <input
             type="text"
@@ -77,7 +77,7 @@ export default function AddExamForm() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Date</label>
+          <label className="block text-sm font-medium mb-1">תאריך</label>
           <input
             type="date"
             name="date"
@@ -91,7 +91,7 @@ export default function AddExamForm() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium mb-1">
-              Start Time
+              שעת התחלה
             </label>
             <input
               type="time"
@@ -105,7 +105,7 @@ export default function AddExamForm() {
 
           <div>
             <label className="block text-sm font-medium mb-1">
-              End Time
+              שעת סיום
             </label>
             <input
               type="time"
@@ -120,7 +120,7 @@ export default function AddExamForm() {
 
         <div>
           <label className="block text-sm font-medium mb-1">
-            Location
+            כיתה
           </label>
           <input
             type="text"
@@ -134,7 +134,7 @@ export default function AddExamForm() {
 
         <div>
           <label className="block text-sm font-medium mb-1">
-            Proctor
+            שם משגיח
           </label>
           <input
             type="text"
