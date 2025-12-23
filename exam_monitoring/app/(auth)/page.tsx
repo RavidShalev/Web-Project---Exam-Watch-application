@@ -2,6 +2,6 @@
 
 import Login from "./_components/Login";
 
-export default function LoginPage() {
+export default function HomePage() {
   return <Login />;
 }

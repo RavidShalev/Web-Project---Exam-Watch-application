@@ -69,9 +69,6 @@ const Navbar = () => {
       <div>
         <ul className="hidden md:flex items-center gap-8 list-none">
           <li><Link href="/home" className={getLinkClass('/home')}>בית</Link></li>
-          <li><Link href="/exam-clock" className={getLinkClass('/exam-clock')}>שעון בחינה</Link></li>
-          <li><Link href="/attendance" className={getLinkClass('/attendance')}>נוכחות</Link></li>
-          <li><Link href="/report" className={getLinkClass('/report')}>דיווח</Link></li>
           <li><Link href="/procedures" className={getLinkClass('/procedures')}>נהלים</Link></li>
           <li><Link href="/exam-bot" className={getLinkClass('/exam-bot')}>בוט בחינות</Link></li>
 
@@ -103,9 +100,6 @@ const Navbar = () => {
         className={`${clicked ? "flex" : "hidden"} md:hidden flex-col absolute top-full right-0 w-full bg-[#1b2430] p-6 shadow-lg border-t border-gray-700`}
       >
         <Link href="/home" className={`${getLinkClass('/home')} py-2 block`} onClick={() => setClicked(false)}>בית</Link>
-        <Link href="/exam-clock" className={`${getLinkClass('/exam-clock')} py-2 block`} onClick={() => setClicked(false)}>שעון בחינה</Link>
-        <Link href="/attendance" className={`${getLinkClass('/attendance')} py-2 block`} onClick={() => setClicked(false)}>נוכחות</Link>
-        <Link href="/report" className={`${getLinkClass('/report')} py-2 block`} onClick={() => setClicked(false)}>דיווח</Link>
         <Link href="/procedures" className={`${getLinkClass('/procedures')} py-2 block`} onClick={() => setClicked(false)}>נהלים</Link>
         <Link href="/exam-bot" className={`${getLinkClass('/exam-bot')} py-2 block`} onClick={() => setClicked(false)}>בוט בחינות</Link>
 
