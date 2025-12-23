@@ -27,8 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="he" dir="rtl">
-      <body
-        className={heebo.className} >
+      <body className={heebo.className} >
         {children}
       </body>
     </html>
