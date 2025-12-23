@@ -63,7 +63,7 @@ function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[84vh] bg-[#1b2430]">
+    <div className="flex items-center justify-center min-h-[100vh] bg-[#1b2430]">
       <div className="bg-[#232d3b] p-8 rounded-xl shadow w-full max-w-sm">
         <h2 className="text-3xl font-bold text-[#17cf97] mb-6 text-center">
           ברוך שובך!
