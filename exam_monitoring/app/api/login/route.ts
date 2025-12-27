@@ -5,13 +5,13 @@ import User from "../../models/Users";
 // API Route: POST /api/login
 export async function POST(req: Request) {
   try {
-    // reading the data that has been sent from the frontend (username, password)
-    const { username, password } = await req.json();
+    // reading the data that has been sent from the frontend (idNumber, password)
+    const { idNumber, password } = await req.json();
 
     await dbConnect();
     
-    // searching the user from the username
-    const user = await User.findOne({ username });
+    // searching the user from the idNumber
+    const user = await User.findOne({ idNumber });
 
     // checking if the user doesn't exist or the db doesn't match what the user typed
     if (!user || user.password !== password) {
@@ -23,7 +23,8 @@ export async function POST(req: Request) {
 
     // if no errors return to the user the information
     return NextResponse.json({
-      username: user.username,
+      _id: user._id.toString(),
+      idNumber: user.idNumber,
       role: user.role,
     });
   } catch (err) {

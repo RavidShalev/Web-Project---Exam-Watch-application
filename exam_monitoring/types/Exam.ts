@@ -13,22 +13,28 @@ export interface ItemOfChecklist{
     isDone: boolean;
 }
 
-export interface Lecturer{
-    id: string;
+
+export interface User{
+    id?: string;
+    idNumber: string;
     name: string;
     email: string;
     phone: string;
+    password: string;
+    role: 'supervisor' | 'admin' | 'lecturer'| 'student';
 }
 
 export interface Exam{
     _id?: string;
     courseName: string;
     courseCode: string;
-    lecturers: Lecturer[];
+    lecturers: string[];
     date: string;
     startTime: string;
     endTime: string;
     location: string;
+    supervisors: string[];
     checklist: ItemOfChecklist[];
     rules: Rule[];
+    status: 'scheduled' | 'ongoing' | 'completed';
 }

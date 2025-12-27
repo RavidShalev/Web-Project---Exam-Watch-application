@@ -5,7 +5,7 @@ import { useState, useRef, FormEvent } from "react";
 
 function Login() {
   // state hook - for memory
-  const [username, setUsername] = useState<string>("");
+  const [idNumber, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
 
@@ -31,8 +31,8 @@ function Login() {
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();  //instead of refresh the page on submit we prevent default behavior
 
-    if (!username.trim() || !password.trim()) {
-      setError("Please enter both username and password.");
+    if (!idNumber.trim() || !password.trim()) {
+      setError("יש למלא את כל השדות");
       return;
     }
 
@@ -43,17 +43,21 @@ function Login() {
         // Inform the server that the request body is JSON
         "Content-Type" : "application/json",
     },
-    // Send username and password as JSON in the request body
-    body : JSON.stringify({username,password}),
+    // Send idNumber and password as JSON in the request body
+    body : JSON.stringify({idNumber,password}),
   });
 
     if(!res.ok) {
-       setError("Invalid username of password");
+       setError("תעודת הזהות או הסיסמה שגויים");
        return;
     }
 
     // Parse the JSON response returned from the server
     const user = await res.json();
+
+    if (user.role === "supervisor") {
+        localStorage.setItem("supervisorId", user._id);
+    }
 
     // Store authenticated user data in sessionStorage
     sessionStorage.setItem("currentUser", JSON.stringify(user));
@@ -72,9 +76,9 @@ function Login() {
         <form onSubmit={handleLogin} className="flex flex-col gap-4 text-white">
           <input
             ref={userRef}
-            value={username}
+            value={idNumber}
             onChange={(e) => handleChange("user", e)}
-            placeholder="שם משתמש"
+            placeholder="תעודת זהות"
             className="p-3 rounded"
           />
 
