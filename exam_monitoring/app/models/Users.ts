@@ -1,11 +1,31 @@
 import mongoose from "mongoose";
 
-const ALLOWED_ROLES = ["admin", "proctor", "lecturer", "student"] as const;
+const ALLOWED_ROLES = ["admin", "supervisor", "lecturer", "student"] as const;
 
 const UserSchema = new mongoose.Schema(
   {
-    username: { type: String, required: true, unique: true},
-    password: { type: String, required: true },
+    idNumber: { 
+      type: String, 
+      required: true, 
+      unique: true 
+    },
+    name: { 
+      type: String, 
+      required: true 
+    },
+    email: { 
+      type: String, 
+      required: true, 
+      unique: true 
+    },
+    phone: { 
+      type: String, 
+      required: false 
+    },
+    password: { 
+      type: String, 
+      required: true 
+    },
     role: {
       type: String,
       required: true,
