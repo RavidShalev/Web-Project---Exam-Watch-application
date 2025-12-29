@@ -97,7 +97,11 @@ const ExamSchema = new mongoose.Schema(
      type : String,
      enum : ['scheduled', 'active', 'finished'],
      default : 'scheduled'
-   }
+   },
+   actualStartTime:
+   {
+     type: String,
+     default: null}
   },
   {
      timestamps :true

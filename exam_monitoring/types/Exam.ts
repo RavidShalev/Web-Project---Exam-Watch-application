@@ -36,5 +36,7 @@ export interface Exam{
     supervisors: string[];
     checklist: ItemOfChecklist[];
     rules: Rule[];
-    status: 'scheduled' | 'ongoing' | 'completed';
+    status: 'scheduled' | 'active' | 'completed';
+    actualStartTime?: string;
+    durationMinutes: number;
 }

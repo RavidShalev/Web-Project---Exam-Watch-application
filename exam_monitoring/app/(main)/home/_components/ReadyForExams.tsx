@@ -13,7 +13,12 @@ const iconMap: Record<IconType, any> = {
   headphones: Headphones,
 };
 
-export default function ReadyForExams({ exam }: { exam: Exam }) {
+type ReadyForExamsProps = {
+    exam: Exam;
+    onStartExam?: () => void;
+}
+
+export default function ReadyForExams({ exam, onStartExam }: ReadyForExamsProps) {
     const [checklist, setChecklist] = useState(exam.checklist);
 
     // change the isDone status of an item in the checklist
@@ -86,7 +91,7 @@ export default function ReadyForExams({ exam }: { exam: Exam }) {
                 </div>
             </div>
             {/* button to start the exam */}
-            <button disabled={!allDone} className={`mt-6 w-full py-3 rounded-xl text-white font-semibold ${allDone ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'}`}>
+            <button disabled={!allDone} onClick={onStartExam} className={`mt-6 w-full py-3 rounded-xl text-white font-semibold ${allDone ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'}`}>
                 התחל מבחן
             </button>
         </div>

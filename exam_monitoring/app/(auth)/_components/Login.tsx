@@ -46,7 +46,7 @@ function Login() {
     // Send idNumber and password as JSON in the request body
     body : JSON.stringify({idNumber,password}),
   });
-
+    console.log("sending:", { idNumber, password });
     if(!res.ok) {
        setError("תעודת הזהות או הסיסמה שגויים");
        return;

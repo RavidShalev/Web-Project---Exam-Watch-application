@@ -1,11 +1,29 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import ReadyForExams from "./_components/ReadyForExams";
+import { Exam } from "@/types/Exam";
+
+
 
 export default function HomePage() {
-  const [exam, setExam] = useState(null);
+  const [exam, setExam] = useState<Exam | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  async function handleStartExam() {
+    if (!exam) return;
+    const res = await fetch("/api/exams/activate", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ examId: exam._id })
+    });
+    const updatedExam = await res.json();
+    setExam(updatedExam.exam);
+    // Navigate to active exam page
+    router.push(`/active-exam/${exam._id}`);
+}
 
   // run once on component mount
   useEffect(() => {
@@ -40,5 +58,5 @@ export default function HomePage() {
     return <div>אין מבחנים קרובים</div>;
   }
 
-  return <ReadyForExams exam={exam} />;
+  return <ReadyForExams exam={exam} onStartExam={handleStartExam} />;
 }
