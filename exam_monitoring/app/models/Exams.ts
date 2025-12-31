@@ -101,7 +101,17 @@ const ExamSchema = new mongoose.Schema(
    actualStartTime:
    {
      type: String,
-     default: null}
+     default: null
+    },
+    durationMinutes:
+    {
+      type: Number,
+      required: true
+    },
+    students:
+    [
+      { type: String }
+    ]
   },
   {
      timestamps :true

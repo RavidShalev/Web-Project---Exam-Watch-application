@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import dbConnect from "../../../lib/db";
 import Exam from "../../../models/Exams";
+import Attendance from "../../../models/Attendance";
 
 export async function POST(req: Request) {
     try {
@@ -17,10 +18,10 @@ export async function POST(req: Request) {
                 { status: 400 }
             );
         }
-        // update the exam status to "active" and set actualStartTime to now
-        const exam = await Exam.findByIdAndUpdate(
+        // update the exam status to "active" and set actualStartTime to now 
+        const exam = await Exam.findOneAndUpdate(
             { _id: examId, status: "scheduled" },
-            { status: "active", actualStartTime: new Date() },
+            { status: "active", actualStartTime: new Date().toISOString() },
             { new: true }
         );
 
@@ -30,6 +31,22 @@ export async function POST(req: Request) {
                 { error: "Exam not found" },
                 { status: 404 }
             );
+        }
+
+        const existingAttendance = await Attendance.findOne({ examId: exam._id });
+        if (!existingAttendance) {
+        // prepare attendance records for each student in the exam
+        const attendanceRecords = exam.students.map((studentId: any, index: number) => ({
+            examId: exam._id,
+            studentId: studentId,
+            studentNumInExam: index + 1,
+            attendanceStatus: "absent",
+            IdImage: null,
+            adjusmenentImage: null,
+            }));
+
+        await Attendance.insertMany(attendanceRecords);
+
         }
 
         // return success response

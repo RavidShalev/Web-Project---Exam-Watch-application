@@ -39,6 +39,14 @@ export default function HomePage() {
 
         const data = await res.json();
 
+        const findedExam = data.closestExam;
+
+        if (findedExam && findedExam.status === "active") {
+          // if there is an active exam, navigate directly to its page
+          router.push(`/active-exam/${findedExam._id}`);
+          return;
+        }
+
         setExam(data.closestExam);
       } catch (err) {
         console.error("Failed to fetch exam:", err);

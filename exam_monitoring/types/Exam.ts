@@ -39,4 +39,5 @@ export interface Exam{
     status: 'scheduled' | 'active' | 'completed';
     actualStartTime?: string;
     durationMinutes: number;
+    students: string[];
 }

@@ -23,7 +23,7 @@ export default function ExamTimer({ duration, startTime }: ExamTimerProps) {
 
     // return the remaining time in HH:MM:SS format (add leading zeros if needed)
     return (
-        <div>
+        <div className="text-7xl font-extrabold text-gray-900">
             {`${remainingTime.hours.toString().padStart(2, '0')}:${remainingTime.minutes
                 .toString()
                 .padStart(2, '0')}:${remainingTime.seconds.toString().padStart(2, '0')}`}

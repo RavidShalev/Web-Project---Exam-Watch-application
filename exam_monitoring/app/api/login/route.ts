@@ -13,10 +13,6 @@ export async function POST(req: Request) {
 
     // reading the data that has been sent from the frontend (idNumber, password)
     const { idNumber, password } = await req.json();
-    
-    console.log("dbConnected");
-    
-
 
     // checking if the user doesn't exist or the db doesn't match what the user typed
     if (!idNumber || !password ) {

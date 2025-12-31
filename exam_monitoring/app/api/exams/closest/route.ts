@@ -22,6 +22,16 @@ export async function GET(req: Request) {
                 { status: 400 }
             );
         }
+
+        // first check if there is any active exam for the supervisor
+        const activeExam = await Exam.find({
+            supervisors: supervisorId,
+            status: { $in: ["active"] },
+        }).lean();
+        if (activeExam.length > 0) {
+            return NextResponse.json({ closestExam: activeExam[0] });
+        }
+
         // find all exams where the supervisor is assigned and the exam is scheduled
         const exams = await Exam.find({
             supervisors: supervisorId,
