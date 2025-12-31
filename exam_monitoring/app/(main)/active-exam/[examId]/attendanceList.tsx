@@ -9,7 +9,7 @@ export default function AttemdanceList({attendance}: {attendance:AttendanceRow[]
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white border border-gray-300 text-black">
             <thead>
-                <tr dir="rtl">
+                <tr>
                         <th className="py-2 px-4 border-b border-gray-300 text-left">תעודת זהות</th>
                         <th className="py-2 px-4 border-b border-gray-300 text-left">שם</th>
                         <th className="py-2 px-4 border-b border-gray-300 text-left">מספר במבחן</th>
@@ -27,7 +27,7 @@ export default function AttemdanceList({attendance}: {attendance:AttendanceRow[]
                         <td className="py-2 px-4 border-b border-gray-300">{record.studentId.idNumber}</td>
                         <td className="py-2 px-4 border-b border-gray-300">{record.studentId.name}</td>
                         <td className="py-2 px-4 border-b border-gray-300">{record.studentNumInExam}</td>
-                        <td className="py-2 px-4 border-b border-gray-300"></td>
+                        <td className="py-2 px-4 border-b border-gray-300">{record.attendanceStatus === "present" ? (<button className="text-green-500">בטל נוכחות</button>) : (<button className="px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600">סמן כנוכח</button>)}</td>
                         <td className="py-2 px-4 border-b border-gray-300"></td>
                         <td className="py-2 px-4 border-b border-gray-300"></td>
                     </tr>
