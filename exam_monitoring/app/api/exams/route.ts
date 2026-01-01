@@ -34,16 +34,7 @@ export async function POST(req: Request) {
     await dbConnect();
 
     // Basic validation for required fields
-    const requiredFields = [
-      "courseName",
-      "courseCode",
-      "lecturers",
-      "supervisors",
-      "date",
-      "startTime",
-      "endTime",
-      "location",
-    ];
+    const requiredFields = ["courseName", "courseCode"];
 
     for (const field of requiredFields) {
       if (!body[field]) {
@@ -79,24 +70,25 @@ export async function POST(req: Request) {
 
     // Creating the exam in the database
     const exam = await Exam.create({
-      ...body,
+      courseName: body.courseName,
+      courseCode: body.courseCode,
+      date: body.date ?? "-",
+      startTime: body.startTime ?? "-",
+      endTime: body.endTime ?? "-",
+      location: body.location ?? "-",
+      lecturers: body.lecturers ?? [],
+      supervisors: body.supervisors ?? [],
       status: body.status || "scheduled",
     });
 
-    return NextResponse.json(
-      { success: true, exam },
-      { status: 201 }
-    );
+    return NextResponse.json({ success: true, exam }, { status: 201 });
   } catch (err) {
     console.error("Error creating exam:", err);
 
     return NextResponse.json(
       {
         success: false,
-        message:
-          err instanceof Error
-            ? err.message
-            : "Unknown server error",
+        message: err instanceof Error ? err.message : "Unknown server error",
       },
       { status: 500 }
     );

@@ -3,9 +3,14 @@
 import { useState } from "react";
 import "../../../globals.css";
 
-export default function AddExamForm() {
+type AddExamFormProps = {
+  onSuccess?: () => void;
+};
+
+export default function AddExamForm({ onSuccess }: AddExamFormProps) {
   const [formData, setFormData] = useState({
-    subjectName: "",
+    courseName: "",
+    courseCode: "",
     date: "",
     startTime: "",
     endTime: "",
@@ -23,6 +28,16 @@ export default function AddExamForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!formData.courseName.trim() || !formData.courseCode.trim()) {
+    alert("שם קורס וקוד קורס הם שדות חובה");
+    return;
+  }
+
+  if (!Number.isInteger(Number(formData.courseCode))) {
+    alert("קוד קורס חייב להיות מספר שלם");
+    return;
+  }
 
     const res = await fetch("/api/exams", {
       method: "POST",
@@ -49,6 +64,9 @@ export default function AddExamForm() {
     }
 
     alert("Exam created successfully");
+
+    // Reset form
+    onSuccess?.();
   };
 
   return (
@@ -58,21 +76,37 @@ export default function AddExamForm() {
         className="w-full max-w-lg bg-white border border-gray-200
                    rounded-xl shadow-md p-8 space-y-5"
       >
-        <h2 className="text-2xl font-semibold text-center mb-4">
-          הוספת מבחן
-        </h2>
+        <h2 className="text-2xl font-semibold text-center mb-4">הוספת מבחן</h2>
 
         <div>
-          <label className="block text-sm font-medium mb-1">
-            שם הקורס
-          </label>
+          <label className="block text-sm font-medium mb-1">שם הקורס</label>
           <input
             type="text"
-            name="subjectName"
-            value={formData.subjectName}
+            name="courseName"
+            value={formData.courseName}
             onChange={handleChange}
             className="w-full rounded-md border border-gray-300 px-3 py-2
                        focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">קוד הקורס</label>
+          <input
+            type="number"
+            name="courseCode"
+            value={formData.courseCode}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (/^\d*$/.test(value)) {
+                setFormData((prev) => ({
+                  ...prev,
+                  courseCode: value,
+                }));
+              }
+            }}
+            className="w-full rounded-md border border-gray-300 px-3 py-2
+               focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -90,9 +124,7 @@ export default function AddExamForm() {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-1">
-              שעת התחלה
-            </label>
+            <label className="block text-sm font-medium mb-1">שעת התחלה</label>
             <input
               type="time"
               name="startTime"
@@ -104,9 +136,7 @@ export default function AddExamForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">
-              שעת סיום
-            </label>
+            <label className="block text-sm font-medium mb-1">שעת סיום</label>
             <input
               type="time"
               name="endTime"
@@ -119,9 +149,7 @@ export default function AddExamForm() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">
-            כיתה
-          </label>
+          <label className="block text-sm font-medium mb-1">כיתה</label>
           <input
             type="text"
             name="location"
@@ -133,9 +161,7 @@ export default function AddExamForm() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">
-            שם משגיח
-          </label>
+          <label className="block text-sm font-medium mb-1">שם משגיח</label>
           <input
             type="text"
             name="proctor"

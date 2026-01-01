@@ -1,110 +1,94 @@
 import mongoose from "mongoose";
 
-
 const RuleSchema = new mongoose.Schema({
-  id:
-  {
+  id: {
     type: String,
-    required: true
+    required: true,
   },
   label: {
     type: String,
-    required: true
+    required: true,
   },
   icon: {
     type: String,
     enum: ["calculator", "book", "phone", "headphones"],
-    required: true
+    required: true,
   },
   allowed: {
     type: Boolean,
-    required: true
-  }
+    required: true,
+  },
 });
 
 const ItemOfChecklistSchema = new mongoose.Schema({
-  id:
-  {
+  id: {
     type: String,
-    required: true
+    required: true,
   },
   description: {
     type: String,
-    required: true
+    required: true,
   },
   isDone: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 });
 
 const ExamSchema = new mongoose.Schema(
   {
-    courseName:
-    {
+    courseName: {
       type: String,
-      required: true
+      required: true,
     },
-    courseCode:
-    {
+    courseCode: {
+      type: Number,
+      required: true,
+    },
+    lecturers: {
+      type: [String],
+      default: [],
+    },
+    date: {
       type: String,
-      required: true
+      default: "-",
     },
-    lecturers:
-    [
-      {
-        type: String,
-        required: true
-      }
-    ],
-    date:
-    {
+    startTime: {
       type: String,
-      required: true
+      default: "-",
     },
-    startTime:
-    {
+    endTime: {
       type: String,
-      required: true
+      default: "-",
     },
-    endTime:
-    {
+    location: {
       type: String,
-      required: true
+      default: "-",
     },
-    location:
-    {
+    supervisors: {
+      type: [String],
+      default: [],
+    },
+    checklist: {
+      type: [ItemOfChecklistSchema],
+      default: [],
+    },
+    rules: {
+      type: [RuleSchema],
+      default: [],
+    },
+    status: {
       type: String,
-      required: true
+      enum: ["scheduled", "active", "finished"],
+      default: "scheduled",
     },
-   supervisors:
-   [
-     {
-       type : String,
-       required :true
-     }
-   ],
-   checklist :
-   [
-     ItemOfChecklistSchema
-   ],
-   rules :
-   [
-     RuleSchema
-   ],
-   status :
-   {
-     type : String,
-     enum : ['scheduled', 'active', 'finished'],
-     default : 'scheduled'
-   },
-   actualStartTime:
-   {
-     type: String,
-     default: null}
+    actualStartTime: {
+      type: String,
+      default: null,
+    },
   },
   {
-     timestamps :true
+    timestamps: true,
   }
 );
 
