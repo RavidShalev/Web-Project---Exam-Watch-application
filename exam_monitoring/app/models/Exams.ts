@@ -61,6 +61,10 @@ const ExamSchema = new mongoose.Schema(
       type: String,
       default: "-",
     },
+    durationMinutes: {
+      type: Number,
+      required: false,
+    },
     location: {
       type: String,
       default: "-",
