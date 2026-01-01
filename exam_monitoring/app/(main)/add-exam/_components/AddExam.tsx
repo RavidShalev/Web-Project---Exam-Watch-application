@@ -15,11 +15,22 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
     startTime: "",
     endTime: "",
     location: "",
-    proctor: "",
+    supervisors: "",
+    lecturers: "",
+  });
+
+  const [rules, setRules] = useState({
+    calculator: false,
+    computer: false,
+    headphones: false,
+    openBook: false,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
+    if (!name) return;
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -29,22 +40,39 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.courseName.trim() || !formData.courseCode.trim()) {
-    alert("שם קורס וקוד קורס הם שדות חובה");
-    return;
-  }
+    const courseName = String(formData.courseName ?? "");
+    const courseCode = String(formData.courseCode ?? "");
 
-  if (!Number.isInteger(Number(formData.courseCode))) {
-    alert("קוד קורס חייב להיות מספר שלם");
-    return;
-  }
+    if (!courseName.trim() || !courseCode.trim()) {
+      alert("שם קורס וקוד קורס הם שדות חובה");
+      return;
+    }
+
+    if (!Number.isInteger(Number(formData.courseCode))) {
+      alert("קוד קורס חייב להיות מספר שלם");
+      return;
+    }
+
+    const supervisors = formData.supervisors
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    const lecturers = formData.lecturers
+      .split(",")
+      .map((l) => l.trim())
+      .filter(Boolean);
 
     const res = await fetch("/api/exams", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(formData),
+      body: JSON.stringify({
+        ...formData,
+        supervisors,
+        lecturers,
+      }),
     });
 
     const data = await res.json();
@@ -52,7 +80,7 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
     // case 1: conflict - room already taken
     if (res.status === 409) {
       alert(
-        "Cannot create exam: the selected location is already occupied during this time range."
+        "Cannot create exam: the selected locכation is already occupied during this time range."
       );
       return;
     }
@@ -63,7 +91,7 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
       return;
     }
 
-    alert("Exam created successfully");
+    alert("המבחן נוסף בהצלחה!");
 
     // Reset form
     onSuccess?.();
@@ -141,9 +169,10 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
               type="time"
               name="endTime"
               value={formData.endTime}
+              min={formData.startTime || undefined}
               onChange={handleChange}
               className="w-full rounded-md border border-gray-300 px-3 py-2
-                         focus:outline-none focus:ring-2 focus:ring-blue-500"
+             focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
@@ -161,15 +190,58 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">שם משגיח</label>
+          <label className="block text-sm font-medium mb-1">
+            שמות משגיחים (מופרדים בפסיק)
+          </label>
           <input
             type="text"
-            name="proctor"
-            value={formData.proctor}
+            name="supervisors"
+            value={formData.supervisors}
             onChange={handleChange}
+            placeholder="דני כהן, רונית לוי"
             className="w-full rounded-md border border-gray-300 px-3 py-2
-                       focus:outline-none focus:ring-2 focus:ring-blue-500"
+               focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            שמות מרצים (מופרדים בפסיק)
+          </label>
+          <input
+            type="text"
+            name="lecturers"
+            value={formData.lecturers}
+            onChange={handleChange}
+            placeholder="פרופ' ישראלי, ד״ר כהן"
+            className="w-full rounded-md border border-gray-300 px-3 py-2
+               focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="block text-sm font-medium">חוקים לבחינה</label>
+
+          {[
+            { key: "calculator", label: "מחשבון" },
+            { key: "computer", label: "מחשב" },
+            { key: "headphones", label: "אוזניות" },
+            { key: "openBook", label: "חומר פתוח" },
+          ].map(({ key, label }) => (
+            <label key={key} className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={rules[key as keyof typeof rules]}
+                onChange={(e) =>
+                  setRules((prev) => ({
+                    ...prev,
+                    [key]: e.target.checked,
+                  }))
+                }
+              />
+              {label}
+            </label>
+          ))}
         </div>
 
         <button
@@ -177,7 +249,7 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
           className="w-full bg-blue-600 text-white py-2 rounded-md
                      hover:bg-blue-700 transition font-medium"
         >
-          Create Exam
+          הוספת בחינה
         </button>
       </form>
     </div>

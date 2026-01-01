@@ -25,7 +25,11 @@ const showOrDash = (value: unknown): string => {
   if (value === null || value === undefined) return "—";
 
   if (Array.isArray(value)) {
-    return value.length === 0 ? "—" : "—";
+    return value.length === 0 ? "—" : value.join(", ");
+  }
+
+  if (typeof value === "number") {
+    return value.toString();
   }
 
   if (typeof value === "string") {
@@ -39,6 +43,32 @@ const showOrDash = (value: unknown): string => {
 export default function ExamsTable({ refreshKey }: ExamsTableProps) {
   const [exams, setExams] = useState<Exam[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Function to handle delete of an exam
+  const handleDelete = async (examId: string) => {
+    const confirmed = window.confirm("למחוק את המבחן?");
+    if (!confirmed) return;
+
+    // Call the API to delete the exam
+    try {
+      const res = await fetch(`/api/exams/${examId}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) {
+        alert("שגיאה במחיקה");
+        return;
+      }
+
+      alert("המבחן נמחק בהצלחה");
+
+      // Update the local state to remove the deleted exam
+      setExams((prev) => prev.filter((exam) => exam._id !== examId));
+    } catch (err) {
+      console.error("Delete exam error:", err);
+      alert("שגיאה במחיקה");
+    }
+  };
 
   // Fetch existing exams from the API on component mount
   useEffect(() => {
@@ -92,6 +122,9 @@ export default function ExamsTable({ refreshKey }: ExamsTableProps) {
                     <div className="flex flex-col gap-1 ml-6">
                       <button
                         type="button"
+                        onClick={() => {
+                          window.location.href = `/edit-exam/${exam._id}`;
+                        }}
                         className="bg-blue-600 text-white px-2 py-1 rounded text-xs hover:bg-blue-700"
                       >
                         ערוך
@@ -99,6 +132,7 @@ export default function ExamsTable({ refreshKey }: ExamsTableProps) {
 
                       <button
                         type="button"
+                        onClick={() => handleDelete(exam._id)}
                         className="bg-red-600 text-white px-2 py-1 rounded text-xs hover:bg-red-700"
                       >
                         מחק

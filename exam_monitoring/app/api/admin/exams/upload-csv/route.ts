@@ -4,6 +4,53 @@ import { dbConnect } from "../../../../lib/db";
 import Exam from "../../../../models/Exams";
 import { ExamCsvRow } from "@/app/models/ExamCsvRow";
 
+// Default checklist items for new exams
+const emptyChecklist = [
+  {
+    id: "distance",
+    description: "כל הסטודנטים יושבים במרחק של שני כסאות זה מזה",
+    isDone: false,
+  },
+  {
+    id: "bags-front",
+    description: "כל התיקים בקדמת הכיתה",
+    isDone: false,
+  },
+  {
+    id: "exam-on-board",
+    description: "פרטי הבחינה שנמצאים על הלוח",
+    isDone: false,
+  },
+];
+
+// Default rules for new exams
+const emptyRules = [
+  {
+    id: "calculator",
+    label: "מחשבון",
+    icon: "calculator",
+    allowed: false,
+  },
+  {
+    id: "computer",
+    label: "מחשב",
+    icon: "book",
+    allowed: false,
+  },
+  {
+    id: "headphones",
+    label: "אוזניות",
+    icon: "headphones",
+    allowed: false,
+  },
+  {
+    id: "openBook",
+    label: "חומר פתוח",
+    icon: "book",
+    allowed: false,
+  },
+];
+
 // API route to handle CSV file upload and process exam data
 export async function POST(req: Request) {
   try {
@@ -39,16 +86,19 @@ export async function POST(req: Request) {
       courseName: row.courseName,
       courseCode: row.courseCode,
 
+      date: null,
+      startTime: null,
+      endTime: null,
+      location: null,
+
       lecturers: [],
       supervisors: [],
 
-      checklist: [],
-      rules: [],
+      durationTime: null,
+      checklist: emptyChecklist,
+      rules: emptyRules,
 
-      date: "-",
-      startTime: "-",
-      endTime: "-",
-      location: "-",
+      students: [],
 
       status: "scheduled",
     }));

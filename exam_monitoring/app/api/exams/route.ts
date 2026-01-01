@@ -25,6 +25,25 @@ async function hasExamTimeConflict(
   return !!conflict;
 }
 
+// Default checklist items for new exams
+const checklist = [
+  {
+    id: "distance",
+    description: "כל הסטודנטים יושבים במרחק של שני כסאות זה מזה",
+    isDone: false,
+  },
+  {
+    id: "bags-front",
+    description: "כל התיקים בקדמת הכיתה",
+    isDone: false,
+  },
+  {
+    id: "exam-on-board",
+    description: "פרטי הבחינה שנמצאים על הלוח",
+    isDone: false,
+  },
+];
+
 // API Route: POST /api/exams
 export async function POST(req: Request) {
   try {
@@ -61,24 +80,82 @@ export async function POST(req: Request) {
       return NextResponse.json(
         {
           success: false,
-          message:
-            "There is already an exam in this location during the selected time range",
+          message: "כבר קיים מבחן במיקום זה בטווח הזמנים שנבחר.",
         },
         { status: 409 }
       );
     }
 
+    let durationMinutes: number | null = null;
+
+    // Calculate duration if startTime and endTime are provided
+    if (body.startTime && body.endTime) {
+      const [sh, sm] = body.startTime.split(":").map(Number);
+      const [eh, em] = body.endTime.split(":").map(Number);
+
+      const start = sh * 60 + sm;
+      const end = eh * 60 + em;
+
+      if (end <= start) {
+        return NextResponse.json(
+          { success: false, message: "שעת סיום חייבת להיות אחרי שעת התחלה" },
+          { status: 400 }
+        );
+      }
+
+      durationMinutes = end - start;
+    }
+
+    // Parsing rules
+    const rules = [
+      {
+        id: "calculator",
+        label: "מחשבון",
+        icon: "calculator",
+        allowed: !!body.rules?.calculator,
+      },
+      {
+        id: "computer",
+        label: "מחשב",
+        icon: "book",
+        allowed: !!body.rules?.computer,
+      },
+      {
+        id: "headphones",
+        label: "אוזניות",
+        icon: "headphones",
+        allowed: !!body.rules?.headphones,
+      },
+      {
+        id: "openBook",
+        label: "חומר פתוח",
+        icon: "book",
+        allowed: !!body.rules?.openBook,
+      },
+    ];
+
+    console.log("durationMinutes =", durationMinutes);
+
     // Creating the exam in the database
     const exam = await Exam.create({
       courseName: body.courseName,
       courseCode: body.courseCode,
+
       date: body.date ?? "-",
       startTime: body.startTime ?? "-",
       endTime: body.endTime ?? "-",
       location: body.location ?? "-",
-      lecturers: body.lecturers ?? [],
-      supervisors: body.supervisors ?? [],
-      status: body.status || "scheduled",
+
+      lecturers: Array.isArray(body.lecturers) ? body.lecturers : [],
+      supervisors: Array.isArray(body.supervisors) ? body.supervisors : [],
+
+      durationMinutes,
+      checklist,
+      rules,
+
+      students: [],
+
+      status: "scheduled",
     });
 
     return NextResponse.json({ success: true, exam }, { status: 201 });

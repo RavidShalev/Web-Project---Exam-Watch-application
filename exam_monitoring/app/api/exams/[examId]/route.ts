@@ -28,3 +28,33 @@ export async function GET(
     );
   }
 }
+
+// API route to handle deletion of an exam by ID
+export async function DELETE(
+  req: Request,
+  context: { params: Promise<{ examId: string }> }
+) {
+  try {
+    const { examId } = await context.params;  
+    await dbConnect();
+
+    const deletedExam = await Exam.findByIdAndDelete(examId);
+
+    if (!deletedExam) {
+      return NextResponse.json(
+        { message: "Exam not found" },
+        { status: 404 }
+      );
+    }
+    return NextResponse.json(
+      { message: "Exam deleted successfully" },
+      { status: 200 }
+    );
+  }
+  catch (error) {
+    return NextResponse.json(
+      { message: "Server error" },
+      { status: 500 }
+    );
+  }
+}
