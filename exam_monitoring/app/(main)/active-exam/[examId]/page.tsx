@@ -12,6 +12,50 @@ export default function ActiveExamPage() {
   const [attendance, setAttendance] = useState<AttendanceRow[]>([]);
   const { examId } = useParams<{ examId: string }>();
 
+  // this function will update a record attendance status to present
+  async function makePresent(attendanceId: string) {
+    const res = await fetch(`/api/exams/attendance/updateRecord/${attendanceId}`, {
+      // change in attendance status to present
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({attendanceStatus: "present"}),
+    });
+    setAttendance((prevAttendance) => {
+      // search for the attendance record and update its status without update all records
+      const updatedAttendance = prevAttendance.map((record) => {
+        if (record._id === attendanceId) {
+          return { ...record, attendanceStatus: "present" as const };
+        }
+        return record;
+      });
+      return updatedAttendance;
+    });
+  };
+
+  // this function will update a record attendance status to absent
+  async function makeAbsent(attendanceId: string) {
+    const res = await fetch(`/api/exams/attendance/updateRecord/${attendanceId}`, {
+      // change in attendance status to absent
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({attendanceStatus: "absent"}),
+    });
+    setAttendance((prevAttendance) => {
+      // search for the attendance record and update its status without update all records
+      const updatedAttendance = prevAttendance.map((record) => {
+        if (record._id === attendanceId) {
+          return { ...record, attendanceStatus: "absent" as const };
+        }
+        return record;
+      });
+      return updatedAttendance;
+    });
+  };
+
   // Fetch exam details
   useEffect(() => {
     async function fetchExam() {
@@ -58,8 +102,10 @@ export default function ActiveExamPage() {
 
       <div className="max-w-4xl mx-auto mt-8">
         <h2 className="text-2xl font-semibold mb-4">רשימת נוכחות</h2>
-        <AttendanceList attendance={attendance} />
+        <AttendanceList attendance={attendance} makePresent={makePresent} makeAbsent={makeAbsent} />
       </div>
     </div>
   );
 }
+
+
