@@ -56,6 +56,20 @@ export default function ActiveExamPage() {
     });
   };
 
+  // save report to the DB (only report on specific student)
+  async function saveReport(data: {examId: string; studentId: string; eventType: string; description?: string;
+}) {
+    const res = await fetch(`/api/exams/${examId}/reporting/${data.studentId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    const result = await res.json();
+    return result;
+  }
+
   // Fetch exam details
   useEffect(() => {
     async function fetchExam() {
@@ -102,7 +116,7 @@ export default function ActiveExamPage() {
 
       <div className="max-w-4xl mx-auto mt-8">
         <h2 className="text-2xl font-semibold mb-4">רשימת נוכחות</h2>
-        <AttendanceList attendance={attendance} makePresent={makePresent} makeAbsent={makeAbsent} />
+        <AttendanceList attendance={attendance} makePresent={makePresent} makeAbsent={makeAbsent} saveReport={saveReport} />
       </div>
     </div>
   );
