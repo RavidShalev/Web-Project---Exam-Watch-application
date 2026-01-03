@@ -1,6 +1,70 @@
 import { NextResponse } from "next/server";
 import dbConnect from "../../lib/db";
 import Exam from "../../models/Exams";
+import User from "../../models/Users";
+
+// Normalizes and validates ID numbers (tz)
+function normalizeAndValidateIdNumbers(
+  input: unknown,
+  fieldName: string
+): string[] {
+  if (!input) return [];
+
+  // Convert input to array of strings
+  const arr =
+  typeof input === "string"
+    ? input.split(",")
+    : Array.isArray(input)
+    ? input
+    : [];
+    
+  const cleaned = arr.map((id) => id.toString().trim());
+
+  // Validate each ID number (tz) format
+  const invalid = cleaned.filter((id) => !/^\d{9}$/.test(id));
+
+  if (invalid.length > 0) {
+    throw new Error(
+      `שדה ${fieldName} מכיל ת"ז לא חוקית: ${invalid.join(", ")}`
+    );
+  }
+
+  return cleaned;
+}
+
+// Converts an array of ID numbers (tz) to MongoDB ObjectIds
+async function resolveUsersByRole(
+  idNumbers: string[],
+  role: "lecturer" | "supervisor"
+) {
+  if (!Array.isArray(idNumbers) || idNumbers.length === 0) {
+    return [];
+  }
+
+  // Validate each ID number
+  for (const id of idNumbers) {
+    if (!validateIsraeliId(id)) {
+      throw new Error(`תעודת זהות לא חוקית: ${id}`);
+    }
+  }
+
+  // Fetch users from the database matching the given ID numbers and role
+  const users = await User.find({
+    idNumber: { $in: idNumbers },
+    role,
+  });
+
+  if (users.length !== idNumbers.length) {
+    const foundIds = users.map((u) => u.idNumber);
+    const missing = idNumbers.filter((id) => !foundIds.includes(id));
+
+    throw new Error(
+      `תעודת זהות לא קיימת או לא משויכת לתפקיד (${role}): ${missing.join(", ")}`
+    );
+  }
+
+  return users.map((u) => u._id);
+}
 
 /*
  * Checks whether there is another exam in the same location and date
@@ -44,6 +108,11 @@ const checklist = [
   },
 ];
 
+// Default rules for new exams
+function validateIsraeliId(id: string): boolean {
+  return /^\d{5,9}$/.test(id);
+}
+
 // API Route: POST /api/exams
 export async function POST(req: Request) {
   try {
@@ -60,7 +129,7 @@ export async function POST(req: Request) {
         return NextResponse.json(
           {
             success: false,
-            message: `Missing required field: ${field}`,
+            message: `חסר את השדה: ${field}`,
           },
           { status: 400 }
         );
@@ -134,7 +203,25 @@ export async function POST(req: Request) {
       },
     ];
 
-    console.log("durationMinutes =", durationMinutes);
+    // Resolving lecturers and supervisors by their ID numbers
+    const lecturersIdNumbers = normalizeAndValidateIdNumbers(
+      body.lecturers,
+      "מרצים"
+    );
+
+    console.log("SUPERVISORS RAW:", body.supervisorsIdNumbers);
+
+    const lecturers = await resolveUsersByRole(lecturersIdNumbers, "lecturer");
+
+    const supervisorsIdNumbers = normalizeAndValidateIdNumbers(
+      body.supervisors,
+      "משגיחים"
+    );
+
+    const supervisors = await resolveUsersByRole(
+      supervisorsIdNumbers,
+      "supervisor"
+    );
 
     // Creating the exam in the database
     const exam = await Exam.create({
@@ -146,14 +233,12 @@ export async function POST(req: Request) {
       endTime: body.endTime ?? "-",
       location: body.location ?? "-",
 
-      lecturers: Array.isArray(body.lecturers) ? body.lecturers : [],
-      supervisors: Array.isArray(body.supervisors) ? body.supervisors : [],
+      lecturers,
+      supervisors,
 
       durationMinutes,
       checklist,
       rules,
-
-      students: [],
 
       status: "scheduled",
     });

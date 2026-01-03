@@ -46,7 +46,13 @@ const ExamSchema = new mongoose.Schema(
       required: true,
     },
     lecturers: {
-      type: [String],
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "User",
+      default: [],
+    },
+    supervisors: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "User",
       default: [],
     },
     date: {
@@ -68,10 +74,6 @@ const ExamSchema = new mongoose.Schema(
     location: {
       type: String,
       default: "-",
-    },
-    supervisors: {
-      type: [String],
-      default: [],
     },
     checklist: {
       type: [ItemOfChecklistSchema],
