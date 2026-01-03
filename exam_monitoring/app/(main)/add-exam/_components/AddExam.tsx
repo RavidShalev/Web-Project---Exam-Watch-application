@@ -53,12 +53,12 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
       return;
     }
 
-    const supervisors = formData.supervisors
+    const supervisorsTz = formData.supervisors
       .split(",")
       .map((s) => s.trim())
       .filter(Boolean);
 
-    const lecturers = formData.lecturers
+    const lecturersTz = formData.lecturers
       .split(",")
       .map((l) => l.trim())
       .filter(Boolean);
@@ -70,8 +70,8 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
       },
       body: JSON.stringify({
         ...formData,
-        supervisors,
-        lecturers,
+        supervisorsTz,
+        lecturersTz,
       }),
     });
 
@@ -191,14 +191,14 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
 
         <div>
           <label className="block text-sm font-medium mb-1">
-            שמות משגיחים (מופרדים בפסיק)
+            תעודות זהות של משגיחים (מופרדות בפסיק)
           </label>
           <input
             type="text"
             name="supervisors"
             value={formData.supervisors}
             onChange={handleChange}
-            placeholder="דני כהן, רונית לוי"
+            placeholder="10000001, 100000002, ..."
             className="w-full rounded-md border border-gray-300 px-3 py-2
                focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
@@ -206,14 +206,14 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
 
         <div>
           <label className="block text-sm font-medium mb-1">
-            שמות מרצים (מופרדים בפסיק)
+            תעודות זהות של מרצים (מופרדות בפסיק)
           </label>
           <input
             type="text"
             name="lecturers"
             value={formData.lecturers}
             onChange={handleChange}
-            placeholder="פרופ' ישראלי, ד״ר כהן"
+            placeholder="10000001, 100000002, ..."
             className="w-full rounded-md border border-gray-300 px-3 py-2
                focus:outline-none focus:ring-2 focus:ring-blue-500"
           />

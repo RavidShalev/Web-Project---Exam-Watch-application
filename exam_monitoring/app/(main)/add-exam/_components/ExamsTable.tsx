@@ -5,12 +5,12 @@ import { useEffect, useState } from "react";
 interface Exam {
   _id: string;
   courseName: string;
-  courseCode: string;
+  courseCode: number;
   date: string;
   startTime: string;
   endTime: string;
-  lecturers: string[];
-  supervisors: string[];
+  lecturers: { _id: string; name: string }[];
+  supervisors: { _id: string; name: string }[];
   location: string;
   status: string;
 }
@@ -21,20 +21,34 @@ type ExamsTableProps = {
 
 // Helper function to display a value or a dash if the value is empty/null/undefined
 // in case of arrays it shows a dash instead of joining the array elements
+type NamedEntity = { name: string };
+
+// Helper function to display a value or a dash if the value is empty/null/undefined
 const showOrDash = (value: unknown): string => {
   if (value === null || value === undefined) return "—";
 
+  // Array of populated users (lecturers / supervisors)
   if (Array.isArray(value)) {
-    return value.length === 0 ? "—" : value.join(", ");
+    if (value.length === 0) return "—";
+
+    // If the array contains objects with a 'name' property, join their names
+    if (
+      typeof value[0] === "object" &&
+      value[0] !== null &&
+      "name" in value[0]
+    ) {
+      return (value as { name: string }[])
+        .map((u) => u.name)
+        .join(", ");
+    }
+
+    return "—";
   }
 
-  if (typeof value === "number") {
-    return value.toString();
-  }
+  if (typeof value === "number") return value.toString();
 
-  if (typeof value === "string") {
+  if (typeof value === "string")
     return value.trim() === "" ? "—" : value;
-  }
 
   return "—";
 };
