@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import ReadyForExams from "./_components/ReadyForExams";
-import { Exam } from "@/types/Exam";
+import { Exam } from "@/types/examtypes";
 
 
 

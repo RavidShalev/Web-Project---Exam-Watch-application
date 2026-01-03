@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Calculator, Book, Smartphone, Headphones, MapPin, CheckCircle, Circle } from 'lucide-react';
-import { Exam, IconType } from '@/types/Exam';
+import { Exam, IconType } from '@/types/examtypes';
 
 
 // Connect text to actual icon components
