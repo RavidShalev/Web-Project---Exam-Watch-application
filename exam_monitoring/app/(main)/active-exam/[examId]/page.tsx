@@ -1,6 +1,6 @@
 "use client";
 
-import { Exam } from "@/types/Exam";
+import { Exam } from "@/types/examtypes";
 import ExamTimer from "./examTimer";
 import { useState, useEffect, use } from "react";
 import { useParams } from "next/navigation";
