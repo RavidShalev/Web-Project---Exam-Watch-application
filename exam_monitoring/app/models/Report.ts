@@ -9,7 +9,7 @@ const Report = new mongoose.Schema({
     studentId: { 
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required: true,
+        required: false,
     },
     eventType: {
         type: String,
