@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Send, Bot, User, Loader2, Sparkles, AlertCircle, Clock, BookOpen, Phone } from "lucide-react";
 
 type Message = {
@@ -23,8 +24,27 @@ export default function ExamBotPage() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+
+  // Check authorization on mount
+  useEffect(() => {
+    const storedUser = sessionStorage.getItem("currentUser");
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+      if (user.role === "supervisor") {
+        setIsAuthorized(true);
+      } else {
+        setIsAuthorized(false);
+        router.push("/home");
+      }
+    } else {
+      setIsAuthorized(false);
+      router.push("/");
+    }
+  }, [router]);
 
   // Scroll to bottom when new messages arrive
   const scrollToBottom = () => {
@@ -100,6 +120,20 @@ export default function ExamBotPage() {
   const handleQuickAction = (question: string) => {
     sendMessage(question);
   };
+
+  // Show loading while checking authorization
+  if (isAuthorized === null) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-emerald-400 animate-spin" />
+      </div>
+    );
+  }
+
+  // Don't render if not authorized (will redirect)
+  if (!isAuthorized) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" dir="rtl">
