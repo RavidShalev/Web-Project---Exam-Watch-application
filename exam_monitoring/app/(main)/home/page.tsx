@@ -3,13 +3,13 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import ReadyForExams from "./_components/ReadyForExams";
+import StudentDashboard from "./_components/StudentDashboard"; 
 import { Exam } from "@/types/examtypes";
-
-
 
 export default function HomePage() {
   const [exam, setExam] = useState<Exam | null>(null);
   const [loading, setLoading] = useState(true);
+  const [userRole, setUserRole] = useState(""); //save user role
   const router = useRouter();
 
   async function handleStartExam() {
@@ -23,10 +23,25 @@ export default function HomePage() {
     setExam(updatedExam.exam);
     // Navigate to active exam page
     router.push(`/active-exam/${exam._id}`);
-}
+  }
 
   // run once on component mount
   useEffect(() => {
+    
+    // checlk user role from sessionStorage
+    const storedUser = sessionStorage.getItem('currentUser');
+    if (storedUser) {
+        const user = JSON.parse(storedUser);
+        setUserRole(user.role);
+        
+        //if student, stop further execution
+        if (user.role === 'student') {
+            setLoading(false);
+            return; 
+        }
+    }
+  
+
     async function fetchClosestExam() {
       try {
         // get supervisorId from localStorage
@@ -60,6 +75,11 @@ export default function HomePage() {
 
   if (loading) {
     return <div>טוען...</div>;
+  }
+
+  //student dashboard view
+  if (userRole === 'student') {
+      return <StudentDashboard />;
   }
 
   if (!exam) {
