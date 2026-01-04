@@ -10,7 +10,7 @@ export async function POST(
         // connect to the database, if already connected, does nothing
         await dbConnect();
         const { examId, studentId } = await context.params;
-        const { eventType, description } = await req.json();
+        const { eventType, description, supervisorId } = await req.json();
 
         if (!eventType ) {
             return NextResponse.json(
@@ -24,6 +24,7 @@ export async function POST(
             studentId: studentId,
             eventType: eventType,
             description: description || "",
+            supervisorId: supervisorId,
             createdAt: new Date(),
         });
         return NextResponse.json({ message: "Report created successfully", report });

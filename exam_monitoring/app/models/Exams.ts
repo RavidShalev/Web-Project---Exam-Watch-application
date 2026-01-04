@@ -91,6 +91,10 @@ const ExamSchema = new mongoose.Schema(
     actualStartTime: {
       type: String,
       default: null,
+    },
+    students: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "User",
     },   
   },
   {

@@ -42,7 +42,7 @@ export async function POST(req: Request) {
             studentNumInExam: index + 1,
             attendanceStatus: "absent",
             IdImage: null,
-            adjusmenentImage: null,
+            isOnToilet: false,
             }));
 
         await Attendance.insertMany(attendanceRecords);
@@ -52,6 +52,7 @@ export async function POST(req: Request) {
         // return success response
         return NextResponse.json({ message: "Exam activated successfully", exam });
     } catch (err) {
+        console.error("Error activating exam:", err);
         return NextResponse.json(
             { message: err instanceof Error ? err.message : "Unknown server error" },
             { status: 500 }

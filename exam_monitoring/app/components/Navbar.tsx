@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 type CurrentUser = { username: string; role: string };
@@ -9,16 +9,19 @@ const Navbar = () => {
   const [clicked, setClicked] = useState(false);
 
   // Load current user (username + role) from sessionStorage ONCE (no useEffect)
-  const [currentUser] = useState<CurrentUser | null>(() => {
-    if (typeof window === 'undefined') return null; // Next.js server safety
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+
+  useEffect(() => {
     try {
       const raw = sessionStorage.getItem('currentUser');
-      return raw ? (JSON.parse(raw) as CurrentUser) : null;
+      if (raw) {
+        setCurrentUser(JSON.parse(raw));
+      }
     } catch {
-      return null;
+      setCurrentUser(null);
     }
-  });
-
+  }, []);
+  
   const isAdmin = currentUser?.role === 'admin';
   const isSupervisor = currentUser?.role === 'supervisor';
 

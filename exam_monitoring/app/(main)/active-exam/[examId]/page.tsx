@@ -60,13 +60,15 @@ export default function ActiveExamPage() {
     });
   };
 
+  // save general report to the DB (not specific student)
   async function saveGeneralReport(data: {examId: string; eventType: string; description?: string}) {
+    const supervisorId = localStorage.getItem("supervisorId");
     const res = await fetch(`/api/exams/${examId}/reporting`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify({...data, supervisorId}),
     });
     const result = await res.json();
     return result;
@@ -75,17 +77,48 @@ export default function ActiveExamPage() {
   // save report to the DB (only report on specific student)
   async function saveReport(data: {examId: string; studentId: string; eventType: string; description?: string;
 }) {
+    const supervisorId = localStorage.getItem("supervisorId");
     const res = await fetch(`/api/exams/${examId}/reporting/${data.studentId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify({...data, supervisorId}),
     });
     const result = await res.json();
     return result;
   }
 
+  // update toilet time for specific attendance record (send report as well)
+  async function updateToiletTime(attendanceId: string) {
+    const currentRecord = attendance.find(record => record._id === attendanceId);
+    if (!currentRecord) return;
+    const newToiletStatus = currentRecord && !currentRecord.isOnToilet;
+    const res = await fetch(`/api/exams/attendance/updateToilet/${attendanceId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ isOnToilet: newToiletStatus }),
+    });
+
+    await saveReport({
+      examId: examId,
+      studentId: currentRecord.studentId._id,
+      eventType: newToiletStatus ? "יצא לשירותים" : "חזר משירותים",
+      description: "",
+    });
+
+    setAttendance((prevAttendance) => {
+      const updatedAttendance = prevAttendance.map((record) => {
+        if (record._id === attendanceId) {
+          return { ...record, isOnToilet: newToiletStatus };
+        }
+        return record;
+      });
+      return updatedAttendance;
+    });
+  }
+
+  // Finish exam function
   async function finishExam() {
     const confirmed = window.confirm("האם את/ה בטוח/ה שברצונך לסיים את המבחן?");
     if (!confirmed) return;
@@ -175,6 +208,7 @@ export default function ActiveExamPage() {
           makePresent={makePresent}
           makeAbsent={makeAbsent}
           saveReport={saveReport}
+          updateToiletTime={updateToiletTime}
         />
       </div>
 

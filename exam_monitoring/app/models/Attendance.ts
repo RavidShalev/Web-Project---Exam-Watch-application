@@ -24,10 +24,10 @@ const Attendance = new mongoose.Schema({
       type: String,
       default: null,
    },
-  AdjusmenentImage: {
-      type: String,
-      default: null,
-   },
+   isOnToilet:{
+      type: Boolean,
+      default: false,
+   }
 });
 
 export default mongoose.models.Attendance || mongoose.model("Attendance", Attendance);

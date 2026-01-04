@@ -23,9 +23,9 @@ export default function ReportModal({attendanceRecord, onClose, onSave}: props) 
 
         {/* Event Type Selection */}
         <select className="w-full border rounded p-2" value={eventType} onChange={(e) => setEventType(e.target.value)}>
-          <option>בחר סוג אירוע</option>
-          <option>יצא לשירותים</option>
-          <option>חזר משירותים</option>
+          <option>בחר סוג אירוע חריג</option>
+          <option>איחור</option>
+          <option>עזיבה מוקדמת</option>
           <option>יצא מהכיתה</option>
           <option>חשד להעתקה (תיאור חובה)</option>
           <option>אחר</option>
