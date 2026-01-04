@@ -8,6 +8,7 @@ import AttendanceList from "./attendanceList";
 import { AttendanceRow } from "@/types/attendance";
 import ReportEvents from "./reportEvents";
 import { useRouter } from "next/navigation";
+import SmartBotAssistant from "./SmartBotAssistant";
 
 export default function ActiveExamPage() {
   const [exam, setExam] = useState<Exam | null>(null);
@@ -221,6 +222,17 @@ export default function ActiveExamPage() {
             await saveGeneralReport({ examId, eventType, description });
             setShowReportModal(false);
           }}
+        />
+      )}
+
+            {/* Smart Bot Assistant - proactive alerts and check-ins */}
+      {exam.actualStartTime && (
+        <SmartBotAssistant
+          examId={examId}
+          examStartTime={exam.actualStartTime}
+          durationMinutes={exam.durationMinutes}
+          attendance={attendance}
+          courseName={exam.courseName}
         />
       )}
     </div>
