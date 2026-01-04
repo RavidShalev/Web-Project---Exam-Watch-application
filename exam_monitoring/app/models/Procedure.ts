@@ -15,7 +15,7 @@ const ProcedureSchema = new mongoose.Schema(
     targetRoles: { 
       type: [String], 
       required: true,
-      enum: ["admin", "supervisor", "lecturer", "student"] 
+      enum: ["supervisor", "lecturer", "student"] 
     },
       
     phase: { 

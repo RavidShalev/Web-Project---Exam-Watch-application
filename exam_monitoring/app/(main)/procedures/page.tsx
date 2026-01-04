@@ -70,7 +70,11 @@ export default function ProceduresPage() {
           <h1 className="text-3xl font-bold text-gray-900">נהלי בחינות</h1>
         </div>
         <p className="text-gray-500 pr-11">
-          הנחיות מותאמות לתפקיד: <span className="font-semibold text-blue-600">{userRole === 'student' ? 'סטודנט' : 'משגיח'}</span>
+          הנחיות מותאמות לתפקיד: <span className="font-semibold text-blue-600">
+            {userRole === 'student' ? 'סטודנט' : 
+             userRole === 'supervisor' ? 'משגיח' : 
+             userRole === 'lecturer' ? 'מרצה' : userRole}
+          </span>
         </p>
       </div>
 
