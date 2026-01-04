@@ -1,120 +1,104 @@
 import mongoose from "mongoose";
 
-
 const RuleSchema = new mongoose.Schema({
-  id:
-  {
+  id: {
     type: String,
-    required: true
+    required: true,
   },
   label: {
     type: String,
-    required: true
+    required: true,
   },
   icon: {
     type: String,
     enum: ["calculator", "book", "phone", "headphones"],
-    required: true
+    required: true,
   },
   allowed: {
     type: Boolean,
-    required: true
-  }
+    required: true,
+  },
 });
 
 const ItemOfChecklistSchema = new mongoose.Schema({
-  id:
-  {
+  id: {
     type: String,
-    required: true
+    required: true,
   },
   description: {
     type: String,
-    required: true
+    required: true,
   },
   isDone: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 });
 
 const ExamSchema = new mongoose.Schema(
   {
-    courseName:
-    {
+    courseName: {
       type: String,
-      required: true
+      required: true,
     },
-    courseCode:
-    {
-      type: String,
-      required: true
-    },
-    lecturers:
-    [
-      {
-        type: String,
-        required: true
-      }
-    ],
-    date:
-    {
-      type: String,
-      required: true
-    },
-    startTime:
-    {
-      type: String,
-      required: true
-    },
-    endTime:
-    {
-      type: String,
-      required: true
-    },
-    location:
-    {
-      type: String,
-      required: true
-    },
-   supervisors:
-   [
-     {
-       type : String,
-       required :true
-     }
-   ],
-   checklist :
-   [
-     ItemOfChecklistSchema
-   ],
-   rules :
-   [
-     RuleSchema
-   ],
-   status :
-   {
-     type : String,
-     enum : ['scheduled', 'active', 'finished'],
-     default : 'scheduled'
-   },
-   actualStartTime:
-   {
-     type: String,
-     default: null
-    },
-    durationMinutes:
-    {
+    courseCode: {
       type: Number,
-      required: true
+      required: true,
     },
-    students:
-    [
-      { type: String }
-    ]
+    lecturers: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "User",
+      default: [],
+    },
+    supervisors: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "User",
+      default: [],
+    },
+    date: {
+      type: String,
+      default: "-",
+    },
+    startTime: {
+      type: String,
+      default: "-",
+    },
+    endTime: {
+      type: String,
+      default: "-",
+    },
+    durationMinutes: {
+      type: Number,
+      required: false,
+    },
+    location: {
+      type: String,
+      default: "-",
+    },
+    checklist: {
+      type: [ItemOfChecklistSchema],
+      default: [],
+    },
+    rules: {
+      type: [RuleSchema],
+      default: [],
+    },
+    status: {
+      type: String,
+      enum: ["scheduled", "active", "finished"],
+      default: "scheduled",
+    },
+    actualStartTime: {
+      type: String,
+      default: null,
+    },
+    students: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "User",
+    },   
   },
   {
-     timestamps :true
+    timestamps: true,
   }
 );
 

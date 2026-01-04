@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 type CurrentUser = { username: string; role: string };
@@ -9,17 +9,21 @@ const Navbar = () => {
   const [clicked, setClicked] = useState(false);
 
   // Load current user (username + role) from sessionStorage ONCE (no useEffect)
-  const [currentUser] = useState<CurrentUser | null>(() => {
-    if (typeof window === 'undefined') return null; // Next.js server safety
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+
+  useEffect(() => {
     try {
       const raw = sessionStorage.getItem('currentUser');
-      return raw ? (JSON.parse(raw) as CurrentUser) : null;
+      if (raw) {
+        setCurrentUser(JSON.parse(raw));
+      }
     } catch {
-      return null;
+      setCurrentUser(null);
     }
-  });
-
+  }, []);
+  
   const isAdmin = currentUser?.role === 'admin';
+  const isSupervisor = currentUser?.role === 'supervisor';
 
   // change the state of clicked when the button is clicked
   const handleClick = () => {
@@ -70,7 +74,11 @@ const Navbar = () => {
         <ul className="hidden md:flex items-center gap-8 list-none">
           <li><Link href="/home" className={getLinkClass('/home')}>בית</Link></li>
           <li><Link href="/procedures" className={getLinkClass('/procedures')}>נהלים</Link></li>
-          <li><Link href="/exam-bot" className={getLinkClass('/exam-bot')}>בוט בחינות</Link></li>
+          
+          {/* Supervisor only */}
+          {isSupervisor && (
+            <li><Link href="/exam-bot" className={getLinkClass('/exam-bot')}>בוט בחינות</Link></li>
+          )}
 
           {/* Admin only */}
           {isAdmin && (
@@ -101,7 +109,11 @@ const Navbar = () => {
       >
         <Link href="/home" className={`${getLinkClass('/home')} py-2 block`} onClick={() => setClicked(false)}>בית</Link>
         <Link href="/procedures" className={`${getLinkClass('/procedures')} py-2 block`} onClick={() => setClicked(false)}>נהלים</Link>
-        <Link href="/exam-bot" className={`${getLinkClass('/exam-bot')} py-2 block`} onClick={() => setClicked(false)}>בוט בחינות</Link>
+        
+        {/* Supervisor only */}
+        {isSupervisor && (
+          <Link href="/exam-bot" className={`${getLinkClass('/exam-bot')} py-2 block`} onClick={() => setClicked(false)}>בוט בחינות</Link>
+        )}
 
         {/* Admin only */}
         {isAdmin && (

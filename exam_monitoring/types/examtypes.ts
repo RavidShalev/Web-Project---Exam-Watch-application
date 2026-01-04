@@ -39,5 +39,45 @@ export interface Exam{
     status: 'scheduled' | 'active' | 'completed';
     actualStartTime?: string;
     durationMinutes: number;
-    students: string[];
 }
+
+export type ExamRuleFlags = {
+  calculator: boolean;
+  computer: boolean;
+  headphones: boolean;
+  openBook: boolean;
+};
+
+export type PopulatedUser = {
+  _id: string;
+  idNumber: string;
+  name: string;
+};
+
+export type ExamFromApi = {
+  _id: string;
+  courseName: string;
+  courseCode: number;
+  date: string;
+  startTime: string;
+  endTime: string;
+  location: string;
+  lecturers: PopulatedUser[];
+  supervisors: PopulatedUser[];
+  rules: {
+    id: string;
+    allowed: boolean;
+  }[];
+};
+
+export type ExamFormData = {
+  courseName: string;
+  courseCode: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  location: string;
+  lecturers: string;   
+  supervisors: string; 
+  rules: ExamRuleFlags;
+};

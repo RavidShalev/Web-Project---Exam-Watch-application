@@ -10,5 +10,5 @@ export type AttendanceRow = {
   studentNumInExam: number;
   attendanceStatus: "present" | "absent";
   IdImage: string | null;
-  adjusmenentImage: string | null;
+  isOnToilet: boolean;
 };
