@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Calendar, Clock, MapPin, CheckCircle, ChevronDown, ChevronUp, Calculator, Headphones, Book, AlertCircle, DoorOpen, Bell, User, BookOpen } from 'lucide-react';
+// I added 'QrCode' icon and removed 'Bell' icon
+import { Calendar, Clock, MapPin, CheckCircle, ChevronDown, ChevronUp, Calculator, Headphones, Book, AlertCircle, DoorOpen, User, BookOpen, QrCode } from 'lucide-react';
 
-// Defines what a rule looks like
+// Defines what a "Rule" looks like (example: Calculator allowed)
 interface Rule {
     id: string;
     label: string;
@@ -11,7 +12,7 @@ interface Rule {
     allowed: boolean;
 }
 
-// Defines what an exam looks like
+// Defines what an "Exam" looks like in the database
 interface Exam {
   _id: string;
   courseName: string;
@@ -25,23 +26,27 @@ interface Exam {
 }
 
 export default function StudentDashboard() {
-  // memory states for the component
+  // --- STATE (Memory) ---
   const [exams, setExams] = useState<Exam[]>([]);
   const [loading, setLoading] = useState(true);
   const [studentName, setStudentName] = useState('');
   const [studentId, setStudentId] = useState('');
   
-  // This variable remembers WHICH exam box is currently open.
-  // if null = all boxes are closed.
-  // if contains an ID = that specific box is open.
+  // Remembers which exam box is open in the history list
   const [expandedExamId, setExpandedExamId] = useState<string | null>(null);
 
+  // --- STATE FOR ACTIVE EXAM ---
   const [restroomStatus, setRestroomStatus] = useState(false);
-  const [helpRequested, setHelpRequested] = useState(false);
-
   
+  // Status for the QR Code scan:
+  // 'idle'     = Waiting to scan
+  // 'scanning' = Camera is "working" (animation)
+  // 'verified' = Scan is done and OK
+  const [scanStatus, setScanStatus] = useState<'idle' | 'scanning' | 'verified'>('idle');
+
+  // --- RUNS ONCE WHEN PAGE LOADS ---
   useEffect(() => {
-    // 1. Get user from browser memory
+    // 1. Get user data from browser memory
     const storedUser = sessionStorage.getItem('currentUser');
     
     if (storedUser) {
@@ -49,7 +54,7 @@ export default function StudentDashboard() {
       setStudentName(user.name || user.idNumber || 'Student');
       setStudentId(user.idNumber); 
 
-      // 2. Fetch exams from the server
+      // 2. Get exams from the server
       fetch(`/api/exams/student?studentId=${user._id}`)
         .then((res) => res.json())
         .then((data) => {
@@ -62,23 +67,21 @@ export default function StudentDashboard() {
     }
   }, []);
 
-  // Filter exams into 3 categories
+  // Filter the exams into groups
   const activeExam = exams.find(e => e.status === 'active');
   const upcomingExams = exams.filter(e => e.status === 'scheduled');
   const pastExams = exams.filter(e => e.status === 'finished');
 
-  // open exam box
+  // Function to open/close history items
   const toggleExamDetails = (id: string) => {
       if (expandedExamId === id) {
-          // If I clicked the exam that is ALREADY open -> Close it
-          setExpandedExamId(null);
+          setExpandedExamId(null); // Close if already open
       } else {
-          // If I clicked a closed exam -> Open it (and close others)
-          setExpandedExamId(id);
+          setExpandedExamId(id); // Open the clicked one
       }
   };
 
-  // need to get the correct icon for each rule
+  // Function to choose the right icon
   const getRuleIcon = (iconName: string) => {
       switch(iconName) {
           case 'calculator': return <Calculator size={16} />;
@@ -88,25 +91,38 @@ export default function StudentDashboard() {
       }
   };
 
+  // Toggle restroom status
   const handleRestroomToggle = () => setRestroomStatus(!restroomStatus);
-  const handleCallSupervisor = () => {
-    setHelpRequested(true);
-    setTimeout(() => setHelpRequested(false), 3000); 
+
+  // --- NEW FUNCTION: Handle QR Scan ---
+  const handleQrScan = () => {
+    // If already verified, do nothing
+    if (scanStatus === 'verified') return;
+
+    // Change status to 'scanning' (starts animation)
+    setScanStatus('scanning');
+    
+    // Wait 2 seconds to simulate a camera scan
+    setTimeout(() => {
+        setScanStatus('verified'); // Mark as done
+        // In the future: Here we will tell the server "Student is present"
+    }, 2000); 
   };
 
   if (loading) return <div className="p-10 text-center bg-gray-50 min-h-screen">Loading...</div>;
 
-
+  // --- VIEW 1: ACTIVE EXAM SCREEN ---
   if (activeExam) {
     return (
       <div className="flex flex-col items-center p-6 w-full bg-gray-50 min-h-screen" dir="rtl">
-        {/* Header: Course Name */}
+        
+        {/* Header */}
         <div className="w-full max-w-lg text-center mb-8 mt-4">
             <h1 className="text-3xl font-bold text-gray-900">{activeExam.courseName}</h1>
             <p className="text-xl text-gray-500 font-mono mt-1">{activeExam.courseCode}</p>
         </div>
         
-        {/* Timer Box */}
+        {/* Timer */}
         <div className="bg-white px-10 py-6 rounded-3xl shadow-sm border border-gray-200 mb-8 text-center">
             <p className="text-gray-400 text-sm mb-1">Time Left</p>
             <div className="text-5xl font-mono font-bold text-blue-600 tracking-wider">
@@ -114,20 +130,22 @@ export default function StudentDashboard() {
             </div>
         </div>
 
-        {/* Student Card */}
+        {/* ID Card */}
         <div className="w-full max-w-lg bg-white p-6 rounded-2xl shadow-sm border-r-4 border-blue-500 mb-8 flex items-center gap-4">
             <div className="bg-blue-50 p-4 rounded-full">
                 <User size={32} className="text-blue-600" />
             </div>
             <div>
-                <p className="text-gray-500 text-sm">Digital ID</p>
+                <p className="text-gray-500 text-sm">תעודת זהות</p>
                 <h2 className="text-2xl font-bold text-gray-900">{studentId}</h2>
-                <p className="text-gray-600">User Connected</p>
+                <p className="text-gray-600">משתמש פעיל</p>
             </div>
         </div>
 
-        {/* Action Buttons */}
+        {/* --- ACTION BUTTONS --- */}
         <div className="grid grid-cols-2 gap-4 w-full max-w-lg">
+            
+            {/* 1. Restroom Button */}
             <button 
                 onClick={handleRestroomToggle}
                 className={`flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all shadow-sm ${
@@ -138,43 +156,55 @@ export default function StudentDashboard() {
             >
                 <DoorOpen size={48} className="mb-2" />
                 <span className="font-bold text-lg">
-                    {restroomStatus ? "Click to Return" : "Go to Restroom"}
+                    {restroomStatus ? "לחץ לחזרה" : "יציאה לשירותים"}
                 </span>
             </button>
 
+            {/* 2. QR Code Scan Button (New) */}
             <button 
-                onClick={handleCallSupervisor}
+                onClick={handleQrScan}
+                disabled={scanStatus === 'verified'} // Disable click if already done
                 className={`flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all shadow-sm ${
-                    helpRequested
-                    ? 'bg-red-50 border-red-500 text-red-700'
-                    : 'bg-white border-gray-200 text-gray-700 hover:border-red-400 hover:shadow-md'
+                    scanStatus === 'verified'
+                    ? 'bg-green-50 border-green-500 text-green-700 cursor-default' // Style for Done
+                    : scanStatus === 'scanning'
+                        ? 'bg-blue-50 border-blue-400 text-blue-700 animate-pulse' // Style for Scanning
+                        : 'bg-white border-gray-200 text-gray-700 hover:border-blue-400 hover:shadow-md' // Style for Idle
                 }`}
             >
-                <Bell size={48} className={`mb-2 ${helpRequested ? 'animate-bounce' : ''}`} />
+                {/* Change Icon based on status */}
+                {scanStatus === 'verified' ? (
+                     <CheckCircle size={48} className="mb-2" />
+                ) : (
+                     <QrCode size={48} className={`mb-2 ${scanStatus === 'scanning' ? 'animate-spin-slow' : ''}`} />
+                )}
+                
+                {/* Change Text based on status */}
                 <span className="font-bold text-lg">
-                    {helpRequested ? "Supervisor Called!" : "Call Supervisor"}
+                    {scanStatus === 'idle' && "סריקת נוכחות"}
+                    {scanStatus === 'scanning' && "מבצע סריקה..."}
+                    {scanStatus === 'verified' && "נוכחות אומתה!"}
                 </span>
             </button>
         </div>
 
         <div className="mt-8 flex items-center gap-2 text-gray-400 text-sm">
             <MapPin size={16} />
-            <span>Location: {activeExam.location}</span>
+            <span>מיקום: {activeExam.location}</span>
         </div>
       </div>
     );
   }
 
-  // --- VIEW 2: Main Dashboard (Home Screen) ---
   return (
     <div className="flex flex-col gap-6 p-4 w-full bg-gray-50 min-h-screen" dir="rtl">
       
-      {/* Top Bar: Hello User */}
+      {/* Top Bar */}
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex justify-between items-center">
         <div>
-           <h1 className="text-2xl font-bold mb-1 text-black">שלום, {studentName}</h1>
+           <h1 className="text-2xl font-bold mb-1 text-black">Hello, {studentName}</h1>
            <p className="text-gray-500 text-sm">
-             איזור אישי • {upcomingExams.length} מבחנים מתוכננים
+             Personal Area • {upcomingExams.length} Upcoming Exams
            </p>
         </div>
         <div className="bg-blue-50 p-3 rounded-full text-blue-600">
@@ -182,16 +212,16 @@ export default function StudentDashboard() {
         </div>
       </div>
 
-      {/* Upcoming Exams Section */}
+      {/* Upcoming Exams List */}
       <div>
         <h3 className="text-lg font-semibold mb-3 text-black flex items-center gap-2">
             <Calendar className="text-blue-600" size={20} />
-            מבחנים קרובים
+            Upcoming Exams
         </h3>
         
         {upcomingExams.length === 0 ? (
             <div className="bg-white p-8 rounded-2xl border border-dashed border-gray-300 text-center text-gray-400">
-                <p>אין מבחנים קרובים</p>
+                <p>No upcoming exams</p>
             </div>
         ) : (
             <div className="grid gap-4 md:grid-cols-2">
@@ -212,17 +242,17 @@ export default function StudentDashboard() {
         )}
       </div>
 
-      {/* --- HISTORY SECTION (The Accordion) --- */}
+      {/* History List (Accordion) */}
       {pastExams.length > 0 && (
           <div className="mt-4 pt-6 border-t border-gray-200">
             <h3 className="text-lg font-semibold mb-3 text-gray-500 flex items-center gap-2">
-                <CheckCircle size={20} /> היסטוריית בחינות
+                <CheckCircle size={20} /> Exam History
             </h3>
             <div className="space-y-3">
                 {pastExams.map((exam) => (
                     <div key={exam._id} className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
                         
-                        {/* 1. THE CLICKABLE ROW */}
+                        {/* Clickable Header */}
                         <div 
                             onClick={() => toggleExamDetails(exam._id)}
                             className="p-4 flex justify-between items-center cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors"
@@ -232,38 +262,32 @@ export default function StudentDashboard() {
                                 <p className="text-xs text-gray-500">{exam.date} • {exam.startTime} - {exam.endTime}</p>
                             </div>
                             <div className="flex items-center gap-3">
-                                <span className="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded">הסתיים</span>
-                                {/* Icon changes: Up if open, Down if closed */}
+                                <span className="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded">Finished</span>
                                 {expandedExamId === exam._id ? <ChevronUp size={20} className="text-gray-400"/> : <ChevronDown size={20} className="text-gray-400"/>}
                             </div>
                         </div>
 
-                        {/* 2. THE EXPANDED DETAILS BOX */}
-                        {/* Only show this if the current exam ID matches the one saved in state */}
+                        {/* Expanded Details */}
                         {expandedExamId === exam._id && (
                             <div className="p-4 bg-white border-t border-gray-100 text-sm">
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <p className="font-bold text-gray-700 mb-2">Details:</p>
                                         <ul className="space-y-1 text-gray-600">
-                                            <li>מיקום: {exam.location}</li>
-                                            <li>קוד קורס: {exam.courseCode}</li>
+                                            <li>Location: {exam.location}</li>
+                                            <li>Course Code: {exam.courseCode}</li>
                                         </ul>
                                     </div>
                                     
-                                    {/* RULES SECTION */}
-                                    {/* Only show if rules exist in the database */}
                                     {exam.rules && exam.rules.length > 0 && (
                                         <div>
                                             <p className="font-bold text-gray-700 mb-2">Equipment:</p>
                                             <div className="flex flex-wrap gap-2">
-                                                {/* Allowed Rules (Green) */}
                                                 {exam.rules.filter(r => r.allowed).map((rule) => (
                                                     <span key={rule.id} className="flex items-center gap-1 bg-green-50 text-green-700 px-2 py-1 rounded text-xs border border-green-100">
                                                         {getRuleIcon(rule.icon)} {rule.label}
                                                     </span>
                                                 ))}
-                                                {/* Not Allowed Rules (Red) */}
                                                 {exam.rules.filter(r => !r.allowed).map((rule) => (
                                                     <span key={rule.id} className="flex items-center gap-1 bg-red-50 text-red-700 px-2 py-1 rounded text-xs border border-red-100 opacity-70">
                                                         <AlertCircle size={12}/> No {rule.label}
