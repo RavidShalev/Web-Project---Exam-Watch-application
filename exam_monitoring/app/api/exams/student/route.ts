@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
+import mongoose from "mongoose";
 import dbConnect from "../../../lib/db";
-import Exam from "../../../models/Exams";
-
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const studentId = searchParams.get('studentId');
+  const { searchParams } = new URL(request.url); // Take the URL of the request and extract query parameters
+  const studentId = searchParams.get('studentId'); // Get the value of studentId from the query string
 
   if (!studentId) {
     return NextResponse.json({ error: "Missing studentId" }, { status: 400 });
@@ -13,13 +12,27 @@ export async function GET(request: Request) {
 
   try {
     await dbConnect();
+    
 
-    // Fetch exams for the given studentId from the database
-    const exams = await Exam.find({ students: studentId }).sort({ date: 1 });
+    if (!mongoose.connection.db) {
+        throw new Error("MongoDB connection error");
+    }
+    const collection = mongoose.connection.db.collection("exams");
+
+    const searchValues: any[] = [studentId];
+    
+    if (mongoose.Types.ObjectId.isValid(studentId)) {
+        searchValues.push(new mongoose.Types.ObjectId(studentId));
+    }
+
+    const exams = await collection.find({
+        students: { $in: searchValues }
+    }).sort({ date: 1 }).toArray(); 
 
     return NextResponse.json({ success: true, data: exams });
+
   } catch (error) {
-    console.error("Error fetching student exams:", error);
+    console.error("Search Error:", error);
     return NextResponse.json({ error: "Server Error" }, { status: 500 });
   }
 }

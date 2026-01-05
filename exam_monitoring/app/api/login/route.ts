@@ -38,6 +38,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       _id: user._id.toString(),
       idNumber: user.idNumber,
+      name: user.name,
       role: user.role,
     });
   } catch (err) {
