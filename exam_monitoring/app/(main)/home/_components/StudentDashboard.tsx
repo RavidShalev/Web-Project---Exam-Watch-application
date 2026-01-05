@@ -172,9 +172,9 @@ export default function StudentDashboard() {
       {/* Top Bar: Hello User */}
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex justify-between items-center">
         <div>
-           <h1 className="text-2xl font-bold mb-1 text-black">Hello, {studentName}</h1>
+           <h1 className="text-2xl font-bold mb-1 text-black">שלום, {studentName}</h1>
            <p className="text-gray-500 text-sm">
-             Personal Area • {upcomingExams.length} Upcoming Exams
+             איזור אישי • {upcomingExams.length} מבחנים מתוכננים
            </p>
         </div>
         <div className="bg-blue-50 p-3 rounded-full text-blue-600">
@@ -186,12 +186,12 @@ export default function StudentDashboard() {
       <div>
         <h3 className="text-lg font-semibold mb-3 text-black flex items-center gap-2">
             <Calendar className="text-blue-600" size={20} />
-            Upcoming Exams
+            מבחנים קרובים
         </h3>
         
         {upcomingExams.length === 0 ? (
             <div className="bg-white p-8 rounded-2xl border border-dashed border-gray-300 text-center text-gray-400">
-                <p>No upcoming exams</p>
+                <p>אין מבחנים קרובים</p>
             </div>
         ) : (
             <div className="grid gap-4 md:grid-cols-2">
@@ -216,7 +216,7 @@ export default function StudentDashboard() {
       {pastExams.length > 0 && (
           <div className="mt-4 pt-6 border-t border-gray-200">
             <h3 className="text-lg font-semibold mb-3 text-gray-500 flex items-center gap-2">
-                <CheckCircle size={20} /> Exam History
+                <CheckCircle size={20} /> היסטוריית בחינות
             </h3>
             <div className="space-y-3">
                 {pastExams.map((exam) => (
@@ -232,7 +232,7 @@ export default function StudentDashboard() {
                                 <p className="text-xs text-gray-500">{exam.date} • {exam.startTime} - {exam.endTime}</p>
                             </div>
                             <div className="flex items-center gap-3">
-                                <span className="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded">Finished</span>
+                                <span className="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded">הסתיים</span>
                                 {/* Icon changes: Up if open, Down if closed */}
                                 {expandedExamId === exam._id ? <ChevronUp size={20} className="text-gray-400"/> : <ChevronDown size={20} className="text-gray-400"/>}
                             </div>
@@ -246,8 +246,8 @@ export default function StudentDashboard() {
                                     <div>
                                         <p className="font-bold text-gray-700 mb-2">Details:</p>
                                         <ul className="space-y-1 text-gray-600">
-                                            <li>Location: {exam.location}</li>
-                                            <li>Course Code: {exam.courseCode}</li>
+                                            <li>מיקום: {exam.location}</li>
+                                            <li>קוד קורס: {exam.courseCode}</li>
                                         </ul>
                                     </div>
                                     
