@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import EditExam from "../_components/EditExam";
 import { ExamFormData } from "../../../../types/examtypes";
-
+import ExamStudentsTable from "../_components/ExamStudentsTable";
+import UploadStudentsCsv from "../_components/UploadStudentsCsv";
 
 type PageProps = {
   params: Promise<{
@@ -16,6 +17,26 @@ export default function EditExamPage({ params }: PageProps) {
   const [examId, setExamId] = useState<string | null>(null);
   const [exam, setExam] = useState<ExamFormData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [students, setStudents] = useState<
+    { name: string; idNumber: string }[]
+  >([]);
+
+  const refreshStudents = async () => {
+    if (!examId) return;
+
+    const res = await fetch(`/api/admin/exams/${examId}`);
+    if (!res.ok) return;
+
+    const data = await res.json();
+
+    // Update students list
+    setStudents(
+      data.exam.students?.map((s: { name: string; idNumber: string }) => ({
+        name: s.name,
+        idNumber: s.idNumber,
+      })) || []
+    );
+  };
 
   // Fetch exam data on component mount
   useEffect(() => {
@@ -45,14 +66,13 @@ export default function EditExamPage({ params }: PageProps) {
           openBook: false,
         };
 
-        data.exam.rules?.forEach(
-          (r: { id: string; allowed: boolean }) => {
-            if (r.id in rules) {
-              rules[r.id as keyof typeof rules] = r.allowed;
-            }
+        data.exam.rules?.forEach((r: { id: string; allowed: boolean }) => {
+          if (r.id in rules) {
+            rules[r.id as keyof typeof rules] = r.allowed;
           }
-        );
+        });
 
+        // Set exam form data - STUDENTS ARE UPDATED SEPARATELY
         setExam({
           courseName: data.exam.courseName,
           courseCode: data.exam.courseCode,
@@ -79,6 +99,11 @@ export default function EditExamPage({ params }: PageProps) {
     fetchExam();
   }, [params]);
 
+  useEffect(() => {
+    if (!examId) return;
+    refreshStudents();
+  }, [examId]);
+
   if (loading) {
     return <p className="text-center mt-10">טוען מבחן…</p>;
   }
@@ -90,6 +115,10 @@ export default function EditExamPage({ params }: PageProps) {
   return (
     <div className="mt-10">
       <EditExam exam={exam} examId={examId} />
+
+      <UploadStudentsCsv examId={examId} onSuccess={refreshStudents} />
+
+      <ExamStudentsTable students={students} />
     </div>
   );
 }

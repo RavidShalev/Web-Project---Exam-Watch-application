@@ -240,6 +240,8 @@ export async function POST(req: Request) {
       checklist,
       rules,
 
+      students: [],
+      
       status: "scheduled",
     });
 
