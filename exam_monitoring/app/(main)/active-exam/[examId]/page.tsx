@@ -60,6 +60,25 @@ export default function ActiveExamPage() {
     });
   };
 
+  // Finish exam for specific student
+  async function finishExamForStudent(attendanceId: string) {
+    const res = await fetch(`/api/exams/attendance/updateRecord/${attendanceId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({attendanceStatus: "finished"}),
+    });
+    // update attendance state to reflect the change
+     setAttendance(prevAttendance =>
+      prevAttendance.map(record =>
+      record._id === attendanceId
+        ? { ...record, attendanceStatus: "finished" as const }
+        : record
+    )
+  );
+  }
+
   // save general report to the DB (not specific student)
   async function saveGeneralReport(data: {examId: string; eventType: string; description?: string}) {
     const supervisorId = localStorage.getItem("supervisorId");
@@ -99,23 +118,21 @@ export default function ActiveExamPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ isOnToilet: newToiletStatus }),
     });
-
+    // send report about toilet event
     await saveReport({
       examId: examId,
       studentId: currentRecord.studentId._id,
       eventType: newToiletStatus ? "יצא לשירותים" : "חזר משירותים",
       description: "",
     });
-
-    setAttendance((prevAttendance) => {
-      const updatedAttendance = prevAttendance.map((record) => {
-        if (record._id === attendanceId) {
-          return { ...record, isOnToilet: newToiletStatus };
-        }
-        return record;
-      });
-      return updatedAttendance;
-    });
+    // Update local state
+    setAttendance(prevAttendance =>
+    prevAttendance.map(record =>
+      record._id === attendanceId
+        ? { ...record, isOnToilet: newToiletStatus }
+        : record
+    )
+  );
   }
 
   // Finish exam function
@@ -209,6 +226,7 @@ export default function ActiveExamPage() {
           makeAbsent={makeAbsent}
           saveReport={saveReport}
           updateToiletTime={updateToiletTime}
+          finishExamForStudent={finishExamForStudent}
         />
       </div>
 
