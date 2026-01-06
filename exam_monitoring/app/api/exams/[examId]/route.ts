@@ -178,3 +178,27 @@ export async function PUT(
     return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 }
+
+
+export async function PATCH(
+  req: Request,
+  { params }: { params: Promise<{ examId: string }> })
+{
+  try {
+    const { examId } = await params;
+    await dbConnect();
+
+     const updatedExam = await Exam.findByIdAndUpdate(
+      examId,
+      {
+        status: "finished",
+      },
+      { new: true }
+    );
+
+    return NextResponse.json({ success: true, exam: updatedExam });
+  } catch (error) {
+    console.error("PATCH finish exam error:", error);
+    return NextResponse.json({ message: "Server error" }, { status: 500 });
+  }
+}
