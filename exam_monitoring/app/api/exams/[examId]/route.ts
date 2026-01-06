@@ -18,10 +18,11 @@ export async function GET(
       return NextResponse.json({ message: "Invalid exam id" }, { status: 400 });
     }
 
-    // Fetch exam by ID with populated supervisors and lecturers
+    // Fetch the exam by ID
     const exam = await Exam.findById(examId)
-      .populate("supervisors", "idNumber")
-      .populate("lecturers", "idNumber");
+      .populate("lecturers", "idNumber name")
+      .populate("supervisors", "idNumber name")
+      .populate("students", "idNumber name");
 
     if (!exam) {
       return NextResponse.json({ message: "Exam not found" }, { status: 404 });
@@ -181,13 +182,13 @@ export async function PUT(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: Promise<{ examId: string }> })
-{
+  { params }: { params: Promise<{ examId: string }> }
+) {
   try {
     const { examId } = await params;
     await dbConnect();
 
-     const updatedExam = await Exam.findByIdAndUpdate(
+    const updatedExam = await Exam.findByIdAndUpdate(
       examId,
       {
         status: "finished",
