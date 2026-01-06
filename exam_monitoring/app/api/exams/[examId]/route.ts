@@ -179,7 +179,6 @@ export async function PUT(
   }
 }
 
-
 export async function PATCH(
   req: Request,
   { params }: { params: Promise<{ examId: string }> })

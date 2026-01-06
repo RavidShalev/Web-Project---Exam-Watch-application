@@ -109,7 +109,7 @@ export default function StudentDashboard() {
     }, 2000); 
   };
 
-  if (loading) return <div className="p-10 text-center bg-gray-50 min-h-screen">Loading...</div>;
+  if (loading) return <div className="p-10 text-center bg-gray-50 min-h-screen">טוען...</div>;
 
   // --- VIEW 1: ACTIVE EXAM SCREEN ---
   if (activeExam) {
@@ -124,7 +124,7 @@ export default function StudentDashboard() {
         
         {/* Timer */}
         <div className="bg-white px-10 py-6 rounded-3xl shadow-sm border border-gray-200 mb-8 text-center">
-            <p className="text-gray-400 text-sm mb-1">Time Left</p>
+            <p className="text-gray-400 text-sm mb-1">זמן שנותר</p>
             <div className="text-5xl font-mono font-bold text-blue-600 tracking-wider">
                 02:45:00
             </div>
@@ -202,9 +202,9 @@ export default function StudentDashboard() {
       {/* Top Bar */}
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex justify-between items-center">
         <div>
-           <h1 className="text-2xl font-bold mb-1 text-black">Hello, {studentName}</h1>
+           <h1 className="text-2xl font-bold mb-1 text-black">שלום, {studentName}</h1>
            <p className="text-gray-500 text-sm">
-             Personal Area • {upcomingExams.length} Upcoming Exams
+             איזור אישי • {upcomingExams.length} מבחנים קרובים
            </p>
         </div>
         <div className="bg-blue-50 p-3 rounded-full text-blue-600">
@@ -216,12 +216,12 @@ export default function StudentDashboard() {
       <div>
         <h3 className="text-lg font-semibold mb-3 text-black flex items-center gap-2">
             <Calendar className="text-blue-600" size={20} />
-            Upcoming Exams
+            מבחנים קרובים
         </h3>
         
         {upcomingExams.length === 0 ? (
             <div className="bg-white p-8 rounded-2xl border border-dashed border-gray-300 text-center text-gray-400">
-                <p>No upcoming exams</p>
+                <p>אין מבחנים קרובים</p>
             </div>
         ) : (
             <div className="grid gap-4 md:grid-cols-2">
@@ -246,7 +246,7 @@ export default function StudentDashboard() {
       {pastExams.length > 0 && (
           <div className="mt-4 pt-6 border-t border-gray-200">
             <h3 className="text-lg font-semibold mb-3 text-gray-500 flex items-center gap-2">
-                <CheckCircle size={20} /> Exam History
+                <CheckCircle size={20} /> היסטוריית מבחנים
             </h3>
             <div className="space-y-3">
                 {pastExams.map((exam) => (
@@ -262,7 +262,7 @@ export default function StudentDashboard() {
                                 <p className="text-xs text-gray-500">{exam.date} • {exam.startTime} - {exam.endTime}</p>
                             </div>
                             <div className="flex items-center gap-3">
-                                <span className="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded">Finished</span>
+                                <span className="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded">הסתיים</span>
                                 {expandedExamId === exam._id ? <ChevronUp size={20} className="text-gray-400"/> : <ChevronDown size={20} className="text-gray-400"/>}
                             </div>
                         </div>
@@ -272,16 +272,16 @@ export default function StudentDashboard() {
                             <div className="p-4 bg-white border-t border-gray-100 text-sm">
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <p className="font-bold text-gray-700 mb-2">Details:</p>
+                                        <p className="font-bold text-gray-700 mb-2">פרטים:</p>
                                         <ul className="space-y-1 text-gray-600">
-                                            <li>Location: {exam.location}</li>
-                                            <li>Course Code: {exam.courseCode}</li>
+                                            <li>מיקום: {exam.location}</li>
+                                            <li>קוד קורס: {exam.courseCode}</li>
                                         </ul>
                                     </div>
                                     
                                     {exam.rules && exam.rules.length > 0 && (
                                         <div>
-                                            <p className="font-bold text-gray-700 mb-2">Equipment:</p>
+                                            <p className="font-bold text-gray-700 mb-2">ציוד למבחן:</p>
                                             <div className="flex flex-wrap gap-2">
                                                 {exam.rules.filter(r => r.allowed).map((rule) => (
                                                     <span key={rule.id} className="flex items-center gap-1 bg-green-50 text-green-700 px-2 py-1 rounded text-xs border border-green-100">
@@ -290,7 +290,7 @@ export default function StudentDashboard() {
                                                 ))}
                                                 {exam.rules.filter(r => !r.allowed).map((rule) => (
                                                     <span key={rule.id} className="flex items-center gap-1 bg-red-50 text-red-700 px-2 py-1 rounded text-xs border border-red-100 opacity-70">
-                                                        <AlertCircle size={12}/> No {rule.label}
+                                                        <AlertCircle size={12}/> לא {rule.label}
                                                     </span>
                                                 ))}
                                             </div>

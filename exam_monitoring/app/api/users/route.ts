@@ -1,48 +1,61 @@
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "../../lib/db";
 import User from "../../models/Users";
+import bcrypt from "bcryptjs"; 
+
 
 // API Route: POST /api/users - Create new user
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+    
+    // 1. extract fields from the request body
+    const { name, idNumber, email, phone, password, role } = body;
+
+    // 2. check for required fields
+    if (!name || !idNumber || !email || !password || !role) {
+      return NextResponse.json(
+        { success: false, message: "חסרים שדות חובה: שם, ת.ז, אימייל, סיסמה או תפקיד" },
+        { status: 400 }
+      );
+    }
 
     await dbConnect();
 
-    // Check required fields
-    const requiredFields = ["idNumber", "name", "email", "password", "role"];
-    for (const field of requiredFields) {
-      if (!body[field]) {
-        return NextResponse.json(
-          { success: false, message: `Missing required field: ${field}` },
-          { status: 400 }
-        );
-      }
-    }
-
-    // Check if user already exists
+    // 3. check if user with same idNumber or email already exists
     const existingUser = await User.findOne({
-      $or: [{ idNumber: body.idNumber }, { email: body.email }],
+      $or: [{ idNumber }, { email }],
     });
 
     if (existingUser) {
       return NextResponse.json(
-        { success: false, message: "User with this ID or email already exists" },
+        { success: false, message: "משתמש עם תעודת זהות או אימייל זה כבר קיים" },
         { status: 409 }
       );
     }
 
-    // Create user
-    const user = await User.create(body);
+    // 4. encryption of the password before saving to the database
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Return without password
-    const userObj = user.toObject();
+    // 5. create the new user
+    const newUser = await User.create({
+      name,
+      idNumber,
+      email,
+      phone,
+      role,
+      password: hashedPassword, // save the hashed password
+    });
+
+    // 6. answer without the password field
+    const userObj = newUser.toObject();
     delete userObj.password;
 
     return NextResponse.json(
       { success: true, user: userObj },
       { status: 201 }
     );
+
   } catch (err) {
     console.error("Error creating user:", err);
     return NextResponse.json(
@@ -56,7 +69,7 @@ export async function POST(request: NextRequest) {
 export async function GET() {
   try {
     await dbConnect();
-
+  // fetch all users without passwords
     const users = await User.find({}).select("-password").lean();
 
     return NextResponse.json({ success: true, users });

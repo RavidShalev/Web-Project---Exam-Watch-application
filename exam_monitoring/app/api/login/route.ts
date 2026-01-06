@@ -3,7 +3,7 @@ export const runtime = "nodejs";
 import { NextResponse } from "next/server";
 import dbConnect from "../../lib/db";
 import User from "../../models/Users";
-
+import bcrypt from "bcryptjs";
 
 
 // API Route: POST /api/login
@@ -14,22 +14,36 @@ export async function POST(req: Request) {
     // reading the data that has been sent from the frontend (idNumber, password)
     const { idNumber, password } = await req.json();
 
-    // checking if the user doesn't exist or the db doesn't match what the user typed
-    if (!idNumber || !password ) {
+    // checking input validation
+    if (!idNumber || !password) {
       return NextResponse.json(
-        { message: "Invalid username or password" },
-        { status: 401 }
+        { message: "נא להזין תעודת זהות וסיסמה" },
+        { status: 400 }
       );
     }
+    
     const cleanIdNumber = idNumber.trim();
     const cleanPassword = password.trim();
     
-    // searching the user from the idNumber
+    // 2. קודם כל מוצאים את המשתמש לפי תעודת זהות
+    // (אנחנו לא בודקים סיסמה בשאילתה, אלא רק שולפים את המשתמש)
     const user = await User.findOne({ idNumber: cleanIdNumber });
 
-    if (!user || user.password !== cleanPassword) {
+    // אם לא נמצא משתמש כזה -> שגיאה
+    if (!user) {
       return NextResponse.json(
-        { message: "Invalid username or password" },
+        { message: "שם משתמש או סיסמה שגויים" },
+        { status: 401 }
+      );
+    }
+
+    // 3. עכשיו בודקים את הסיסמה עם bcrypt
+    // הפונקציה משווה את הסיסמה שהוזנה (cleanPassword) מול ההצפנה ב-DB (user.password)
+    const isMatch = await bcrypt.compare(cleanPassword, user.password);
+
+    if (!isMatch) {
+      return NextResponse.json(
+        { message: "שם משתמש או סיסמה שגויים" },
         { status: 401 }
       );
     }
@@ -41,7 +55,9 @@ export async function POST(req: Request) {
       name: user.name,
       role: user.role,
     });
+    
   } catch (err) {
+    console.error("Login error:", err);
     return NextResponse.json(
       { message: err instanceof Error ? err.message : "Unknown server error" },
       { status: 500 }
