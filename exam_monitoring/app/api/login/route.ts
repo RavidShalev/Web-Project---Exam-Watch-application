@@ -25,11 +25,8 @@ export async function POST(req: Request) {
     const cleanIdNumber = idNumber.trim();
     const cleanPassword = password.trim();
     
-    // 2. קודם כל מוצאים את המשתמש לפי תעודת זהות
-    // (אנחנו לא בודקים סיסמה בשאילתה, אלא רק שולפים את המשתמש)
     const user = await User.findOne({ idNumber: cleanIdNumber });
 
-    // אם לא נמצא משתמש כזה -> שגיאה
     if (!user) {
       return NextResponse.json(
         { message: "שם משתמש או סיסמה שגויים" },
@@ -37,8 +34,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // 3. עכשיו בודקים את הסיסמה עם bcrypt
-    // הפונקציה משווה את הסיסמה שהוזנה (cleanPassword) מול ההצפנה ב-DB (user.password)
+    //check password matching with hashed password
     const isMatch = await bcrypt.compare(cleanPassword, user.password);
 
     if (!isMatch) {
