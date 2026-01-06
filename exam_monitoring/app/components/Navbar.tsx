@@ -24,6 +24,9 @@ const Navbar = () => {
   
   const isAdmin = currentUser?.role === 'admin';
   const isSupervisor = currentUser?.role === 'supervisor';
+  const isStudent = currentUser?.role === 'student';
+  const isLecturer = currentUser?.role === 'lecturer';
+  const canViewProcedures = isStudent || isLecturer || isSupervisor;
 
   // change the state of clicked when the button is clicked
   const handleClick = () => {
@@ -73,7 +76,10 @@ const Navbar = () => {
       <div>
         <ul className="hidden md:flex items-center gap-8 list-none">
           <li><Link href="/home" className={getLinkClass('/home')}>בית</Link></li>
-          <li><Link href="/procedures" className={getLinkClass('/procedures')}>נהלים</Link></li>
+          
+          {canViewProcedures && (
+            <li><Link href="/procedures" className={getLinkClass('/procedures')}>נהלים</Link></li>
+          )}
           
           {/* Supervisor only */}
           {isSupervisor && (
@@ -108,7 +114,10 @@ const Navbar = () => {
         className={`${clicked ? "flex" : "hidden"} md:hidden flex-col absolute top-full right-0 w-full bg-[#1b2430] p-6 shadow-lg border-t border-gray-700`}
       >
         <Link href="/home" className={`${getLinkClass('/home')} py-2 block`} onClick={() => setClicked(false)}>בית</Link>
-        <Link href="/procedures" className={`${getLinkClass('/procedures')} py-2 block`} onClick={() => setClicked(false)}>נהלים</Link>
+        
+        {canViewProcedures && (
+          <Link href="/procedures" className={`${getLinkClass('/procedures')} py-2 block`} onClick={() => setClicked(false)}>נהלים</Link>
+        )}
         
         {/* Supervisor only */}
         {isSupervisor && (

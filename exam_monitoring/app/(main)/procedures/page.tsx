@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { BookOpen, Info } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import ProcedureCard from './_components/ProcedureCard';
 
 // Define the shape of data from API
@@ -15,6 +16,7 @@ interface Procedure {
 }
 
 export default function ProceduresPage() {
+  const router = useRouter();
   const [procedures, setProcedures] = useState<Procedure[]>([]);
   const [loading, setLoading] = useState(true);
   const [activePhase, setActivePhase] = useState('before'); // default tab
@@ -29,6 +31,12 @@ export default function ProceduresPage() {
       const user = JSON.parse(storedUser);
       setUserRole(user.role);
 
+      // Prevent admin from accessing this page
+      if (user.role === 'admin') {
+        router.push('/home');
+        return;
+      }
+
       // Fetch data from our API
       fetch(`/api/procedures?role=${user.role}`)
         .then((res) => res.json())
@@ -42,7 +50,7 @@ export default function ProceduresPage() {
     } else {
       setLoading(false);
     }
-  }, []);
+  }, [router]);
 
   // 2. Filter procedures by the active tab
   const filteredProcedures = procedures.filter(p => 
