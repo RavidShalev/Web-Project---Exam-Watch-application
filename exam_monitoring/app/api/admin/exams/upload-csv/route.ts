@@ -94,7 +94,7 @@ export async function POST(req: Request) {
       lecturers: [],
       supervisors: [],
 
-      durationTime: null,
+      durationMinutes: null,
       checklist: emptyChecklist,
       rules: emptyRules,
 
@@ -120,3 +120,4 @@ export async function POST(req: Request) {
     );
   }
 }
+  

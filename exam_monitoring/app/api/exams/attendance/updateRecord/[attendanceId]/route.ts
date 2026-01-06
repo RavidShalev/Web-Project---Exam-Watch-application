@@ -13,12 +13,30 @@ export async function PATCH(
         const { attendanceId } = await params;
         
         try {
-            // Find the attendance record by ID and update its status
+            const updateData: any = { attendanceStatus,};
+
+            // if changing to present – set start time
+            if (attendanceStatus === "present") {
+            updateData.startTime = new Date();
+            }
+
+            // if changing to absent – clear times
+            if (attendanceStatus === "absent") {
+            updateData.startTime = null;
+            updateData.endTime = null;
+            }
+
+            if(attendanceStatus==="finished")
+            {
+                updateData.endTime=new Date();
+            }
+            // update the attendance record
             const updatedAttendance = await Attendance.findByIdAndUpdate(
-                attendanceId,
-                { attendanceStatus },
-                { new: true } // Return the updated document
+            attendanceId,
+            updateData,
+            { new: true }
             );
+
             return NextResponse.json({ success: true, updatedAttendance });
         } catch (error) {
             console.error("Error updating attendance:", error);

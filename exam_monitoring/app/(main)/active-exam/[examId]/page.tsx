@@ -8,12 +8,16 @@ import AttendanceList from "./attendanceList";
 import { AttendanceRow } from "@/types/attendance";
 import ReportEvents from "./reportEvents";
 import { useRouter } from "next/navigation";
+import SmartBotAssistant from "./SmartBotAssistant";
 
 export default function ActiveExamPage() {
+  // hooks and states
   const [exam, setExam] = useState<Exam | null>(null);
   const [attendance, setAttendance] = useState<AttendanceRow[]>([]);
   const { examId } = useParams<{ examId: string }>();
   const [showReportModal, setShowReportModal] = useState(false);
+  const [showAddTimeModal, setShowAddTimeModal] = useState(false);
+  const [minutes, setMinutes] = useState("");
   const router = useRouter();
 
   // this function will update a record attendance status to present
@@ -60,6 +64,25 @@ export default function ActiveExamPage() {
     });
   };
 
+  // Finish exam for specific student
+  async function finishExamForStudent(attendanceId: string) {
+    const res = await fetch(`/api/exams/attendance/updateRecord/${attendanceId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({attendanceStatus: "finished"}),
+    });
+    // update attendance state to reflect the change
+     setAttendance(prevAttendance =>
+      prevAttendance.map(record =>
+      record._id === attendanceId
+        ? { ...record, attendanceStatus: "finished" as const }
+        : record
+    )
+  );
+  }
+
   // save general report to the DB (not specific student)
   async function saveGeneralReport(data: {examId: string; eventType: string; description?: string}) {
     const supervisorId = localStorage.getItem("supervisorId");
@@ -99,23 +122,41 @@ export default function ActiveExamPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ isOnToilet: newToiletStatus }),
     });
-
+    // send report about toilet event
     await saveReport({
       examId: examId,
       studentId: currentRecord.studentId._id,
       eventType: newToiletStatus ? "יצא לשירותים" : "חזר משירותים",
       description: "",
     });
+    // Update local state
+    setAttendance(prevAttendance =>
+    prevAttendance.map(record =>
+      record._id === attendanceId
+        ? { ...record, isOnToilet: newToiletStatus }
+        : record
+    )
+  );
+  }
 
-    setAttendance((prevAttendance) => {
-      const updatedAttendance = prevAttendance.map((record) => {
-        if (record._id === attendanceId) {
-          return { ...record, isOnToilet: newToiletStatus };
-        }
-        return record;
-      });
-      return updatedAttendance;
+  // Add time to exam function
+  async function handleAddTime() {
+    const minutesToAdd = parseInt(minutes, 10);
+    if (isNaN(minutesToAdd) || minutesToAdd <= 0) {
+      alert("אנא הזן מספר תקין של דקות.");
+      return;
+    }
+    const res = await fetch(`/api/exams/${examId}/addTime`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ minutesToAdd }),
     });
+    const data = await res.json();
+    setExam(data.exam);
+    setMinutes("");
+    setShowAddTimeModal(false);
   }
 
   // Finish exam function
@@ -177,6 +218,7 @@ export default function ActiveExamPage() {
           <p className="text-sm text-gray-500 mt-2">
             זמן שנשאר במבחן
           </p>
+           <button onClick={() => setShowAddTimeModal(true)} className="bg-blue-600 text-white px-4 py-2 my-5 rounded w-full sm:w-auto">הוספת זמן לבחינה</button>
           <button onClick={finishExam} className="bg-red-600 text-white px-4 py-2 my-5 rounded w-full sm:w-auto">סיים מבחן</button>
         </div>
       )}
@@ -209,6 +251,7 @@ export default function ActiveExamPage() {
           makeAbsent={makeAbsent}
           saveReport={saveReport}
           updateToiletTime={updateToiletTime}
+          finishExamForStudent={finishExamForStudent}
         />
       </div>
 
@@ -222,6 +265,43 @@ export default function ActiveExamPage() {
             setShowReportModal(false);
           }}
         />
+      )}
+
+            {/* Smart Bot Assistant - proactive alerts and check-ins */}
+      {exam.actualStartTime && (
+        <SmartBotAssistant
+          examId={examId}
+          examStartTime={exam.actualStartTime}
+          durationMinutes={exam.durationMinutes}
+          attendance={attendance}
+          courseName={exam.courseName}
+        />
+      )}
+
+      {/* Add time modal */}
+      {showAddTimeModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 text-black">
+          <div className="bg-white p-6 rounded shadow-lg w-80">
+            <h2 className="text-lg font-semibold mb-4">הוסף זמן למבחן</h2>
+            <input type="number" min={1} value={minutes}
+              onChange={(e) => setMinutes(e.target.value)}
+              placeholder="כמה דקות להוסיף?"
+              className="w-full border border-gray-300 rounded px-3 py-2"
+            />
+            <button
+              className="border px-4 py-2 rounded"
+              onClick={() => setShowAddTimeModal(false)}
+            >
+              ביטול
+            </button>
+            <button
+                onClick={handleAddTime}
+                className="bg-blue-600 text-white px-4 py-2 rounded"
+              >
+                אישור
+              </button>
+          </div>
+        </div>
       )}
     </div>
   );

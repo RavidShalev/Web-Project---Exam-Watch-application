@@ -17,7 +17,7 @@ const Attendance = new mongoose.Schema({
   },
   attendanceStatus: {
     type: String,
-    enum: ['present', 'absent'],
+    enum: ['present', 'absent', 'finished'],
     default: 'absent', 
   },
   IdImage: {
@@ -27,7 +27,15 @@ const Attendance = new mongoose.Schema({
    isOnToilet:{
       type: Boolean,
       default: false,
-   }
+   },
+   startTime: {
+      type: String,
+      default: null,
+   },
+   endTime: {
+      type: String,
+      default: null,
+   },
 });
 
 export default mongoose.models.Attendance || mongoose.model("Attendance", Attendance);
