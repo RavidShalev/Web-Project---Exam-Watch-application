@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import dbConnect from "../../../../lib/db";
 import Exam from "../../../../models/Exams";
+import {logAuditEvent} from "../../../../lib/auditLogger";
 
 // API route to add time to an exam's duration
 export async function PATCH(
@@ -11,13 +12,13 @@ export async function PATCH(
 
   const { examId } = await params;
 
-  const { minutesToAdd } = await request.json();
+  const { minutesToAdd, userId } = await request.json();
 
   const exam = await Exam.findByIdAndUpdate(
-    examId, // ✅ משתמשים ב־examId, לא ב־params.examId
+    examId, 
     { $inc: { durationMinutes: minutesToAdd } },
     { new: true }
   );
-
+  await logAuditEvent({userId, action: "הוספת זמן בחינה", examId: exam._id.toString(), status: true,});
   return NextResponse.json({ exam });
 }

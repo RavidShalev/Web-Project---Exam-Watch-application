@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import dbConnect from "../../../../lib/db";
 import Report from "../../../../models/Report";
+import {logAuditEvent} from "../../../../lib/auditLogger";
 
 // POST /api/exams/[examId] - Report a general exam event
 export async function POST( req: Request, context: { params: Promise<{ examId: string; }> })
@@ -9,9 +10,10 @@ export async function POST( req: Request, context: { params: Promise<{ examId: s
           // connect to the database, if already connected, does nothing
           await dbConnect();
           const { examId} = await context.params;
-          const { eventType, description, supervisorId } = await req.json();
+          const { eventType, description, userId } = await req.json();
   
           if (!eventType ) {
+            await logAuditEvent({userId, action: "הוספת דיווח כללי", examId: examId.toString(), status: false,});
               return NextResponse.json(
                   { message: "Missing eventType in request body" },
                   { status: 400 }
@@ -22,9 +24,10 @@ export async function POST( req: Request, context: { params: Promise<{ examId: s
               examId: examId,
               eventType: eventType,
               description: description || "",
-              supervisorId: supervisorId,
+              supervisorId: userId,
               createdAt: new Date(),
           });
+          await logAuditEvent({userId, action: "הוספת דיווח כללי", examId: examId.toString(), status: true,});
           return NextResponse.json({ message: "Report created successfully", report });
       } catch (err) {
         console.error("Error creating report:", err);

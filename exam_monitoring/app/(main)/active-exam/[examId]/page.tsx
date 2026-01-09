@@ -151,7 +151,7 @@ export default function ActiveExamPage() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ minutesToAdd }),
+      body: JSON.stringify({ minutesToAdd, userId: localStorage.getItem("supervisorId") }),
     });
     const data = await res.json();
     setExam(data.exam);
@@ -168,6 +168,7 @@ export default function ActiveExamPage() {
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({userId: localStorage.getItem("supervisorId") }),
     });
     const result = await res.json();
     setExam(result.exam);

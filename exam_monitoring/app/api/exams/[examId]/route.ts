@@ -3,6 +3,7 @@ import dbConnect from "../../../lib/db";
 import Exam from "../../../models/Exams";
 import User from "../../../models/Users";
 import mongoose from "mongoose";
+import {logAuditEvent} from "../../../lib/auditLogger";
 
 // API Route: GET, DELETE, PUT exam by ID
 export async function GET(
@@ -186,6 +187,7 @@ export async function PATCH(
 ) {
   try {
     const { examId } = await params;
+    const {userId}= await req.json();
     await dbConnect();
 
     const updatedExam = await Exam.findByIdAndUpdate(
@@ -195,6 +197,8 @@ export async function PATCH(
       },
       { new: true }
     );
+
+    await logAuditEvent({userId, action: "סיום בחינה", examId: examId.toString(), status: true,});
 
     return NextResponse.json({ success: true, exam: updatedExam });
   } catch (error) {
