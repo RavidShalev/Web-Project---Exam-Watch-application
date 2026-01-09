@@ -17,7 +17,7 @@ export default function HomePage() {
     const res = await fetch("/api/exams/activate", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ examId: exam._id })
+        body: JSON.stringify({ examId: exam._id, userId: localStorage.getItem("supervisorId") }),
     });
     const updatedExam = await res.json();
     setExam(updatedExam.exam);

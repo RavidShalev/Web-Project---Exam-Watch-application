@@ -2,14 +2,15 @@ import { NextResponse } from "next/server";
 import dbConnect from "../../../lib/db";
 import Exam from "../../../models/Exams";
 import Attendance from "../../../models/Attendance";
+import { logAuditEvent } from "../../../lib/auditLogger";
 
 export async function POST(req: Request) {
     try {
         // connect to the database, if already connected, does nothing
         await dbConnect();
 
-        // get examId from request body
-        const { examId } = await req.json();
+        // get examId and userId from request body
+        const { examId, userId } = await req.json();
 
         // if no examId provided, return error
         if (!examId) {
@@ -27,6 +28,12 @@ export async function POST(req: Request) {
 
         // if no exam found, return error
         if (!exam) {
+            await logAuditEvent({
+                userId: userId,
+                action: "התחלת מבחן",
+                examId,
+                status: false,
+            });
             return NextResponse.json(
                 { error: "Exam not found" },
                 { status: 404 }
@@ -48,6 +55,8 @@ export async function POST(req: Request) {
         await Attendance.insertMany(attendanceRecords);
 
         }
+        await logAuditEvent({userId, action: "התחלת מבחן", examId: exam._id.toString(), status: true,});
+
 
         // return success response
         return NextResponse.json({ message: "Exam activated successfully", exam });
