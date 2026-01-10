@@ -362,7 +362,7 @@ export default function ActiveExamPage() {
         />
       )}
 
-      {/* Add time modal - Improved UI */}
+      {/* Add time modal */}
       {showAddTimeModal && (
         <div className="modal-overlay" dir="rtl">
           <div className="modal">
