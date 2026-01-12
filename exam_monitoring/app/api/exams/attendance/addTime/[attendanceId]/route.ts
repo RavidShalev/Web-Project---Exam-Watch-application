@@ -8,11 +8,12 @@ export async function PATCH(
     {
         await dbConnect();
 
-        const {timeToAdd}=await req.json();
+        const {minutesToAdd}=await req.json();
         const { attendanceId } = await params;
 
         try{
             const attendance = await Attendance.findById(attendanceId);
+            // if not found any record with attendanceId
             if (!attendance) {
                   return NextResponse.json(
                     { success: false, error: "Attendance not found" },
@@ -20,8 +21,12 @@ export async function PATCH(
                   );
             }
 
+            // add the minutes to the extraTimeMinutes we already added
+            attendance.extraTimeMinutes =attendance.extraTimeMinutes + minutesToAdd;
 
+            await attendance.save();
 
+            return NextResponse.json({success: true,attendance,});
         }catch (error) {
             console.error("Error updating time to add for the student:", error);
             return NextResponse.json(
