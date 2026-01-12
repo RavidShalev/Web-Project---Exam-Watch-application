@@ -36,6 +36,10 @@ const Attendance = new mongoose.Schema({
       type: String,
       default: null,
    },
+   extraTimeMinutes: {
+      type: Number,
+      default: 0
+}
 });
 
 export default mongoose.models.Attendance || mongoose.model("Attendance", Attendance);
