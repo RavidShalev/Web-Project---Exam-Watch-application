@@ -102,6 +102,13 @@ const Navbar = () => {
               </Link>
             </li>
           )}
+
+          {/* All users can access settings (for 2FA) */}
+          <li>
+            <Link href="/settings" className={getLinkClass('/settings')}>
+              הגדרות אימות
+            </Link>
+          </li>
         </ul>
       </div>
 
@@ -144,6 +151,15 @@ const Navbar = () => {
             הוספת בחינה
           </Link>
         )}
+
+        {/* All users can access settings */}
+        <Link
+          href="/settings"
+          className={`${getLinkClass('/settings')} py-2 block`}
+          onClick={() => setClicked(false)}
+        >
+          הגדרות אימות
+        </Link>
       </div>
     </nav>
   );

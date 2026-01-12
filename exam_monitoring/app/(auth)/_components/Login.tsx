@@ -7,6 +7,9 @@ function Login() {
   // state hook - for memory
   const [idNumber, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [twoFactorCode, setTwoFactorCode] = useState<string>(""); // For 6-digit 2FA code
+  const [showTwoFactor, setShowTwoFactor] = useState<boolean>(false); // Show 2FA input?
+  const [tempUserId, setTempUserId] = useState<string>(""); // Temporary user ID for 2FA step
   const [error, setError] = useState<string>("");
 
   // ref hook - for direct element access - for delte values later
@@ -36,6 +39,12 @@ function Login() {
       return;
     }
 
+    // If we're in 2FA step, also check for 2FA code
+    if (showTwoFactor && !twoFactorCode.trim()) {
+      setError("יש להזין קוד אימות");
+      return;
+    }
+
   // Send login request to api
   const res = await fetch("/api/login", {
     method: "POST",
@@ -43,17 +52,31 @@ function Login() {
         // Inform the server that the request body is JSON
         "Content-Type" : "application/json",
     },
-    // Send idNumber and password as JSON in the request body
-    body : JSON.stringify({idNumber,password}),
+    // Send idNumber, password, and optionally twoFactorCode
+    body : JSON.stringify({idNumber, password, twoFactorCode: showTwoFactor ? twoFactorCode : null}),
   });
-    console.log("sending:", { idNumber, password });
+    console.log("sending:", { idNumber, password, twoFactorCode: showTwoFactor ? twoFactorCode : null });
+    
+    // Parse the JSON response (success or error) from the server
+    const data = await res.json();
+    
     if(!res.ok) {
-       setError("תעודת הזהות או הסיסמה שגויים");
+       // Display the error message from the server (includes attempts left, lock info, etc.)
+       setError(data.message || "תעודת הזהות או הסיסמה שגויים");
        return;
     }
 
-    // Parse the JSON response returned from the server
-    const user = await res.json();
+    // Check if server requires 2FA code
+    if (data.requiresTwoFactor) {
+      // Password was correct, but now we need the 6-digit code
+      setShowTwoFactor(true); // Show 2FA input field
+      setTempUserId(data.tempUserId); // Save user ID for next request
+      setError(""); // Clear any previous errors
+      return; // Stop here - wait for user to enter 2FA code
+    }
+
+    // Login was successful (password + 2FA if needed)
+    const user = data;
 
     if (user.role === "supervisor") {
         localStorage.setItem("supervisorId", user._id);
@@ -80,6 +103,7 @@ function Login() {
             onChange={(e) => handleChange("user", e)}
             placeholder="תעודת זהות"
             className="p-3 rounded"
+            disabled={showTwoFactor} 
           />
 
           <input
@@ -89,7 +113,25 @@ function Login() {
             onChange={(e) => handleChange("pass", e)}
             placeholder="סיסמא"
             className="p-3 rounded"
+            disabled={showTwoFactor}
           />
+
+          {/* Show 2FA code input only if user has 2FA enabled */}
+          {showTwoFactor && (
+            <div className="flex flex-col gap-2">
+              <label className="text-sm text-gray-300">
+                הזן קוד בן 6 ספרות מאפליקציית האימות
+              </label>
+              <input
+                type="text"
+                value={twoFactorCode}
+                onChange={(e) => setTwoFactorCode(e.target.value)}
+                placeholder="123456"
+                maxLength={6}
+                className="p-3 rounded text-center text-2xl tracking-widest"
+              />
+            </div>
+          )}
 
           {error && <p className="text-red-500 text-sm">{error}</p>}
 
