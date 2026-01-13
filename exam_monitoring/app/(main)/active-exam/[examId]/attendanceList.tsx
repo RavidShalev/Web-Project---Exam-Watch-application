@@ -3,6 +3,7 @@
 import { AttendanceRow } from "@/types/attendance";
 import { useState } from "react";
 import ReportModal from "./reportModal";
+import AddTimeModal from "./addTimeModal";
 
 type props={
     attendance:AttendanceRow[];
@@ -11,12 +12,18 @@ type props={
     saveReport: (data: {examId: string; studentId: string; eventType: string; description?: string}) => Promise<any>;
     updateToiletTime: (attendanceId: string) => void;
     finishExamForStudent: (attendanceId: string) => void;
+    addTimeForStudent: (attendanceId:string, minutesToAdd:number)=>void;
 }
 
-export default function AttemdanceList({attendance, makePresent, makeAbsent, saveReport, updateToiletTime, finishExamForStudent}: props) {
+export default function AttemdanceList({attendance, makePresent, makeAbsent, saveReport, updateToiletTime, finishExamForStudent, addTimeForStudent}: props) {
     const [openReport, setOpenReport] = useState(false);
     const [openAddTime, setOpenAddTime]=useState(false);
     const [selectedRecord, setSelectedRecord] = useState<AttendanceRow | null>(null);
+    const handleAddTime = async (minutesToAdd: number) => {
+        if (!selectedRecord) return;
+        await addTimeForStudent(selectedRecord._id, minutesToAdd);
+    };
+
     
     return (
         <>
@@ -74,6 +81,7 @@ export default function AttemdanceList({attendance, makePresent, makeAbsent, sav
             </div>
             {/* Report Modal- for specific attendance record */}
             {openReport && selectedRecord && (<ReportModal attendanceRecord={selectedRecord} onClose={() => {setOpenReport(false); setSelectedRecord(null);}} onSave={saveReport} />)}
+            {openAddTime && selectedRecord && (<AddTimeModal attendanceRecord={selectedRecord} onClose={()=>{setOpenAddTime(false); setSelectedRecord(null);}} onSave={handleAddTime}/>)}
             </>
         );
 

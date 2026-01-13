@@ -5,7 +5,7 @@ import {useState} from "react";
 type props={
     attendanceRecord: any;
     onClose: () => void;
-    onSave: (data: {minuteToAdd:number}) => Promise<void>;
+    onSave: (minuteToAdd: number) => Promise<void>;
 }
 
 export default function AddTimeModal({attendanceRecord, onClose, onSave}: props) {
@@ -42,7 +42,7 @@ export default function AddTimeModal({attendanceRecord, onClose, onSave}: props)
                 return;
               }
 
-              await onSave({ minuteToAdd: value });
+              await onSave(value);
               onClose();
             }}
           >

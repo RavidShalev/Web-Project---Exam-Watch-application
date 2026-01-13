@@ -13,5 +13,5 @@ export type AttendanceRow = {
   isOnToilet: boolean;
   startTime: string | null;
   endTime: string | null;
-  extraTimeMinutes?: number;
+  extraTimeMinutes: number;
 };
