@@ -4,17 +4,27 @@ import { useEffect, useState } from "react";
 import ClassGrid from "./_components/ClassGrid";
 import type { Classroom } from "./data/mockClassrooms";
 
-
 const ClassMapPage = () => {
   const [classrooms, setClassrooms] = useState<Classroom[]>([]);
 
   useEffect(() => {
-    const user = sessionStorage.getItem("currentUser");
-    const role = user ? JSON.parse(user).role : "";
+    // Retrieve user information from session storage
+    const rawUser = sessionStorage.getItem("currentUser");
 
+    if (!rawUser) {
+      return;
+    }
+
+    const parsedUser = JSON.parse(rawUser);
+
+    const role = parsedUser.role;
+    const userId = parsedUser._id;
+
+    // Fetch classroom data with user-specific headers
     fetch("/api/class-map", {
       headers: {
         "x-user-role": role,
+        "x-user-id": userId,
       },
     })
       .then((res) => res.json())
