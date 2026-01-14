@@ -27,6 +27,7 @@ const Navbar = () => {
   const isStudent = currentUser?.role === 'student';
   const isLecturer = currentUser?.role === 'lecturer';
   const canViewProcedures = isStudent || isLecturer || isSupervisor;
+  const canViewClassMap = isAdmin || isSupervisor || isLecturer;
 
   // change the state of clicked when the button is clicked
   const handleClick = () => {
@@ -77,6 +78,10 @@ const Navbar = () => {
         <ul className="hidden md:flex items-center gap-8 list-none">
           <li><Link href="/home" className={getLinkClass('/home')}>בית</Link></li>
           
+          {canViewClassMap && (
+            <li><Link href="/class-map" className={getLinkClass('/class-map')}>מפת כיתות</Link></li>
+          )}
+
           {canViewProcedures && (
             <li><Link href="/procedures" className={getLinkClass('/procedures')}>נהלים</Link></li>
           )}
@@ -115,6 +120,11 @@ const Navbar = () => {
       >
         <Link href="/home" className={`${getLinkClass('/home')} py-2 block`} onClick={() => setClicked(false)}>בית</Link>
         
+        {/* Supervisors, Lecturers and Admin */}
+        {canViewClassMap && (
+          <Link href="/class-map" className={`${getLinkClass('/class-map')} py-2 block`} onClick={() => setClicked(false)}>מפת כיתות</Link>
+        )}
+
         {canViewProcedures && (
           <Link href="/procedures" className={`${getLinkClass('/procedures')} py-2 block`} onClick={() => setClicked(false)}>נהלים</Link>
         )}

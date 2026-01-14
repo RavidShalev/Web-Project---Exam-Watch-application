@@ -159,6 +159,28 @@ export default function ActiveExamPage() {
     setShowAddTimeModal(false);
   }
 
+  async function handleAddTimeForStudent(attendanceId: string, minutesToAdd: number){
+    const res= await fetch (`/api/exams/attendance/addTime/${attendanceId}`, {
+      method: "PATCH",
+      headers:{
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ minutesToAdd }),
+    });
+    const data= await res.json();
+     setAttendance(prev =>
+    prev.map(record =>
+      record._id === attendanceId
+        ? {
+            ...record,
+            extraTimeMinutes:
+              record.extraTimeMinutes + minutesToAdd,
+          }
+        : record
+    )
+  );
+  }
+
   // Finish exam function
   async function finishExam() {
     const confirmed = window.confirm("האם את/ה בטוח/ה שברצונך לסיים את המבחן?");
@@ -253,6 +275,7 @@ export default function ActiveExamPage() {
           saveReport={saveReport}
           updateToiletTime={updateToiletTime}
           finishExamForStudent={finishExamForStudent}
+          addTimeForStudent={handleAddTimeForStudent}
         />
       </div>
 
