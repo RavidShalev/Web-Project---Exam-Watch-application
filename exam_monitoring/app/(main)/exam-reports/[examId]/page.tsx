@@ -108,53 +108,48 @@ export default function ExamReportPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6" dir="rtl">
       {/* Header */}
-      <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
-        <button
-          onClick={() => router.back()}
-          className="flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-4 text-sm font-semibold"
-        >
-          <ArrowRight size={18} />
-          חזרה
-        </button>
-        
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <FileText className="text-blue-600" size={32} />
-              <h1 className="text-3xl font-bold text-gray-900">דוח מבחן</h1>
-            </div>
-            <h2 className="text-xl text-gray-700 mb-3">{exam.courseName}</h2>
-            <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-              <div className="flex items-center gap-2">
-                <Calendar size={16} />
-                {exam.date}
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock size={16} />
-                {exam.startTime} - {exam.endTime}
-              </div>
-              <div className="flex items-center gap-2">
-                <MapPin size={16} />
-                {exam.location}
-              </div>
-            </div>
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+        {/* Title and Export Buttons */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <FileText className="text-blue-600" size={28} />
+            <h1 className="text-2xl font-bold text-gray-900">דוח מבחן</h1>
           </div>
           
           <div className="flex gap-2">
             <button
-              onClick={handleExportPDF}
-              className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl transition-colors"
-            >
-              <Download size={18} />
-              PDF
-            </button>
-            <button
               onClick={handleExportExcel}
-              className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl transition-colors"
+              className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors font-semibold text-sm"
             >
-              <Download size={18} />
+              <Download size={16} />
               Excel
             </button>
+            <button
+              onClick={handleExportPDF}
+              className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors font-semibold text-sm"
+            >
+              <Download size={16} />
+              PDF
+            </button>
+          </div>
+        </div>
+
+        {/* Exam Details */}
+        <div className="border-t border-gray-200 pt-4">
+          <h2 className="text-xl font-semibold text-gray-800 mb-3">{exam.courseName}</h2>
+          <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+            <div className="flex items-center gap-2">
+              <MapPin size={16} className="text-gray-400" />
+              <span>{exam.location}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Calendar size={16} className="text-gray-400" />
+              <span>{exam.date}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Clock size={16} className="text-gray-400" />
+              <span>{exam.startTime} - {exam.endTime}</span>
+            </div>
           </div>
         </div>
       </div>

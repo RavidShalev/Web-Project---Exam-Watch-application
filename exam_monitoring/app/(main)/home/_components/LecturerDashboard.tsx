@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Calendar, Clock, MapPin, BookOpen, Users, FileText, AlertCircle } from 'lucide-react';
 
-// Type definitions
+// Exam data structure
 interface Exam {
   _id: string;
   courseName: string;
@@ -12,19 +12,24 @@ interface Exam {
   startTime: string;
   endTime: string;
   location: string;
-  status: 'scheduled' | 'active' | 'finished';
+  status: 'scheduled' | 'active' | 'finished';   // Current status of exam
   supervisors?: { name: string }[];
 }
 
+/**
+ * LecturerDashboard Component
+ * Main dashboard for lecturer - shows all their exams
+ */
 export default function LecturerDashboard() {
-  // State
-  const [exams, setExams] = useState<Exam[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [lecturerName, setLecturerName] = useState('');
-  const [lecturerId, setLecturerId] = useState('');
+  // State variables
+  const [exams, setExams] = useState<Exam[]>([]);           // List of all exams
+  const [loading, setLoading] = useState(true);             // Loading state
+  const [lecturerName, setLecturerName] = useState('');     // Lecturer's name
+  const [lecturerId, setLecturerId] = useState('');         // Lecturer's ID
 
-  // Load lecturer data and exams
+  // Load lecturer data and their exams from API
   useEffect(() => {
+    // Get current user from session storage
     const storedUser = sessionStorage.getItem('currentUser');
     
     if (storedUser) {
@@ -32,7 +37,7 @@ export default function LecturerDashboard() {
       setLecturerName(user.name || 'מרצה');
       setLecturerId(user._id);
 
-      // Fetch lecturer's exams
+      // Fetch all exams for this lecturer from API
       fetch(`/api/exams/lecturer?lecturerId=${user._id}`)
         .then((res) => res.json())
         .then((data) => {
@@ -45,9 +50,9 @@ export default function LecturerDashboard() {
     }
   }, []);
 
-  // Filter exams
-  const activeExams = exams.filter(e => e.status === 'active');
-  const upcomingExams = exams.filter(e => e.status === 'scheduled');
+  // Filter exams by status for different sections
+  const activeExams = exams.filter(e => e.status === 'active');       // Currently running
+  const upcomingExams = exams.filter(e => e.status === 'scheduled');  // Not started yet
   const pastExams = exams.filter(e => e.status === 'finished');
 
   if (loading) {
