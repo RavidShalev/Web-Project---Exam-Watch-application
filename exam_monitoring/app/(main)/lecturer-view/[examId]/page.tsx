@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { AttendanceRow } from "@/types/attendance";
 import { Calendar, Clock, MapPin, Users, AlertCircle, CheckCircle2, XCircle, User, MessageSquare, Bell, Activity, TrendingUp, Send } from "lucide-react";
 import SendMessageModal from "./SendMessageModal";
+import { ToastProvider } from "@/app/components/ToastProvider";
 
 // Interface for report structure from database
 interface Report {
@@ -114,7 +115,8 @@ export default function LecturerViewExam() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-6" dir="rtl">
+    <ToastProvider>
+      <div className="min-h-screen bg-gray-50 p-4 md:p-6" dir="rtl">
       {/* Header */}
       <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -357,6 +359,7 @@ export default function LecturerViewExam() {
           onClose={() => setShowMessageModal(false)}
         />
       )}
-    </div>
+      </div>
+    </ToastProvider>
   );
 }
