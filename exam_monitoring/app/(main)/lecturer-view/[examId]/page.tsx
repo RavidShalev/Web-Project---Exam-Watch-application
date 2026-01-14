@@ -349,7 +349,11 @@ export default function LecturerViewExam() {
       {showMessageModal && (
         <SendMessageModal
           examId={examId}
-          supervisors={exam.supervisors || []}
+          supervisors={(exam.supervisors || []).map(supervisor => 
+            typeof supervisor === 'string' 
+              ? { _id: supervisor, name: 'משגיח' }
+              : supervisor
+          )}
           onClose={() => setShowMessageModal(false)}
         />
       )}
