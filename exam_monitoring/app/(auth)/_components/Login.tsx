@@ -67,19 +67,19 @@ function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[100vh] bg-[#1b2430]">
-      <div className="bg-[#232d3b] p-8 rounded-xl shadow w-full max-w-sm">
+    <div className="flex items-center justify-center min-h-[100vh] bg-[#1b2430] dark:bg-[#0b1220]">
+      <div className="bg-[#232d3b] dark:bg-gray-800 p-8 rounded-xl shadow w-full max-w-sm">
         <h2 className="text-3xl font-bold text-[#17cf97] mb-6 text-center">
           ברוך שובך!
         </h2>
 
-        <form onSubmit={handleLogin} className="flex flex-col gap-4 text-white">
+        <form onSubmit={handleLogin} className="flex flex-col gap-4 text-white dark:text-white">
           <input
             ref={userRef}
             value={idNumber}
             onChange={(e) => handleChange("user", e)}
             placeholder="תעודת זהות"
-            className="p-3 rounded"
+            className="p-3 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600"
           />
 
           <input
@@ -88,14 +88,14 @@ function Login() {
             value={password}
             onChange={(e) => handleChange("pass", e)}
             placeholder="סיסמא"
-            className="p-3 rounded"
+            className="p-3 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600"
           />
 
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {error && <p className="text-red-500 dark:text-red-300 text-sm">{error}</p>}
 
           <button
             type="submit"
-            className="bg-[#17cf97] text-black font-bold py-2 rounded"
+            className="bg-[#17cf97] text-black dark:text-white font-bold py-2 rounded"
           >
             כניסה למערכת
           </button>

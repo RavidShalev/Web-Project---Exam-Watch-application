@@ -61,24 +61,24 @@ export default function ProceduresPage() {
   const getTabClass = (phaseName: string) => {
     const base = "px-6 py-2 rounded-full text-sm font-medium transition-all duration-200";
     if (activePhase === phaseName) {
-      return `${base} bg-blue-600 text-white shadow-md`; // Active style
+      return `${base} bg-blue-600 dark:bg-blue-700 text-white shadow-md`; // Active style
     }
-    return `${base} bg-white text-gray-600 hover:bg-gray-100 border border-gray-200`; // Inactive style
+    return `${base} bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-600`; // Inactive style
   };
 
-  if (loading) return <div className="p-10 text-center text-gray-500">טוען נהלים...</div>;
+  if (loading) return <div className="p-10 text-center text-gray-500 dark:text-gray-400">טוען נהלים...</div>;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8" dir="rtl">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-8" dir="rtl">
       
       {/* Header Section */}
       <div className="max-w-6xl mx-auto mb-8">
         <div className="flex items-center gap-3 mb-2">
-          <BookOpen className="text-blue-600" size={32} />
-          <h1 className="text-3xl font-bold text-gray-900">נהלי בחינות</h1>
+          <BookOpen className="text-blue-600 dark:text-blue-400" size={32} />
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">נהלי בחינות</h1>
         </div>
-        <p className="text-gray-500 pr-11">
-          הנחיות מותאמות לתפקיד: <span className="font-semibold text-blue-600">
+        <p className="text-gray-500 dark:text-gray-400 pr-11">
+          הנחיות מותאמות לתפקיד: <span className="font-semibold text-blue-600 dark:text-blue-400">
             {userRole === 'student' ? 'סטודנט' : 
              userRole === 'supervisor' ? 'משגיח' : 
              userRole === 'lecturer' ? 'מרצה' : userRole}
@@ -126,7 +126,7 @@ export default function ProceduresPage() {
           ))
         ) : (
           // Empty State
-          <div className="col-span-full flex flex-col items-center justify-center p-10 bg-white rounded-2xl border border-dashed border-gray-300 text-gray-400">
+          <div className="col-span-full flex flex-col items-center justify-center p-10 bg-white dark:bg-gray-800 rounded-2xl border border-dashed border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500">
             <Info size={40} className="mb-2 opacity-50" />
             <p>אין נהלים להצגה בשלב זה</p>
           </div>

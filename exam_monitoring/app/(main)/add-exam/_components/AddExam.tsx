@@ -101,25 +101,26 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
     <div className="flex justify-center mt-10">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-lg bg-white border border-gray-200
+        className="w-full max-w-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700
                    rounded-xl shadow-md p-8 space-y-5"
       >
-        <h2 className="text-2xl font-semibold text-center mb-4">הוספת מבחן</h2>
+        <h2 className="text-2xl font-semibold text-center mb-4 text-gray-900 dark:text-white">הוספת מבחן</h2>
 
         <div>
-          <label className="block text-sm font-medium mb-1">שם הקורס</label>
+          <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">שם הקורס</label>
           <input
             type="text"
             name="courseName"
             value={formData.courseName}
             onChange={handleChange}
-            className="w-full rounded-md border border-gray-300 px-3 py-2
-                       focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2
+                       bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                       focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">קוד הקורס</label>
+          <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">קוד הקורס</label>
           <input
             type="number"
             name="courseCode"
@@ -133,64 +134,69 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
                 }));
               }
             }}
-            className="w-full rounded-md border border-gray-300 px-3 py-2
-               focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2
+               bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+               focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">תאריך</label>
+          <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">תאריך</label>
           <input
             type="date"
             name="date"
             value={formData.date}
             onChange={handleChange}
-            className="w-full rounded-md border border-gray-300 px-3 py-2
-                       focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2
+                       bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                       focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
           />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-1">שעת התחלה</label>
+            <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">שעת התחלה</label>
             <input
               type="time"
               name="startTime"
               value={formData.startTime}
               onChange={handleChange}
-              className="w-full rounded-md border border-gray-300 px-3 py-2
-                         focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2
+                         bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">שעת סיום</label>
+            <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">שעת סיום</label>
             <input
               type="time"
               name="endTime"
               value={formData.endTime}
               min={formData.startTime || undefined}
               onChange={handleChange}
-              className="w-full rounded-md border border-gray-300 px-3 py-2
-             focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2
+             bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+             focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">כיתה</label>
+          <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">כיתה</label>
           <input
             type="text"
             name="location"
             value={formData.location}
             onChange={handleChange}
-            className="w-full rounded-md border border-gray-300 px-3 py-2
-                       focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2
+                       bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                       focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">
+          <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
             תעודות זהות של משגיחים (מופרדות בפסיק)
           </label>
           <input
@@ -199,13 +205,14 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
             value={formData.supervisors}
             onChange={handleChange}
             placeholder="10000001, 100000002, ..."
-            className="w-full rounded-md border border-gray-300 px-3 py-2
-               focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2
+               bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+               focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">
+          <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
             תעודות זהות של מרצים (מופרדות בפסיק)
           </label>
           <input
@@ -214,13 +221,14 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
             value={formData.lecturers}
             onChange={handleChange}
             placeholder="10000001, 100000002, ..."
-            className="w-full rounded-md border border-gray-300 px-3 py-2
-               focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2
+               bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+               focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
           />
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm font-medium">חוקים לבחינה</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">חוקים לבחינה</label>
 
           {[
             { key: "calculator", label: "מחשבון" },
@@ -228,7 +236,7 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
             { key: "headphones", label: "אוזניות" },
             { key: "openBook", label: "חומר פתוח" },
           ].map(({ key, label }) => (
-            <label key={key} className="flex items-center gap-2 text-sm">
+            <label key={key} className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
               <input
                 type="checkbox"
                 checked={rules[key as keyof typeof rules]}
@@ -238,6 +246,7 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
                     [key]: e.target.checked,
                   }))
                 }
+                className="text-blue-600 dark:text-blue-400"
               />
               {label}
             </label>
@@ -246,8 +255,8 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded-md
-                     hover:bg-blue-700 transition font-medium"
+          className="w-full bg-blue-600 dark:bg-blue-700 text-white py-2 rounded-md
+                     hover:bg-blue-700 dark:hover:bg-blue-800 transition font-medium"
         >
           הוספת בחינה
         </button>

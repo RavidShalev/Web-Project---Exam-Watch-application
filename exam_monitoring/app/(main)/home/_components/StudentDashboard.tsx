@@ -109,36 +109,36 @@ export default function StudentDashboard() {
     }, 2000); 
   };
 
-  if (loading) return <div className="p-10 text-center bg-gray-50 min-h-screen">טוען...</div>;
+  if (loading) return <div className="p-10 text-center bg-gray-50 dark:bg-gray-900 min-h-screen">טוען...</div>;
 
   // --- VIEW 1: ACTIVE EXAM SCREEN ---
   if (activeExam) {
     return (
-      <div className="flex flex-col items-center p-6 w-full bg-gray-50 min-h-screen" dir="rtl">
+      <div className="flex flex-col items-center p-6 w-full bg-gray-50 dark:bg-gray-900 min-h-screen" dir="rtl">
         
         {/* Header */}
         <div className="w-full max-w-lg text-center mb-8 mt-4">
-            <h1 className="text-3xl font-bold text-gray-900">{activeExam.courseName}</h1>
-            <p className="text-xl text-gray-500 font-mono mt-1">{activeExam.courseCode}</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{activeExam.courseName}</h1>
+            <p className="text-xl text-gray-500 dark:text-gray-400 font-mono mt-1">{activeExam.courseCode}</p>
         </div>
         
         {/* Timer */}
-        <div className="bg-white px-10 py-6 rounded-3xl shadow-sm border border-gray-200 mb-8 text-center">
-            <p className="text-gray-400 text-sm mb-1">זמן שנותר</p>
-            <div className="text-5xl font-mono font-bold text-blue-600 tracking-wider">
+        <div className="bg-white dark:bg-gray-800 px-10 py-6 rounded-3xl shadow-sm border border-gray-200 dark:border-gray-700 mb-8 text-center">
+            <p className="text-gray-400 dark:text-gray-500 text-sm mb-1">זמן שנותר</p>
+            <div className="text-5xl font-mono font-bold text-blue-600 dark:text-blue-400 tracking-wider">
                 02:45:00
             </div>
         </div>
 
         {/* ID Card */}
-        <div className="w-full max-w-lg bg-white p-6 rounded-2xl shadow-sm border-r-4 border-blue-500 mb-8 flex items-center gap-4">
-            <div className="bg-blue-50 p-4 rounded-full">
-                <User size={32} className="text-blue-600" />
+        <div className="w-full max-w-lg bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border-r-4 border-blue-500 mb-8 flex items-center gap-4">
+            <div className="bg-blue-50 dark:bg-blue-900 p-4 rounded-full">
+                <User size={32} className="text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-                <p className="text-gray-500 text-sm">תעודת זהות</p>
-                <h2 className="text-2xl font-bold text-gray-900">{studentId}</h2>
-                <p className="text-gray-600">משתמש פעיל</p>
+                <p className="text-gray-500 dark:text-gray-400 text-sm">תעודת זהות</p>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{studentId}</h2>
+                <p className="text-gray-600 dark:text-gray-400">משתמש פעיל</p>
             </div>
         </div>
 
@@ -150,8 +150,8 @@ export default function StudentDashboard() {
                 onClick={handleRestroomToggle}
                 className={`flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all shadow-sm ${
                     restroomStatus 
-                    ? 'bg-yellow-50 border-yellow-400 text-yellow-800 animate-pulse' 
-                    : 'bg-white border-gray-200 text-gray-700 hover:border-blue-400 hover:shadow-md'
+                    ? 'bg-yellow-50 dark:bg-yellow-900 border-yellow-400 dark:border-yellow-600 text-yellow-800 dark:text-yellow-200 animate-pulse' 
+                    : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-md'
                 }`}
             >
                 <DoorOpen size={48} className="mb-2" />
@@ -166,10 +166,10 @@ export default function StudentDashboard() {
                 disabled={scanStatus === 'verified'} // Disable click if already done
                 className={`flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all shadow-sm ${
                     scanStatus === 'verified'
-                    ? 'bg-green-50 border-green-500 text-green-700 cursor-default' // Style for Done
+                    ? 'bg-green-50 dark:bg-green-900 border-green-500 dark:border-green-600 text-green-700 dark:text-green-300 cursor-default' // Style for Done
                     : scanStatus === 'scanning'
-                        ? 'bg-blue-50 border-blue-400 text-blue-700 animate-pulse' // Style for Scanning
-                        : 'bg-white border-gray-200 text-gray-700 hover:border-blue-400 hover:shadow-md' // Style for Idle
+                        ? 'bg-blue-50 dark:bg-blue-900 border-blue-400 dark:border-blue-600 text-blue-700 dark:text-blue-300 animate-pulse' // Style for Scanning
+                        : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-md' // Style for Idle
                 }`}
             >
                 {/* Change Icon based on status */}
@@ -197,44 +197,44 @@ export default function StudentDashboard() {
   }
 
   return (
-    <div className="flex flex-col gap-6 p-4 w-full bg-gray-50 min-h-screen" dir="rtl">
+    <div className="flex flex-col gap-6 p-4 w-full bg-gray-50 dark:bg-gray-900 min-h-screen" dir="rtl">
       
       {/* Top Bar */}
-      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex justify-between items-center">
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex justify-between items-center">
         <div>
-           <h1 className="text-2xl font-bold mb-1 text-black">שלום, {studentName}</h1>
-           <p className="text-gray-500 text-sm">
+           <h1 className="text-2xl font-bold mb-1 text-black dark:text-white">שלום, {studentName}</h1>
+           <p className="text-gray-500 dark:text-gray-400 text-sm">
              איזור אישי • {upcomingExams.length} מבחנים קרובים
            </p>
         </div>
-        <div className="bg-blue-50 p-3 rounded-full text-blue-600">
+        <div className="bg-blue-50 dark:bg-blue-900 p-3 rounded-full text-blue-600 dark:text-blue-400">
             <BookOpen size={32} />
         </div>
       </div>
 
       {/* Upcoming Exams List */}
       <div>
-        <h3 className="text-lg font-semibold mb-3 text-black flex items-center gap-2">
-            <Calendar className="text-blue-600" size={20} />
+        <h3 className="text-lg font-semibold mb-3 text-black dark:text-white flex items-center gap-2">
+            <Calendar className="text-blue-600 dark:text-blue-400" size={20} />
             מבחנים קרובים
         </h3>
         
         {upcomingExams.length === 0 ? (
-            <div className="bg-white p-8 rounded-2xl border border-dashed border-gray-300 text-center text-gray-400">
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl border border-dashed border-gray-300 dark:border-gray-600 text-center text-gray-400 dark:text-gray-500">
                 <p>אין מבחנים קרובים</p>
             </div>
         ) : (
             <div className="grid gap-4 md:grid-cols-2">
                 {upcomingExams.map((exam) => (
-                    <div key={exam._id} className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                    <div key={exam._id} className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow">
                         <div className="flex justify-between">
-                            <h2 className="text-xl font-bold text-black">{exam.courseName}</h2>
-                            <span className="bg-blue-50 text-blue-600 px-2 py-1 rounded text-xs font-bold h-fit">Future</span>
+                            <h2 className="text-xl font-bold text-black dark:text-white">{exam.courseName}</h2>
+                            <span className="bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-400 px-2 py-1 rounded text-xs font-bold h-fit">Future</span>
                         </div>
-                        <div className="mt-3 space-y-2 text-gray-600">
-                            <div className="flex items-center gap-2"><Calendar size={16}/> {exam.date}</div>
-                            <div className="flex items-center gap-2"><Clock size={16}/> {exam.startTime}</div>
-                            <div className="flex items-center gap-2"><MapPin size={16}/> {exam.location}</div>
+                        <div className="mt-3 space-y-2 text-gray-600 dark:text-gray-400">
+                            <div className="flex items-center gap-2"><Calendar size={16} className="text-gray-500 dark:text-gray-400"/> {exam.date}</div>
+                            <div className="flex items-center gap-2"><Clock size={16} className="text-gray-500 dark:text-gray-400"/> {exam.startTime}</div>
+                            <div className="flex items-center gap-2"><MapPin size={16} className="text-gray-500 dark:text-gray-400"/> {exam.location}</div>
                         </div>
                     </div>
                 ))}
@@ -244,36 +244,36 @@ export default function StudentDashboard() {
 
       {/* History List (Accordion) */}
       {pastExams.length > 0 && (
-          <div className="mt-4 pt-6 border-t border-gray-200">
-            <h3 className="text-lg font-semibold mb-3 text-gray-500 flex items-center gap-2">
-                <CheckCircle size={20} /> היסטוריית מבחנים
+          <div className="mt-4 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <h3 className="text-lg font-semibold mb-3 text-gray-500 dark:text-gray-400 flex items-center gap-2">
+                <CheckCircle size={20} className="text-green-500 dark:text-green-400" /> היסטוריית מבחנים
             </h3>
             <div className="space-y-3">
                 {pastExams.map((exam) => (
-                    <div key={exam._id} className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+                    <div key={exam._id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm">
                         
                         {/* Clickable Header */}
                         <div 
                             onClick={() => toggleExamDetails(exam._id)}
-                            className="p-4 flex justify-between items-center cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors"
+                            className="p-4 flex justify-between items-center cursor-pointer bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
                         >
                             <div>
-                                <p className="font-bold text-gray-800">{exam.courseName}</p>
-                                <p className="text-xs text-gray-500">{exam.date} • {exam.startTime} - {exam.endTime}</p>
+                                <p className="font-bold text-gray-800 dark:text-gray-200">{exam.courseName}</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">{exam.date} • {exam.startTime} - {exam.endTime}</p>
                             </div>
                             <div className="flex items-center gap-3">
-                                <span className="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded">הסתיים</span>
-                                {expandedExamId === exam._id ? <ChevronUp size={20} className="text-gray-400"/> : <ChevronDown size={20} className="text-gray-400"/>}
+                                <span className="text-xs bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-1 rounded">הסתיים</span>
+                                {expandedExamId === exam._id ? <ChevronUp size={20} className="text-gray-400 dark:text-gray-500"/> : <ChevronDown size={20} className="text-gray-400 dark:text-gray-500"/>}
                             </div>
                         </div>
 
                         {/* Expanded Details */}
                         {expandedExamId === exam._id && (
-                            <div className="p-4 bg-white border-t border-gray-100 text-sm">
+                            <div className="p-4 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 text-sm">
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <p className="font-bold text-gray-700 mb-2">פרטים:</p>
-                                        <ul className="space-y-1 text-gray-600">
+                                        <p className="font-bold text-gray-700 dark:text-gray-300 mb-2">פרטים:</p>
+                                        <ul className="space-y-1 text-gray-600 dark:text-gray-400">
                                             <li>מיקום: {exam.location}</li>
                                             <li>קוד קורס: {exam.courseCode}</li>
                                         </ul>
@@ -281,16 +281,16 @@ export default function StudentDashboard() {
                                     
                                     {exam.rules && exam.rules.length > 0 && (
                                         <div>
-                                            <p className="font-bold text-gray-700 mb-2">ציוד למבחן:</p>
+                                            <p className="font-bold text-gray-700 dark:text-gray-300 mb-2">ציוד למבחן:</p>
                                             <div className="flex flex-wrap gap-2">
                                                 {exam.rules.filter(r => r.allowed).map((rule) => (
-                                                    <span key={rule.id} className="flex items-center gap-1 bg-green-50 text-green-700 px-2 py-1 rounded text-xs border border-green-100">
+                                                    <span key={rule.id} className="flex items-center gap-1 bg-green-50 dark:bg-green-900 text-green-700 dark:text-green-300 px-2 py-1 rounded text-xs border border-green-100 dark:border-green-700">
                                                         {getRuleIcon(rule.icon)} {rule.label}
                                                     </span>
                                                 ))}
                                                 {exam.rules.filter(r => !r.allowed).map((rule) => (
-                                                    <span key={rule.id} className="flex items-center gap-1 bg-red-50 text-red-700 px-2 py-1 rounded text-xs border border-red-100 opacity-70">
-                                                        <AlertCircle size={12}/> לא {rule.label}
+                                                    <span key={rule.id} className="flex items-center gap-1 bg-red-50 dark:bg-red-900 text-red-700 dark:text-red-300 px-2 py-1 rounded text-xs border border-red-100 dark:border-red-700 opacity-70">
+                                                        <AlertCircle size={12} className="text-red-500 dark:text-red-400"/> לא {rule.label}
                                                     </span>
                                                 ))}
                                             </div>

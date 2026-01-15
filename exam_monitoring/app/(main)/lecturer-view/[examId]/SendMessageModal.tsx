@@ -50,13 +50,13 @@ export default function SendMessageModal({ examId, supervisors, onClose }: Messa
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" dir="rtl">
-      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+      <div className="w-full max-w-md rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-xl">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-gray-900">שליחת הודעה למשגיח</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">שליחת הודעה למשגיח</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-gray-400 hover:text-gray-600 dark:text-gray-300 dark:hover:text-white transition-colors"
           >
             <X size={24} />
           </button>
@@ -66,13 +66,13 @@ export default function SendMessageModal({ examId, supervisors, onClose }: Messa
         <div className="space-y-4">
           {/* Supervisor Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               בחר משגיח
             </label>
             <select
               value={selectedSupervisor}
               onChange={(e) => setSelectedSupervisor(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-3 text-gray-900 dark:text-white bg-white dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="all">כל המשגיחים</option>
               {supervisors.map((sup) => (
@@ -85,7 +85,7 @@ export default function SendMessageModal({ examId, supervisors, onClose }: Messa
 
           {/* Message Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               הודעה
             </label>
             <textarea
@@ -94,9 +94,9 @@ export default function SendMessageModal({ examId, supervisors, onClose }: Messa
               placeholder="כתוב את ההודעה כאן..."
               rows={5}
               maxLength={500}
-              className="w-full border border-gray-300 rounded-lg p-3 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-3 text-gray-900 dark:text-white bg-white dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               {message.length} / 500 תווים
             </p>
           </div>
@@ -107,14 +107,14 @@ export default function SendMessageModal({ examId, supervisors, onClose }: Messa
           <button
             onClick={onClose}
             disabled={sending}
-            className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
+            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 dark:hover:bg-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
           >
             ביטול
           </button>
           <button
             onClick={handleSend}
             disabled={sending || !message.trim()}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+            className="px-4 py-2 bg-blue-600 dark:bg-blue-700 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-800 transition-colors disabled:opacity-50 flex items-center gap-2"
           >
             {sending ? (
               <>

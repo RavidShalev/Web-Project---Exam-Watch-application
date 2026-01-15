@@ -74,27 +74,27 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     switch (type) {
       case "alert":
         return {
-          bg: "bg-red-500",
+          bg: "bg-red-500 dark:bg-red-900",
           icon: <AlertTriangle className="w-5 h-5" />,
-          border: "border-red-600",
+          border: "border-red-600 dark:border-red-700",
         };
       case "warning":
         return {
-          bg: "bg-amber-500",
+          bg: "bg-amber-500 dark:bg-amber-900",
           icon: <Bell className="w-5 h-5" />,
-          border: "border-amber-600",
+          border: "border-amber-600 dark:border-amber-700",
         };
       case "success":
         return {
-          bg: "bg-green-500",
+          bg: "bg-green-500 dark:bg-green-900",
           icon: <CheckCircle className="w-5 h-5" />,
-          border: "border-green-600",
+          border: "border-green-600 dark:border-green-700",
         };
       default:
         return {
-          bg: "bg-blue-500",
+          bg: "bg-blue-500 dark:bg-blue-900",
           icon: <Info className="w-5 h-5" />,
-          border: "border-blue-600",
+          border: "border-blue-600 dark:border-blue-700",
         };
     }
   };

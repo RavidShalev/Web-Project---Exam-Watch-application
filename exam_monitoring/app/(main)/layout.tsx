@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="he" dir="rtl">
       <body
-        className={heebo.className} >
+        className={`${heebo.className} bg-gray-50 dark:bg-gray-900 transition-colors duration-300`} >
         <Navbar />
         {children}
       </body>

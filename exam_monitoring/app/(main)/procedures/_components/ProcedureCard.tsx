@@ -39,25 +39,25 @@ export default function ProcedureCard({
   const IconComponent = iconMap[icon] || iconMap["default"];
 
   return (
-    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-3 transition-all hover:shadow-md h-full">
+    <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col gap-3 transition-all hover:shadow-md h-full">
       
       {/* Top part: Icon and Section ID */}
       <div className="flex justify-between items-start">
-        <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
+        <div className="p-3 bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-400 rounded-xl">
           <IconComponent size={24} />
         </div>
-        <span className="text-xs font-mono text-gray-400 bg-gray-100 px-2 py-1 rounded-md">
+        <span className="text-xs font-mono text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-md">
           § {sectionId}
         </span>
       </div>
 
       {/* Middle part: Title */}
-      <h3 className="text-xl font-bold text-gray-900 mt-2">
+      <h3 className="text-xl font-bold text-gray-900 dark:text-white mt-2">
         {title}
       </h3>
 
       {/* Bottom part: The content text */}
-      <p className="text-gray-600 text-sm leading-relaxed">
+      <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
         {content}
       </p>
     </div>

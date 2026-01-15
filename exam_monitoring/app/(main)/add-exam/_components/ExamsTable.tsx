@@ -102,36 +102,36 @@ export default function ExamsTable({ refreshKey }: ExamsTableProps) {
   }, [refreshKey]);
 
   if (loading) {
-    return <p className="mt-10 text-center">טוען מבחנים…</p>;
+    return <p className="mt-10 text-center text-gray-900 dark:text-gray-100">טוען מבחנים…</p>;
   }
 
   return (
     <div dir="rtl" className="mt-10">
-      <h3 className="text-lg font-semibold mb-4 text-right">
+      <h3 className="text-lg font-semibold mb-4 text-right text-gray-900 dark:text-gray-100">
         רשימת מבחנים קיימים
       </h3>
 
-      <div className="overflow-x-auto border rounded-lg">
-        <table className="w-full text-sm text-right border-collapse">
-          <thead className="bg-gray-100">
+      <div className="overflow-x-auto border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800">
+        <table className="w-full text-sm text-right border-collapse text-gray-900 dark:text-gray-100">
+          <thead className="bg-gray-100 dark:bg-gray-700">
             <tr>
-              <th className="p-2 border">שם הקורס</th>
-              <th className="p-2 border">קוד</th>
-              <th className="p-2 border">תאריך</th>
-              <th className="p-2 border">שעה</th>
-              <th className="p-2 border">מרצים</th>
-              <th className="p-2 border">משגיחים</th>
-              <th className="p-2 border">כיתה</th>
-              <th className="p-2 border">סטטוס</th>
+              <th className="p-2 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100">שם הקורס</th>
+              <th className="p-2 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100">קוד</th>
+              <th className="p-2 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100">תאריך</th>
+              <th className="p-2 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100">שעה</th>
+              <th className="p-2 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100">מרצים</th>
+              <th className="p-2 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100">משגיחים</th>
+              <th className="p-2 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100">כיתה</th>
+              <th className="p-2 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100">סטטוס</th>
             </tr>
           </thead>
 
           <tbody>
             {exams.map((exam) => (
-              <tr key={exam._id} className="hover:bg-gray-50">
-                <td className="p-2 border">
+              <tr key={exam._id} className="hover:bg-gray-50 dark:hover:bg-gray-600 border-gray-300 dark:border-gray-600">
+                <td className="p-2 border border-gray-300 dark:border-gray-600">
                   <div className="flex items-center justify-between">
-                    <span>{showOrDash(exam.courseName)}</span>
+                    <span className="text-gray-900 dark:text-gray-100">{showOrDash(exam.courseName)}</span>
 
                     <div className="flex flex-col gap-1 ml-6">
                       <button
@@ -139,7 +139,7 @@ export default function ExamsTable({ refreshKey }: ExamsTableProps) {
                         onClick={() => {
                           window.location.href = `/edit-exam/${exam._id}`;
                         }}
-                        className="bg-blue-600 text-white px-2 py-1 rounded text-xs hover:bg-blue-700"
+                        className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white px-2 py-1 rounded text-xs"
                       >
                         ערוך
                       </button>
@@ -147,27 +147,27 @@ export default function ExamsTable({ refreshKey }: ExamsTableProps) {
                       <button
                         type="button"
                         onClick={() => handleDelete(exam._id)}
-                        className="bg-red-600 text-white px-2 py-1 rounded text-xs hover:bg-red-700"
+                        className="bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 text-white px-2 py-1 rounded text-xs"
                       >
                         מחק
                       </button>
                     </div>
                   </div>
                 </td>
-                <td className="p-2 border">{showOrDash(exam.courseCode)}</td>
-                <td className="p-2 border">{showOrDash(exam.date)}</td>
+                <td className="p-2 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100">{showOrDash(exam.courseCode)}</td>
+                <td className="p-2 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100">{showOrDash(exam.date)}</td>
 
-                <td className="p-2 border">
+                <td className="p-2 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100">
                   {exam.startTime && exam.endTime
                     ? `${exam.startTime} - ${exam.endTime}`
                     : "—"}
                 </td>
 
-                <td className="p-2 border">{showOrDash(exam.lecturers)}</td>
-                <td className="p-2 border">{showOrDash(exam.supervisors)}</td>
+                <td className="p-2 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100">{showOrDash(exam.lecturers)}</td>
+                <td className="p-2 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100">{showOrDash(exam.supervisors)}</td>
 
-                <td className="p-2 border">{showOrDash(exam.location)}</td>
-                <td className="p-2 border">{showOrDash(exam.status)}</td>
+                <td className="p-2 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100">{showOrDash(exam.location)}</td>
+                <td className="p-2 border border-gray-300 dark:border-600 text-gray-900 dark:text-gray-100">{showOrDash(exam.status)}</td>
               </tr>
             ))}
           </tbody>
