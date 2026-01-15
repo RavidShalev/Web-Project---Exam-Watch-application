@@ -9,7 +9,7 @@ const ClassCard = ({ classroom }: Props) => {
 
   return (
     <div
-      className={`border rounded-lg p-5 bg-white transition-all
+      className={`border rounded-lg p-5 transition-all
         hover:shadow-md hover:-translate-y-1
         ${
           hasSupervisors

@@ -11,7 +11,7 @@ type props={
 export default function AddTimeModal({attendanceRecord, onClose, onSave}: props) {
   const [minuteToAdd, setMinuteToAdd] = useState("");
     return(
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 text-black dark:bg-gray-900">
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 text-black">
       <div className="bg-white rounded-lg p-6 w-[400px] space-y-4">
 
         <h2 className="text-lg font-semibold">הוספת זמן לסטודנט</h2>

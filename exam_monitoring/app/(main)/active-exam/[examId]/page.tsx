@@ -241,20 +241,20 @@ export default function ActiveExamPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 px-3 sm:px-6 py-6">
+    <div className="min-h-screen px-3 sm:px-6 py-6">
 
       {/* Exam timer section */}
       {exam.actualStartTime && (
-        <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-xl py-6 sm:py-10 px-4 text-center mb-6">
+        <div className="max-w-4xl mx-auto bg-white rounded-xl py-6 sm:py-10 px-4 text-center mb-6">
           <ExamTimer
             startTime={exam.actualStartTime}
             duration={exam.durationMinutes}
           />
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+          <p className="text-sm text-gray-500 mt-2">
             זמן שנשאר במבחן
           </p>
-           <button onClick={() => setShowAddTimeModal(true)} className="bg-blue-600 dark:bg-blue-700 text-white px-4 py-2 my-5 rounded w-full sm:w-auto">הוספת זמן לבחינה</button>
-          <button onClick={finishExam} className="bg-red-600 dark:bg-red-700 text-white px-4 py-2 my-5 rounded w-full sm:w-auto">סיים מבחן</button>
+           <button onClick={() => setShowAddTimeModal(true)} className="bg-blue-600 text-white px-4 py-2 my-5 rounded w-full sm:w-auto">הוספת זמן לבחינה</button>
+          <button onClick={finishExam} className="bg-red-600 text-white px-4 py-2 my-5 rounded w-full sm:w-auto">סיים מבחן</button>
         </div>
       )}
 
@@ -263,19 +263,19 @@ export default function ActiveExamPage() {
         {/* General actions (responsive layout) */}
         <div className="flex flex-col gap-3 sm:flex-row sm:gap-5 mb-4">
           <button
-            className="bg-blue-600 dark:bg-blue-700 text-white px-4 py-2 rounded w-full sm:w-auto"
+            className="bg-blue-600 text-white px-4 py-2 rounded w-full sm:w-auto"
             onClick={() => setShowReportModal(true)}
           >
             + דיווח אירוע כללי
           </button>
 
-          <button className="bg-blue-600 dark:bg-blue-700 text-white px-4 py-2 rounded w-full sm:w-auto">
+          <button className="bg-blue-600 text-white px-4 py-2 rounded w-full sm:w-auto">
             קרא למרצה
           </button>
         </div>
 
         {/* Attendance list title */}
-        <h2 className="text-xl sm:text-2xl my-2 font-semibold mb-4 text-black dark:text-white">
+        <h2 className="text-xl sm:text-2xl my-2 font-semibold mb-4 text-black ">
           רשימת נוכחות
         </h2>
 
@@ -317,22 +317,22 @@ export default function ActiveExamPage() {
       {/* Add time modal */}
         {showAddTimeModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded shadow-lg w-80 text-black dark:text-white">
+          <div className="bg-white p-6 rounded shadow-lg w-80 text-black">
             <h2 className="text-lg font-semibold mb-4">הוסף זמן למבחן</h2>
             <input type="number" min={1} value={minutes}
               onChange={(e) => setMinutes(e.target.value)}
               placeholder="כמה דקות להוסיף?"
-              className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="w-full border border-gray-300 rounded px-3 py-2 bg-white text-gray-900 "
             />
             <button
-              className="border px-4 py-2 rounded text-gray-700 dark:text-gray-300"
+              className="border px-4 py-2 rounded text-gray-700 "
               onClick={() => setShowAddTimeModal(false)}
             >
               ביטול
             </button>
             <button
                 onClick={handleAddTime}
-                className="bg-blue-600 dark:bg-blue-700 text-white px-4 py-2 rounded"
+                className="bg-blue-600 text-white px-4 py-2 rounded"
               >
                 אישור
               </button>

@@ -116,9 +116,9 @@ export default function LecturerViewExam() {
 
   return (
     <ToastProvider>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-6" dir="rtl">
+      <div className="min-h-screen bg-gray-50 p-4 md:p-6" dir="rtl">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-6 mb-6">
+      <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">{exam.courseName}</h1>
@@ -149,7 +149,7 @@ export default function LecturerViewExam() {
         <div className="mt-4 pt-4 border-t border-gray-200">
           <button
             onClick={() => setShowMessageModal(true)}
-            className="w-full md:w-auto flex items-center justify-center gap-2 bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-800 text-white px-6 py-3 rounded-xl font-semibold transition-colors"
+            className="w-full md:w-auto flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold transition-colors"
           >
             <Send size={20} />
             שלח הודעה למשגיחים
@@ -159,7 +159,7 @@ export default function LecturerViewExam() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-      <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border-r-4 border-blue-500">
+      <div className="bg-white p-4 rounded-xl shadow-sm border-r-4 border-blue-500">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs text-gray-500 mb-1">סה"כ סטודנטים</p>
@@ -169,7 +169,7 @@ export default function LecturerViewExam() {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border-r-4 border-green-500">
+        <div className="bg-white p-4 rounded-xl shadow-sm border-r-4 border-green-500">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs text-gray-500 mb-1">נוכחים</p>
@@ -179,7 +179,7 @@ export default function LecturerViewExam() {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border-r-4 border-red-500">
+        <div className="bg-white p-4 rounded-xl shadow-sm border-r-4 border-red-500">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs text-gray-500 mb-1">נעדרים</p>
@@ -189,7 +189,7 @@ export default function LecturerViewExam() {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border-r-4 border-purple-500">
+        <div className="bg-white p-4 rounded-xl shadow-sm border-r-4 border-purple-500">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs text-gray-500 mb-1">סיימו</p>
@@ -199,7 +199,7 @@ export default function LecturerViewExam() {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border-r-4 border-yellow-500">
+        <div className="bg-white p-4 rounded-xl shadow-sm border-r-4 border-yellow-500">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs text-gray-500 mb-1">בשירותים</p>

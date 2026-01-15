@@ -35,19 +35,19 @@ export default function ReadyForExams({ exam, onStartExam }: ReadyForExamsProps)
 
     return (
         // detailed card with exam info
-        <div className="flex flex-col gap-6 p-4 w-full bg-gray-50 dark:bg-gray-900 min-h-screen">
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
-                <h1 className="text-2xl font-bold mb-4 text-center text-black dark:text-white">איזור מוכנות לקראת המבחן הקרב</h1>
-                <span className="flex justify-center items-center gap-2 mb-6 text-gray-700 dark:text-gray-300"> ({exam.courseCode}) {exam.courseName}</span>
+        <div className="flex flex-col gap-6 p-4 w-full bg-gray-50  min-h-screen">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 ">
+                <h1 className="text-2xl font-bold mb-4 text-center text-black ">איזור מוכנות לקראת המבחן הקרב</h1>
+                <span className="flex justify-center items-center gap-2 mb-6 text-gray-700 "> ({exam.courseCode}) {exam.courseName}</span>
             </div>
-            <div className="flex bg-blue-50 dark:bg-blue-900 p-3 rounded-full text-blue-600 dark:text-blue-400">
+            <div className="flex bg-blue-50 p-3 rounded-full text-blue-600 ">
                 {/* sign of location */}
                 <MapPin size={32}></MapPin>
                 <span className="mr-2">{exam.location}</span>
             </div> 
             {/* rules of the exam */}
             <div>
-                <h3 className="text-lg font-semibold mb-2 text-black dark:text-white">כללי המבחן:</h3>
+                <h3 className="text-lg font-semibold mb-2 text-black">כללי המבחן:</h3>
                 <div className="flex gap-4 overflow-x-auto pb-2 justify-center">
                     {/* for each rule checks if allowed and color it in green, if not allowed in red */}
                     {exam.rules.map((rule) => {
@@ -56,7 +56,7 @@ export default function ReadyForExams({ exam, onStartExam }: ReadyForExamsProps)
                             <div
                             key={rule.id}
                             className={`flex flex-col items-center justify-center min-w-[80px] h-20 rounded-xl border-2 ${
-                            rule.allowed ? 'bg-green-50 dark:bg-green-900 border-green-200 dark:border-green-700 text-green-700 dark:text-green-300' : 'bg-red-50 dark:bg-red-900 border-red-200 dark:border-red-700 text-red-700 dark:text-red-300'
+                            rule.allowed ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200  text-red-700'
                             }`}
                         >
                             <IconComponent size={24} />
@@ -68,7 +68,7 @@ export default function ReadyForExams({ exam, onStartExam }: ReadyForExamsProps)
             </div>
             {/* checklist for the exam */}
             <div>
-                <h3 className="text-lg font-semibold mb-2 text-black dark:text-white">צ'ק ליסט:</h3>
+                <h3 className="text-lg font-semibold mb-2 text-black">צ'ק ליסט:</h3>
                 <div className="flex flex-col gap-3 ">
                     {checklist.map((item) => (
                         <button
@@ -76,8 +76,8 @@ export default function ReadyForExams({ exam, onStartExam }: ReadyForExamsProps)
                         onClick={() => toggleItem(item.id)}
                         className={`flex items-center justify-center p-3 rounded-xl border-2 ${
                             item.isDone
-                                ? 'bg-green-50 dark:bg-green-900 border-green-200 dark:border-green-700 text-green-700 dark:text-green-300'
-                                : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300'
+                                ? 'bg-green-50 border-green-200  text-green-700 '
+                                : 'bg-white border-gray-200 text-gray-700'
                         }`}
                     >
                         {item.isDone ? (
@@ -91,7 +91,7 @@ export default function ReadyForExams({ exam, onStartExam }: ReadyForExamsProps)
                 </div>
             </div>
             {/* button to start the exam */}
-            <button disabled={!allDone} onClick={onStartExam} className={`mt-6 w-full py-3 rounded-xl text-white font-semibold ${allDone ? 'bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800' : 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed'}`}>
+            <button disabled={!allDone} onClick={onStartExam} className={`mt-6 w-full py-3 rounded-xl text-white font-semibold ${allDone ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'}`}>
                 התחל מבחן
             </button>
         </div>

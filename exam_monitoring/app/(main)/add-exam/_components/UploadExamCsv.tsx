@@ -61,8 +61,8 @@ export default function UploadExamCsv({ onSuccess }: UploadExamCsvProps) {
 
   return (
     <div dir="rtl" className="mt-10 flex justify-center">
-      <div className="w-full max-w-md bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl shadow-md p-6">
-        <h3 className="text-lg font-semibold mb-4 text-right text-gray-900 dark:text-gray-100">
+      <div className="w-full max-w-md bg-white border border-gray-200 rounded-xl shadow-md p-6">
+        <h3 className="text-lg font-semibold mb-4 text-right text-gray-900">
           העלאת מבחנים מקובץ CSV
         </h3>
 
@@ -78,20 +78,20 @@ export default function UploadExamCsv({ onSuccess }: UploadExamCsvProps) {
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="border border-gray-300 dark:border-gray-600 rounded-md py-2 hover:bg-gray-50 dark:hover:bg-gray-600 transition text-sm text-gray-900 dark:text-gray-100"
+            className="border border-gray-300 rounded-md py-2 hover:bg-gray-50 transition text-sm text-gray-900"
           >
             בחירת קובץ CSV
           </button>
 
-          <div className="text-sm text-gray-600 dark:text-gray-400 text-center">
+          <div className="text-sm text-gray-600 text-center">
             {file ? `נבחר קובץ: ${file.name}` : "לא נבחר קובץ"}
           </div>
 
           <button
             onClick={handleUpload}
             disabled={loading}
-            className="bg-green-600 dark:bg-green-700 text-white py-2 rounded-md
-                       hover:bg-green-700 dark:hover:bg-green-800 transition font-medium disabled:opacity-50"
+            className="bg-green-600 text-white py-2 rounded-md
+                       hover:bg-green-700 transition font-medium disabled:opacity-50"
           >
             {loading ? "מעלה קובץ..." : "העלאה"}
           </button>

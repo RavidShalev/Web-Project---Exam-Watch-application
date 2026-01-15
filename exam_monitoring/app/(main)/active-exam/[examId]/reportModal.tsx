@@ -12,17 +12,17 @@ export default function ReportModal({attendanceRecord, onClose, onSave}: props) 
   const [eventType, setEventType] = useState("");
   const [description, setDescription] = useState("");
     return(
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 dark:bg-black/60">
-      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-[400px] space-y-4 text-black dark:text-white">
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 w-[400px] space-y-4 text-black ">
 
         <h2 className="text-lg font-semibold">דיווח על סטודנט</h2>
 
-        <div className="text-sm text-gray-600 dark:text-gray-300">
+        <div className="text-sm text-gray-600">
           {attendanceRecord.studentId.name} – {attendanceRecord.studentId.idNumber}
         </div>
 
         {/* Event Type Selection */}
-        <select className="w-full border rounded p-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600" value={eventType} onChange={(e) => setEventType(e.target.value)}>
+        <select className="w-full border rounded p-2 bg-white text-gray-900 border-gray-300" value={eventType} onChange={(e) => setEventType(e.target.value)}>
           <option>בחר סוג אירוע חריג</option>
           <option>איחור</option>
           <option>עזיבה מוקדמת</option>
@@ -32,7 +32,7 @@ export default function ReportModal({attendanceRecord, onClose, onSave}: props) 
         </select>
 
         <textarea
-          className="w-full border rounded p-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
+          className="w-full border rounded p-2 bg-white text-gray-900 border-gray-300 "
           placeholder="מלא תיאור על האירוע אם יש צורך"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -40,12 +40,12 @@ export default function ReportModal({attendanceRecord, onClose, onSave}: props) 
 
         <div className="flex justify-end gap-2">
           <button
-            className="border px-4 py-2 rounded text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600"
+            className="border px-4 py-2 rounded text-gray-700 border-gray-300"
             onClick={onClose}
           >
             ביטול
           </button>
-          <button className="bg-blue-600 dark:bg-blue-700 text-white px-4 py-2 rounded" onClick={async () => {
+          <button className="bg-blue-600 text-white px-4 py-2 rounded" onClick={async () => {
             // Call onSave with the report data, wait until it's done
             await onSave({
               examId: attendanceRecord.examId,

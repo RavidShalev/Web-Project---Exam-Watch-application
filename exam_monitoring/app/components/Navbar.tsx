@@ -38,14 +38,14 @@ const Navbar = () => {
   // give the style for a button (link) in the navbar
   const getLinkClass = (path: string) => {
     const baseClass =
-      "text-[1.3rem] font-semibold text-white dark:text-white transition duration-300 ease-in-out hover:text-[#17cf97] relative";
+      "text-[1.3rem] font-semibold text-white transition duration-300 ease-in-out hover:text-[#17cf97] relative";
     const hoverClass =
       "after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-[#17cf97] after:bottom-[-4px] after:left-0 hover:after:w-full";
     return `${baseClass} ${hoverClass}`;
   };
 
   return (
-    <nav className="flex items-center justify-between bg-[#1b2430] dark:bg-[#0b1220] py-5 px-5 md:px-20 relative z-50">
+    <nav className="flex items-center justify-between bg-[#1b2430] py-5 px-5 md:px-20 relative z-50">
       <Link href="/">
         <svg
           id="logo-15"
@@ -109,19 +109,19 @@ const Navbar = () => {
             </li>
           )}
 
-            <li className="mr-4 border-r border-gray-600 dark:border-gray-500 pr-4">
+            <li className="mr-4 border-r border-gray-600 pr-4">
               <ThemeToggle />
             </li>
         </ul>
       </div>
 
-      <div className="md:hidden text-white dark:text-white text-2xl cursor-pointer" onClick={handleClick}>
+      <div className="md:hidden text-white text-2xl cursor-pointer" onClick={handleClick}>
         {clicked ? '✕' : '☰'}
       </div>
 
       {/* for small screens (such as mobile) */}
       <div
-        className={`${clicked ? "flex" : "hidden"} md:hidden flex-col absolute top-full right-0 w-full bg-[#1b2430] dark:bg-[#0b1220] p-6 shadow-lg border-t border-gray-700 dark:border-gray-600`}
+        className={`${clicked ? "flex" : "hidden"} md:hidden flex-col absolute top-full right-0 w-full bg-[#1b2430] p-6 shadow-lg border-t border-gray-700`}
       >
         <Link href="/home" className={`${getLinkClass('/home')} py-2 block`} onClick={() => setClicked(false)}>בית</Link>
         
@@ -160,8 +160,8 @@ const Navbar = () => {
           </Link>
         )}
 
-        <div className="mt-4 pt-4 border-t border-gray-600 dark:border-gray-500 flex items-center gap-3">
-          <span className="text-white dark:text-white">מצב תצוגה:</span>
+        <div className="mt-4 pt-4 border-t border-gray-600 flex items-center gap-3">
+          <span className="text-white">מצב תצוגה:</span>
           <ThemeToggle />
       </div>
       </div>
