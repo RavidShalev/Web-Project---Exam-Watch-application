@@ -66,6 +66,12 @@ export default function ActiveExamPage() {
 
   // Finish exam for specific student
   async function finishExamForStudent(attendanceId: string) {
+    // check if the student is on toilet, if he on toilet- can't finish his exam
+    const currentRecord = attendance.find(record => record._id === attendanceId);
+    if (currentRecord?.isOnToilet) {
+      alert("לא ניתן לסמן סיום מבחן לסטודנט שנמצא כרגע בשירותים.");
+      return; 
+    }
     const res = await fetch(`/api/exams/attendance/updateRecord/${attendanceId}`, {
       method: "PATCH",
       headers: {
@@ -183,6 +189,12 @@ export default function ActiveExamPage() {
 
   // Finish exam function
   async function finishExam() {
+    // if there are at least 1 student that present
+    const activeStudents = attendance.filter(student => student.attendanceStatus === "present");
+    if (activeStudents.length > 0) {
+        alert(`לא ניתן לסיים את המבחן. ישנם ${activeStudents.length} סטודנטים שעדיין בסטטוס 'נוכח' ולא סיימו.`);
+        return;
+    }
     const confirmed = window.confirm("האם את/ה בטוח/ה שברצונך לסיים את המבחן?");
     if (!confirmed) return;
     const res = await fetch(`/api/exams/${examId}`, {
