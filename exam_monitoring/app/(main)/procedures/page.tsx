@@ -61,24 +61,27 @@ export default function ProceduresPage() {
   const getTabClass = (phaseName: string) => {
     const base = "px-6 py-2 rounded-full text-sm font-medium transition-all duration-200";
     if (activePhase === phaseName) {
-      return `${base} bg-blue-600 `; // Active style
+      return `${base} bg-blue-600 text-white dark:bg-blue-500`;
     }
-    return `${base} bg-white text-gray-60`; // Inactive style
+    return `${base} bg-white text-gray-600 dark:bg-gray-800 dark:text-gray-300 border border-gray-200 dark:border-gray-700`;
   };
 
-  if (loading) return <div className="p-10 text-center text-gray-500 ">טוען נהלים...</div>;
+  if (loading) return <div className="p-10 text-center text-gray-500 dark:text-gray-400">טוען נהלים...</div>;
 
   return (
-    <div className="min-h-screen p-4 md:p-8" dir="rtl">
+    <div className="min-h-screen p-4 md:p-8 text-gray-900 dark:text-gray-100" dir="rtl">
       
       {/* Header Section */}
-      <div className="max-w-6xl mx-auto mb-8 ">
+      <div className="max-w-6xl mx-auto mb-8">
         <div className="flex items-center gap-3 mb-2">
-          <BookOpen className="text-blue-600 " size={32} />
-          <h1 className="text-3xl font-bold text-gray-900">נהלי בחינות</h1>
+          <BookOpen className="text-blue-600 dark:text-blue-400" size={32} />
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+            נהלי בחינות
+          </h1>
         </div>
-        <p className="text-gray-500  pr-11">
-          הנחיות מותאמות לתפקיד: <span className="font-semibold text-blue-600">
+        <p className="text-gray-600 dark:text-gray-400 pr-11">
+          הנחיות מותאמות לתפקיד:{' '}
+          <span className="font-semibold text-blue-600 dark:text-blue-400">
             {userRole === 'student' ? 'סטודנט' : 
              userRole === 'supervisor' ? 'משגיח' : 
              userRole === 'lecturer' ? 'מרצה' : userRole}
@@ -126,8 +129,8 @@ export default function ProceduresPage() {
           ))
         ) : (
           // Empty State
-          <div className="col-span-full flex flex-col items-center justify-center p-10 bg-white">
-            <Info size={40} className="mb-2 opacity-50" />
+          <div className="col-span-full flex flex-col items-center justify-center p-10 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-lg">
+            <Info size={40} className="mb-2 opacity-50 dark:text-gray-400" />
             <p>אין נהלים להצגה בשלב זה</p>
           </div>
         )}
