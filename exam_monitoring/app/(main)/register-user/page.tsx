@@ -66,29 +66,29 @@ export default function RegisterUserPage() {
   };
 
   return (
-    <div className="flex justify-center mt-10 px-4 min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="flex justify-center mt-10 px-4 min-h-screen bg-gray-50">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-md p-8 space-y-5"
+        className="w-full max-w-lg bg-white  border border-gray-200  rounded-xl shadow-md p-8 space-y-5"
       >
-        <h2 className="text-2xl font-semibold text-center mb-4 text-gray-800 dark:text-white">
+        <h2 className="text-2xl font-semibold text-center mb-4 text-gray-800 ">
           רישום משתמש חדש
         </h2>
 
         {error && (
-          <div className="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-300 px-4 py-3 rounded">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
             {error}
           </div>
         )}
 
         {success && (
-          <div className="bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-700 text-green-700 dark:text-green-300 px-4 py-3 rounded">
+          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
             {success}
           </div>
         )}
 
         <div>
-          <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+          <label className="block text-sm font-medium mb-1 text-gray-700">
             תעודת זהות *
           </label>
           <input
@@ -97,12 +97,12 @@ export default function RegisterUserPage() {
             value={formData.idNumber}
             onChange={handleChange}
             placeholder="הכנס תעודת זהות"
-            className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+          <label className="block text-sm font-medium mb-1 text-gray-700">
             שם מלא *
           </label>
           <input
@@ -111,12 +111,12 @@ export default function RegisterUserPage() {
             value={formData.name}
             onChange={handleChange}
             placeholder="הכנס שם מלא"
-            className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+          <label className="block text-sm font-medium mb-1 text-gray-700">
             אימייל *
           </label>
           <input
@@ -125,12 +125,12 @@ export default function RegisterUserPage() {
             value={formData.email}
             onChange={handleChange}
             placeholder="example@email.com"
-            className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+          <label className="block text-sm font-medium mb-1 text-gray-700">
             טלפון
           </label>
           <input
@@ -139,12 +139,12 @@ export default function RegisterUserPage() {
             value={formData.phone}
             onChange={handleChange}
             placeholder="050-0000000"
-            className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+          <label className="block text-sm font-medium mb-1 text-gray-700">
             סיסמה *
           </label>
           <input
@@ -153,19 +153,19 @@ export default function RegisterUserPage() {
             value={formData.password}
             onChange={handleChange}
             placeholder="הכנס סיסמה"
-            className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+          <label className="block text-sm font-medium mb-1 text-gray-700">
             תפקיד *
           </label>
           <select
             name="role"
             value={formData.role}
             onChange={handleChange}
-            className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="student">סטודנט</option>
             <option value="supervisor">משגיח</option>
@@ -179,8 +179,8 @@ export default function RegisterUserPage() {
           disabled={loading}
           className={`w-full py-2 rounded-md text-white font-medium transition ${
             loading
-              ? "bg-gray-400 dark:bg-gray-600 cursor-not-allowed"
-              : "bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800"
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700  "
           }`}
         >
           {loading ? "יוצר משתמש..." : "צור משתמש"}
