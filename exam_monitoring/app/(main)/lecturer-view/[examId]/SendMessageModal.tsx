@@ -3,60 +3,61 @@
 import { useState } from "react";
 import { Send, X } from "lucide-react";
 
-// Props passed to this modal component
 interface MessageModalProps {
-  examId: string;                                        // ID of current exam
-  supervisors: Array<{ _id: string; name: string }>;    // List of supervisors to send to
-  onClose: () => void;                                   // Function to close modal
+  examId: string;
+  supervisors: Array<{ _id: string; name: string }>;
+  onClose: () => void;
 }
 
-/**
- * SendMessageModal Component
- * Modal popup that allows lecturer to send message to supervisors during exam
- */
-export default function SendMessageModal({ examId, supervisors, onClose }: MessageModalProps) {
-  const [selectedSupervisor, setSelectedSupervisor] = useState("all");  // Which supervisor to send to
-  const [message, setMessage] = useState("");                            // Message text
-  const [sending, setSending] = useState(false);                         // Is currently sending?
+export default function SendMessageModal({
+  examId,
+  supervisors,
+  onClose,
+}: MessageModalProps) {
+  const [selectedSupervisor, setSelectedSupervisor] = useState("all");
+  const [message, setMessage] = useState("");
+  const [sending, setSending] = useState(false);
 
-  // Handle send button click
   const handleSend = async () => {
-    // Validate: message must not be empty
     if (!message.trim()) {
       alert("נא להזין הודעה");
       return;
     }
 
-    setSending(true); // Show loading state
-    
+    setSending(true);
+
     try {
-      // Simulate API call (replace with real API later)
-      // TODO: Create API endpoint at /api/exams/${examId}/messages
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // In real implementation, call:
-      // POST /api/exams/${examId}/messages
-      // Body: { supervisorId: selectedSupervisor, message }
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       alert("ההודעה נשלחה בהצלחה");
-      setMessage(""); // Clear message
-      onClose();      // Close modal
-    } catch (error) {
+      setMessage("");
+      onClose();
+    } catch {
       alert("שגיאה בשליחת ההודעה");
     } finally {
-      setSending(false); // Hide loading state
+      setSending(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" dir="rtl">
-      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+      dir="rtl"
+    >
+      <div
+        className="
+          w-full max-w-md rounded-2xl p-6 shadow-xl
+          bg-[var(--surface)]
+          border border-[var(--border)]
+        "
+      >
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-gray-900">שליחת הודעה למשגיח</h2>
+          <h2 className="text-xl font-bold text-[var(--fg)]">
+            שליחת הודעה למשגיח
+          </h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-[var(--muted)] hover:text-[var(--fg)] transition-colors"
           >
             <X size={24} />
           </button>
@@ -66,13 +67,20 @@ export default function SendMessageModal({ examId, supervisors, onClose }: Messa
         <div className="space-y-4">
           {/* Supervisor Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-[var(--fg)] mb-2">
               בחר משגיח
             </label>
             <select
               value={selectedSupervisor}
               onChange={(e) => setSelectedSupervisor(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="
+                w-full rounded-lg p-3
+                bg-[var(--bg)]
+                text-[var(--fg)]
+                border border-[var(--border)]
+                focus:outline-none
+                focus:ring-2 focus:ring-[var(--ring)]
+              "
             >
               <option value="all">כל המשגיחים</option>
               {supervisors.map((sup) => (
@@ -85,7 +93,7 @@ export default function SendMessageModal({ examId, supervisors, onClose }: Messa
 
           {/* Message Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-[var(--fg)] mb-2">
               הודעה
             </label>
             <textarea
@@ -94,9 +102,16 @@ export default function SendMessageModal({ examId, supervisors, onClose }: Messa
               placeholder="כתוב את ההודעה כאן..."
               rows={5}
               maxLength={500}
-              className="w-full border border-gray-300 rounded-lg p-3 text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              className="
+                w-full rounded-lg p-3 resize-none
+                bg-[var(--bg)]
+                text-[var(--fg)]
+                border border-[var(--border)]
+                focus:outline-none
+                focus:ring-2 focus:ring-[var(--ring)]
+              "
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-[var(--muted)] mt-1">
               {message.length} / 500 תווים
             </p>
           </div>
@@ -107,14 +122,29 @@ export default function SendMessageModal({ examId, supervisors, onClose }: Messa
           <button
             onClick={onClose}
             disabled={sending}
-            className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
+            className="
+              px-4 py-2 rounded-lg
+              border border-[var(--border)]
+              text-[var(--fg)]
+              bg-[var(--surface)]
+              hover:bg-[var(--surface-hover)]
+              transition disabled:opacity-50
+            "
           >
             ביטול
           </button>
+
           <button
             onClick={handleSend}
             disabled={sending || !message.trim()}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+            className="
+              px-4 py-2 rounded-lg
+              bg-[var(--accent)]
+              text-white
+              hover:opacity-90
+              transition disabled:opacity-50
+              flex items-center gap-2
+            "
           >
             {sending ? (
               <>

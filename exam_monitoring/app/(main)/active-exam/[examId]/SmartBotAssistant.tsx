@@ -447,32 +447,32 @@ ${presentCount === attendance.length ? "✅ כל הסטודנטים הרשומי
       case "alert":
         return {
           icon: <Bell className="w-4 h-4" />,
-          bgColor: "bg-amber-100 border-amber-300 ",
-          textColor: "text-amber-800 ",
+          bgColor: "bg-[var(--warning-bg)] border-[var(--warning)] ",
+          textColor: "text-[var(--fg)] ",
         };
       case "check-in":
         return {
           icon: <MessageCircle className="w-4 h-4" />,
-          bgColor: "bg-blue-100  border-blue-300 ",
-          textColor: "text-blue-800 ",
+          bgColor: "bg-[var(--info-bg)] border-[var(--info)]",
+          textColor: "text-[var(--fg)]",
         };
       case "summary":
         return {
           icon: <CheckCircle className="w-4 h-4" />,
-          bgColor: "bg-green-100  border-green-300 ",
-          textColor: "text-green-800 ",
+          bgColor: "bg-[var(--success-bg)] border-[var(--success)]",
+          textColor: "text-[var(--fg)]",
         };
       case "user":
         return {
           icon: null,
-          bgColor: "bg-emerald-500 ",
+          bgColor: "bg-[var(--accent)]",
           textColor: "text-white",
         };
       default:
         return {
           icon: <Bot className="w-4 h-4" />,
-          bgColor: "bg-gray-100  border-gray-200 ",
-          textColor: "text-gray-800",
+          bgColor: "bg-[var(--surface-hover)] border-[var(--border)] ",
+          textColor: "text-[var(--fg)]",
         };
     }
   };
@@ -485,7 +485,7 @@ ${presentCount === attendance.length ? "✅ כל הסטודנטים הרשומי
           className="fixed inset-0 bg-black/70 z-[60] flex items-center justify-center p-4"
           onClick={() => setShowScreenAlert(null)}
         >
-          <div className="bg-white rounded-2xl p-8 max-w-lg w-full text-center animate-pulse shadow-2xl">
+          <div className="bg-[var(--bg)] border border-[var(--border)] rounded-2xl p-8 max-w-lg w-full text-center animate-pulse shadow-xl">
             <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Bell className="w-10 h-10 text-amber-600" />
             </div>
@@ -493,7 +493,7 @@ ${presentCount === attendance.length ? "✅ כל הסטודנטים הרשומי
             <p className="text-xl text-gray-700 whitespace-pre-wrap">{showScreenAlert}</p>
             <button 
               onClick={() => setShowScreenAlert(null)}
-              className="mt-6 px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-full font-semibold"
+              className="mt-6 px-6 py-3 bg-[var(--warning)] hover:brightness-110 text-white rounded-full font-semibold"
             >
               הבנתי
             </button>
@@ -507,7 +507,7 @@ ${presentCount === attendance.length ? "✅ כל הסטודנטים הרשומי
         className={`fixed bottom-6 left-6 w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 z-40 ${
           hasNewAlert 
             ? "bg-amber-500 animate-bounce" 
-            : "bg-emerald-500 hover:bg-emerald-600"
+            : "bg-[var(--accent)] hover:brightness-110"
         }`}
         style={{ display: isOpen ? "none" : "flex" }}
       >
@@ -521,15 +521,21 @@ ${presentCount === attendance.length ? "✅ כל הסטודנטים הרשומי
 
       {/* Chat Window */}
       {isOpen && (
-        <div 
-          className={`fixed bottom-6 left-6 w-96 bg-white rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden transition-all duration-300 ${
-            isMinimized ? "h-14" : "h-[500px]"
-          }`}
-          dir="rtl"
-        >
+          <div
+            className={`fixed bottom-4 left-4
+              w-[90vw] sm:w-96
+              h-[70vh] sm:h-[500px]
+              bg-[var(--bg)] rounded-2xl border border-[var(--border)] shadow-xl z-50
+              flex flex-col overflow-hidden
+              transition-all duration-300
+              ${isMinimized ? "h-14" : ""}
+            `}
+            dir="rtl"
+          >
+
           {/* Header */}
           <div 
-            className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white p-4 flex items-center justify-between cursor-pointer"
+            className="bg-[var(--accent)] text-white p-4 flex items-center justify-between cursor-pointer"
             onClick={() => setIsMinimized(!isMinimized)}
           >
             <div className="flex items-center gap-3">
@@ -566,10 +572,10 @@ ${presentCount === attendance.length ? "✅ כל הסטודנטים הרשומי
           {!isMinimized && (
             <>
               {/* Quick Actions */}
-              <div className="p-2 bg-gray-50 border-b flex gap-2 overflow-x-auto">
+              <div className="p-2 bg-[var(--surface)] border-b border-[var(--border)] flex gap-2 overflow-x-auto">
                 <button
                   onClick={generateSummary}
-                  className="flex items-center gap-1 px-3 py-1.5 bg-white border rounded-full text-sm whitespace-nowrap hover:bg-gray-100"
+                  className="flex items-center gap-1 px-3 py-1.5 bg-[var(--surface-hover)] border border-[var(--border)] hover:brightness-105 border rounded-full text-sm whitespace-nowrap"
                 >
                   <CheckCircle className="w-4 h-4 text-green-500" />
                   סיכום ביניים
@@ -582,7 +588,7 @@ ${presentCount === attendance.length ? "✅ כל הסטודנטים הרשומי
                       content: `⏰ נשארו ${remainingMinutes} דקות לסיום הבחינה.`,
                     });
                   }}
-                  className="flex items-center gap-1 px-3 py-1.5 bg-white border rounded-full text-sm whitespace-nowrap hover:bg-gray-100"
+                  className="flex items-center gap-1 px-3 py-1.5 bg-[var(--surface-hover)] border border-[var(--border)] hover:brightness-105 border rounded-full text-sm whitespace-nowrap"
                 >
                   <Clock className="w-4 h-4 text-blue-500" />
                   כמה זמן נשאר?
@@ -625,8 +631,7 @@ ${presentCount === attendance.length ? "✅ כל הסטודנטים הרשומי
                               <button
                                 key={option}
                                 onClick={() => handleCheckInResponse(message.id, option)}
-                                className="px-3 py-1.5 bg-white/80 hover:bg-white border border-current rounded-full text-xs font-medium transition-colors"
-                              >
+                               className="px-3 py-1.5 rounded-full text-xs font-medium bg-[var(--surface-hover)] text-[var(--fg)] border border-[var(--border)] hover:bg-[var(--accent)] hover:text-white transition-colors" >
                                 {option}
                               </button>
                             ))}
@@ -657,7 +662,7 @@ ${presentCount === attendance.length ? "✅ כל הסטודנטים הרשומי
               </div>
 
               {/* Input */}
-              <div className="p-3 border-t bg-white">
+              <div className="p-3 border-t border-[var(--border)] bg-[var(--surface)]">
                 <div className="flex gap-2">
                   <input
                     type="text"
@@ -665,13 +670,13 @@ ${presentCount === attendance.length ? "✅ כל הסטודנטים הרשומי
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && sendMessage()}
                     placeholder="שאל שאלה על נהלים..."
-                    className="flex-1 px-4 py-2 bg-gray-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="flex-1 px-4 py-2 rounded-full text-sm focus:outline-none focus:ring-2 bg-[var(--surface-hover)] focus:ring-[var(--ring)]"
                     disabled={isLoading}
                   />
                   <button
                     onClick={sendMessage}
                     disabled={!inputValue.trim() || isLoading}
-                    className="w-10 h-10 bg-emerald-500 hover:bg-emerald-600 disabled:bg-gray-300 text-white rounded-full flex items-center justify-center transition-colors"
+                    className="w-10 h-10 bg-[var(--warning)] hover:brightness-110 disabled:bg-gray-300 text-white rounded-full flex items-center justify-center transition-colors"
                   >
                     <Send className="w-5 h-5" />
                   </button>

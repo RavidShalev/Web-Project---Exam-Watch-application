@@ -24,20 +24,17 @@ export default function ProceduresPage() {
 
   // 1. Run on page load
   useEffect(() => {
-    // Get user from storage
     const storedUser = sessionStorage.getItem('currentUser');
     
     if (storedUser) {
       const user = JSON.parse(storedUser);
       setUserRole(user.role);
 
-      // Prevent admin from accessing this page
       if (user.role === 'admin') {
         router.push('/home');
         return;
       }
 
-      // Fetch data from our API
       fetch(`/api/procedures?role=${user.role}`)
         .then((res) => res.json())
         .then((data) => {
@@ -45,7 +42,6 @@ export default function ProceduresPage() {
             setProcedures(data.data);
           }
         })
-        .catch((err) => console.error("Error:", err))
         .finally(() => setLoading(false));
     } else {
       setLoading(false);
@@ -53,63 +49,73 @@ export default function ProceduresPage() {
   }, [router]);
 
   // 2. Filter procedures by the active tab
-  const filteredProcedures = procedures.filter(p => 
-    p.phase === activePhase || p.phase === 'always'
+  const filteredProcedures = procedures.filter(
+    p => p.phase === activePhase || p.phase === 'always'
   );
 
   // 3. Helper to style tabs
   const getTabClass = (phaseName: string) => {
-    const base = "px-6 py-2 rounded-full text-sm font-medium transition-all duration-200";
+    const base =
+      "px-6 py-2 rounded-full text-sm font-medium transition border";
+
     if (activePhase === phaseName) {
-      return `${base} bg-blue-600 text-white dark:bg-blue-500`;
+      return `
+        ${base}
+        bg-[var(--accent)]
+        text-white
+        border-[var(--accent)]
+      `;
     }
-    return `${base} bg-white text-gray-600 dark:bg-gray-800 dark:text-gray-300 border border-gray-200 dark:border-gray-700`;
+
+    return `
+      ${base}
+      bg-[var(--surface)]
+      text-[var(--fg)]
+      border-[var(--border)]
+      hover:bg-[var(--surface-hover)]
+    `;
   };
 
-  if (loading) return <div className="p-10 text-center text-gray-500 dark:text-gray-400">טוען נהלים...</div>;
+  if (loading) {
+    return <div className="p-10 text-center text-[var(--muted)]">טוען נהלים...</div>;
+  }
 
   return (
-    <div className="min-h-screen p-4 md:p-8 text-gray-900 dark:text-gray-100" dir="rtl">
+    <div className="min-h-screen p-4 md:p-8" dir="rtl">
       
       {/* Header Section */}
       <div className="max-w-6xl mx-auto mb-8">
         <div className="flex items-center gap-3 mb-2">
-          <BookOpen className="text-blue-600 dark:text-blue-400" size={32} />
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <BookOpen className="text-[var(--accent)]" size={32} />
+          <h1 className="text-3xl font-bold text-[var(--fg)]">
             נהלי בחינות
           </h1>
         </div>
-        <p className="text-gray-600 dark:text-gray-400 pr-11">
+
+        <p className="pr-11 text-[var(--muted)]">
           הנחיות מותאמות לתפקיד:{' '}
-          <span className="font-semibold text-blue-600 dark:text-blue-400">
-            {userRole === 'student' ? 'סטודנט' : 
-             userRole === 'supervisor' ? 'משגיח' : 
-             userRole === 'lecturer' ? 'מרצה' : userRole}
+          <span className="font-semibold text-[var(--fg)]">
+            {userRole === 'student'
+              ? 'סטודנט'
+              : userRole === 'supervisor'
+              ? 'משגיח'
+              : userRole === 'lecturer'
+              ? 'מרצה'
+              : userRole}
           </span>
         </p>
       </div>
 
-      {/* Tabs Section (Scrollable on mobile) */}
+      {/* Tabs Section */}
       <div className="max-w-6xl mx-auto mb-8 overflow-x-auto pb-4">
         <div className="flex gap-3 min-w-max">
-          <button 
-            onClick={() => setActivePhase('before')} 
-            className={getTabClass('before')}
-          >
+          <button onClick={() => setActivePhase('before')} className={getTabClass('before')}>
             לפני הבחינה
           </button>
-          
-          <button 
-            onClick={() => setActivePhase('ongoing')} 
-            className={getTabClass('ongoing')}
-          >
+          <button onClick={() => setActivePhase('ongoing')} className={getTabClass('ongoing')}>
             במהלך הבחינה
           </button>
-          
-          <button 
-            onClick={() => setActivePhase('after')} 
-            className={getTabClass('after')}
-          >
+          <button onClick={() => setActivePhase('after')} className={getTabClass('after')}>
             לאחר הבחינה
           </button>
         </div>
@@ -119,7 +125,7 @@ export default function ProceduresPage() {
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredProcedures.length > 0 ? (
           filteredProcedures.map((proc) => (
-            <ProcedureCard 
+            <ProcedureCard
               key={proc._id}
               title={proc.title}
               content={proc.content}
@@ -128,9 +134,18 @@ export default function ProceduresPage() {
             />
           ))
         ) : (
-          // Empty State
-          <div className="col-span-full flex flex-col items-center justify-center p-10 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-lg">
-            <Info size={40} className="mb-2 opacity-50 dark:text-gray-400" />
+          <div
+            className="
+              col-span-full
+              flex flex-col items-center justify-center
+              p-10
+              bg-[var(--surface)]
+              border border-[var(--border)]
+              rounded-lg
+              text-[var(--muted)]
+            "
+          >
+            <Info size={40} className="mb-2 opacity-50" />
             <p>אין נהלים להצגה בשלב זה</p>
           </div>
         )}

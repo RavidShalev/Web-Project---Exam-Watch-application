@@ -1,40 +1,79 @@
 "use client";
 
-import {useState} from "react";
+import { useState } from "react";
 
-type props={
-    attendanceRecord: any;
-    onClose: () => void;
-    onSave: (minuteToAdd: number) => Promise<void>;
-}
+type props = {
+  attendanceRecord: any;
+  onClose: () => void;
+  onSave: (minuteToAdd: number) => Promise<void>;
+};
 
-export default function AddTimeModal({attendanceRecord, onClose, onSave}: props) {
+export default function AddTimeModal({
+  attendanceRecord,
+  onClose,
+  onSave,
+}: props) {
   const [minuteToAdd, setMinuteToAdd] = useState("");
-    return(
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 text-black">
-      <div className="bg-white rounded-lg p-6 w-[400px] space-y-4">
 
-        <h2 className="text-lg font-semibold">הוספת זמן לסטודנט</h2>
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-3">
+      <div
+        className="
+          w-full max-w-md
+          rounded-2xl
+          bg-[var(--bg)]
+          border border-[var(--border)]
+          shadow-xl
+          p-5 sm:p-6
+          space-y-4 sm:space-y-5
+          text-right
+        "
+      >
+        <h2 className="text-lg sm:text-xl font-bold text-[var(--fg)]">
+          הוספת זמן לסטודנט
+        </h2>
 
-        <div className="text-sm text-gray-600">
-          {attendanceRecord.studentId.name} – {attendanceRecord.studentId.idNumber}
+        <div className="text-sm text-[var(--muted)] leading-snug">
+          {attendanceRecord.studentId.name} –{" "}
+          {attendanceRecord.studentId.idNumber}
         </div>
 
-        <input type="number" min={1} value={minuteToAdd}
-              onChange={(e) => setMinuteToAdd(e.target.value)}
-              placeholder="כמה דקות להוסיף?"
-              className="w-full border border-gray-300 rounded px-3 py-2"
-            />
+        <input
+          type="number"
+          min={1}
+          value={minuteToAdd}
+          onChange={(e) => setMinuteToAdd(e.target.value)}
+          placeholder="כמה דקות להוסיף?"
+          className="
+            w-full
+            rounded-xl
+            border border-[var(--border)]
+            bg-[var(--surface)]
+            px-3 sm:px-4 py-3
+            text-sm sm:text-base
+            text-[var(--fg)]
+            focus:outline-none
+            focus:ring-2
+            focus:ring-[var(--ring)]
+          "
+        />
 
-        <div className="flex justify-end gap-2">
+        <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 pt-2">
           <button
-            className="border px-4 py-2 rounded"
             onClick={onClose}
+            className="
+              rounded-xl
+              px-4 sm:px-5 py-2
+              text-sm font-semibold
+              text-[var(--fg)]
+              bg-[var(--surface-hover)]
+              hover:brightness-105
+            "
           >
             ביטול
           </button>
+
           <button
-            className="bg-blue-600 text-white px-4 py-2 rounded"
             onClick={async () => {
               const value = parseInt(minuteToAdd, 10);
               if (isNaN(value) || value <= 0) {
@@ -45,6 +84,14 @@ export default function AddTimeModal({attendanceRecord, onClose, onSave}: props)
               await onSave(value);
               onClose();
             }}
+            className="
+              rounded-xl
+              px-4 sm:px-5 py-2
+              text-sm font-semibold
+              text-white
+              bg-[var(--warning)]
+              hover:brightness-110
+            "
           >
             שמור
           </button>
