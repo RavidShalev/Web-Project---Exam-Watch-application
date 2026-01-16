@@ -49,6 +49,9 @@ const Navbar = () => {
       {/* for big screens (such as computer) */}
       <div>
         <ul className="hidden md:flex items-center gap-8 list-none">
+                    <li className="pl-8 mr-8 border-l-2 border-gray-600">
+            <ThemeToggle />
+          </li>
           <li><Link href="/home" className={getLinkClass('/home')}>בית</Link></li>
           
           {canViewClassMap && (
@@ -89,9 +92,6 @@ const Navbar = () => {
             </li>
           )}
           
-          <li>
-            <ThemeToggle />
-          </li>
         </ul>
       </div>
 
@@ -179,8 +179,9 @@ const Navbar = () => {
         )}
 
         <div className="mt-4 pt-4 border-t border-gray-600 flex items-center gap-3">
-          <span className="text-white">מצב תצוגה:</span>
-          <ThemeToggle />
+<li className="mr-4 border-r border-gray-600 pr-4">
+              <ThemeToggle />
+            </li>
       </div>
       </div>
     </nav>
