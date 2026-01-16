@@ -21,18 +21,15 @@ export const metadata: Metadata = {
   description: "System for monitoring exams effectively and efficiently.",
 };
 
-export default function RootLayout({
+export default function MainLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="he" dir="rtl">
-      <body
-        className={heebo.className} >
-        <Navbar />
-        {children}
-      </body>
-    </html>
+    <>
+      <Navbar />
+      {children}
+    </>
   );
 }

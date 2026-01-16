@@ -79,7 +79,7 @@ function Login() {
             value={idNumber}
             onChange={(e) => handleChange("user", e)}
             placeholder="תעודת זהות"
-            className="p-3 rounded"
+            className="p-3 rounded bg-white text-gray-900 border border-gray-300"
           />
 
           <input
@@ -88,10 +88,10 @@ function Login() {
             value={password}
             onChange={(e) => handleChange("pass", e)}
             placeholder="סיסמא"
-            className="p-3 rounded"
+            className="p-3 rounded bg-white text-gray-900 border border-gray-300"
           />
 
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {error && <p className="text-red-500">{error}</p>}
 
           <button
             type="submit"

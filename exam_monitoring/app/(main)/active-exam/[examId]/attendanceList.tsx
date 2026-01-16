@@ -3,75 +3,285 @@
 import { AttendanceRow } from "@/types/attendance";
 import { useState } from "react";
 import ReportModal from "./reportModal";
+import AddTimeModal from "./addTimeModal";
 
-type props={
-    attendance:AttendanceRow[];
-    makePresent: (attendanceId: string) => void;
-    makeAbsent: (attendanceId: string) => void;
-    saveReport: (data: {examId: string; studentId: string; eventType: string; description?: string}) => Promise<any>;
-    updateToiletTime: (attendanceId: string) => void;
-    finishExamForStudent: (attendanceId: string) => void;
-}
+type props = {
+  attendance: AttendanceRow[];
+  makePresent: (attendanceId: string) => void;
+  makeAbsent: (attendanceId: string) => void;
+  saveReport: (data: {
+    examId: string;
+    studentId: string;
+    eventType: string;
+    description?: string;
+  }) => Promise<any>;
+  updateToiletTime: (attendanceId: string) => void;
+  finishExamForStudent: (attendanceId: string) => void;
+  addTimeForStudent: (attendanceId: string, minutesToAdd: number) => void;
+};
 
-export default function AttemdanceList({attendance, makePresent, makeAbsent, saveReport, updateToiletTime, finishExamForStudent}: props) {
-    const [openReport, setOpenReport] = useState(false);
-    const [selectedRecord, setSelectedRecord] = useState<AttendanceRow | null>(null);
-    
-    return (
-        <>
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white border border-gray-300 text-black">
-            <thead>
-                <tr>
-                        <th className="py-2 px-4 border-b border-gray-300 text-left">תעודת זהות</th>
-                        <th className="py-2 px-4 border-b border-gray-300 text-left">שם</th>
-                        <th className="py-2 px-4 border-b border-gray-300 text-left">מספר במבחן</th>
-                        <th className="py-2 px-4 border-b border-gray-300 text-left">סטטוס נוכחות</th>
-                        <th className="py-2 px-4 border-b border-gray-300 text-left">תמונת תעודה מזהה</th>
-                        <th className="py-2 px-4 border-b border-gray-300 text-left">יציאה לשירותים</th>
-                        <th className="py-2 px-4 border-b border-gray-300 text-left">דווח</th>
-                </tr>
-                
-                
-            </thead>
-            <tbody>
-                {attendance.map((record) => (
-                    <tr key={record._id}>
-                        <td className="py-2 px-4 border-b border-gray-300">{record.studentId.idNumber}</td>
-                        <td className="py-2 px-4 border-b border-gray-300">{record.studentId.name}</td>
-                        <td className="py-2 px-4 border-b border-gray-300">{record.studentNumInExam}</td>
-                        <td className="py-2 px-4 border-b border-gray-300"> {record.attendanceStatus === "absent" && (<button onClick={() => {const confirmed = window.confirm(
-                            "האם הסטודנט אכן נמצא בכיתה?");
-                            if (!confirmed) return;
-                            makePresent(record._id);}}
-                            className="px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600">
-                            סמן כנוכח </button>)}
+export default function AttemdanceList({
+  attendance,
+  makePresent,
+  makeAbsent,
+  saveReport,
+  updateToiletTime,
+  finishExamForStudent,
+  addTimeForStudent,
+}: props) {
+  const [openReport, setOpenReport] = useState(false);
+  const [openAddTime, setOpenAddTime] = useState(false);
+  const [selectedRecord, setSelectedRecord] =
+    useState<AttendanceRow | null>(null);
+
+  const handleAddTime = async (minutesToAdd: number) => {
+    if (!selectedRecord) return;
+    await addTimeForStudent(selectedRecord._id, minutesToAdd);
+  };
+
+  return (
+    <>
+      {/* ================= DESKTOP TABLE ================= */}
+      <div className="hidden sm:block overflow-x-auto rounded-xl border border-[var(--border)] bg-[var(--bg)]">
+        <table className="min-w-full text-sm text-right">
+          <thead className="bg-[var(--surface-hover)] text-[var(--muted)] font-semibold">
+            <tr>
+              <th className="px-4 py-3">תעודת זהות</th>
+              <th className="px-4 py-3">שם</th>
+              <th className="px-4 py-3">מספר במבחן</th>
+              <th className="px-4 py-3">סטטוס נוכחות</th>
+              <th className="px-4 py-3">תמונת תעודה</th>
+              <th className="px-4 py-3">שירותים</th>
+              <th className="px-4 py-3">הוספת זמן</th>
+              <th className="px-4 py-3">דיווח</th>
+            </tr>
+          </thead>
+
+          <tbody className="divide-y divide-[var(--border)]">
+            {attendance.map(record => (
+              <tr
+                key={record._id}
+                className="transition hover:bg-[var(--surface-hover)]"
+              >
+                <td className="px-4 py-3 font-mono">
+                  {record.studentId.idNumber}
+                </td>
+                <td className="px-4 py-3 font-medium">
+                  {record.studentId.name}
+                </td>
+                <td className="px-4 py-3">
+                  {record.studentNumInExam}
+                </td>
+
+                <td className="px-4 py-3 space-y-1">
+                  {record.attendanceStatus === "absent" && (
+                    <button
+                      onClick={() => makePresent(record._id)}
+                      className="rounded-lg px-3 py-1 text-xs font-semibold text-white bg-[var(--success)]"
+                    >
+                      סמן כנוכח
+                    </button>
+                  )}
+
+                  {record.attendanceStatus === "present" &&
+                    !record.endTime && (
+                      <div className="flex flex-col gap-1">
+                        <button
+                          onClick={() => makeAbsent(record._id)}
+                          className="rounded-lg px-3 py-1 text-xs font-semibold text-white bg-[var(--danger)]"
+                        >
+                          בטל נוכחות
+                        </button>
+
+                        <button
+                          onClick={() =>
+                            finishExamForStudent(record._id)
+                          }
+                          className="rounded-lg px-3 py-1 text-xs font-semibold text-white bg-[var(--purple)]"
+                        >
+                          סיים מבחן
+                        </button>
+                      </div>
+                    )}
+
+                  {record.endTime && (
+                    <span className="inline-block rounded-full px-3 py-1 text-xs font-semibold bg-[var(--success-bg)] text-[var(--success)]">
+                      המבחן הסתיים
+                    </span>
+                  )}
+                </td>
+
+                <td className="px-4 py-3 text-[var(--muted)]">—</td>
+
+                <td className="px-4 py-3">
+                    <button
+                        disabled={
+                        record.attendanceStatus === "absent" ||
+                        record.attendanceStatus === "finished"
+                        }
+                        onClick={() => updateToiletTime(record._id)}
+                        className={`
+                        rounded-lg px-3 py-1 text-xs font-semibold text-white
+                        ${
+                            record.attendanceStatus === "absent" ||
+                            record.attendanceStatus === "finished"
+                            ? "bg-[var(--border)] text-[var(--muted)] cursor-not-allowed"
+                            : record.isOnToilet
+                            ? "bg-[var(--success)]"
+                            : "bg-[var(--info)] hover:brightness-110"
+                        }
+                        `}
+                    >
+                        🚽
+                    </button>
+                    </td>
 
 
-                            {record.attendanceStatus === "present" && !record.endTime && (
-                            <>
-                            <button onClick={() => makeAbsent(record._id)}
-                            className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 mr-2">
-                            בטל נוכחות </button>
+                <td className="px-4 py-3">
+                  <button
+                    disabled={record.attendanceStatus === "absent" || record.attendanceStatus ==="finished"}
+                    onClick={() => {
+                      setSelectedRecord(record);
+                      setOpenAddTime(true);
+                    }}
+                    className="rounded-lg px-3 py-1 text-xs font-semibold text-white bg-[var(--warning)] disabled:bg-[var(--border)]"
+                  >
+                    הוספת זמן
+                  </button>
+                </td>
 
-                            <button onClick={() => finishExamForStudent(record._id)}
-                            className="px-3 py-1 text-sm bg-purple-600 text-white rounded hover:bg-purple-700">
-                            סיים מבחן </button>
-                            </>  )}         
+                <td className="px-4 py-3">
+                  <button
+                    disabled={record.attendanceStatus === "absent"|| record.attendanceStatus ==="finished"}
+                    onClick={() => {
+                      setSelectedRecord(record);
+                      setOpenReport(true);
+                    }}
+                    className="rounded-lg px-3 py-1 text-xs font-semibold text-white bg-[var(--danger)] disabled:bg-[var(--border)]"
+                  >
+                    דווח
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-                            {record.endTime && (<span className="text-green-700 font-semibold">המבחן הסתיים</span>)}
-                        </td>
-                        <td className="py-2 px-4 border-b border-gray-300"></td>
-                        <td className="py-2 px-4 border-b border-gray-300">{!record.isOnToilet ? (<button disabled={record.attendanceStatus==="absent"} onClick={()=> updateToiletTime(record._id)} className={`px-3 py-1 text-sm text-white rounded ${record.attendanceStatus === "present" ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'}`}>🚽</button>):(<button disabled={record.attendanceStatus==="absent"} onClick={()=>updateToiletTime(record._id)} className="px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600">🚽</button>)}</td>
-                        <td className="py-2 px-4 border-b border-gray-300"><button disabled={record.attendanceStatus === "absent"}  onClick={() => {setSelectedRecord(record); setOpenReport(true);}} className={`px-3 py-1 text-sm bg-blue-500 text-white rounded ${record.attendanceStatus === "present" ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'}`}>דווח</button></td>
-                    </tr>
-                ))}
-            </tbody>
-            </table>
+      {/* ================= MOBILE CARDS ================= */}
+      <div className="sm:hidden space-y-4">
+        {attendance.map(record => (
+          <div
+            key={record._id}
+            className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 space-y-3"
+          >
+            <div className="flex justify-between">
+              <div>
+                <p className="font-semibold">
+                  {record.studentId.name}
+                </p>
+                <p className="text-xs text-[var(--muted)] font-mono">
+                  {record.studentId.idNumber}
+                </p>
+              </div>
+              <span className="text-xs text-[var(--muted)]">
+                #{record.studentNumInExam}
+              </span>
             </div>
-            {/* Report Modal- for specific attendance record */}
-            {openReport && selectedRecord && (<ReportModal attendanceRecord={selectedRecord} onClose={() => {setOpenReport(false); setSelectedRecord(null);}} onSave={saveReport} />)}
-            </>
-        );
 
+            <div className="flex flex-wrap gap-2">
+              {record.attendanceStatus === "absent" && (
+                <button
+                  onClick={() => makePresent(record._id)}
+                  className="rounded-full px-3 py-1 text-xs font-semibold text-white bg-[var(--success)]"
+                >
+                  סמן כנוכח
+                </button>
+              )}
+
+              {record.attendanceStatus === "present" &&
+                !record.endTime && (
+                  <>
+                    <button
+                      onClick={() => makeAbsent(record._id)}
+                      className="rounded-full px-3 py-1 text-xs font-semibold text-white bg-[var(--danger)]"
+                    >
+                      בטל נוכחות
+                    </button>
+                    <button
+                      onClick={() =>
+                        finishExamForStudent(record._id)
+                      }
+                      className="rounded-full px-3 py-1 text-xs font-semibold text-white bg-[var(--purple)]"
+                    >
+                      סיים מבחן
+                    </button>
+                  </>
+                )}
+
+              {record.endTime && (
+                <span className="rounded-full px-3 py-1 text-xs font-semibold bg-[var(--success-bg)] text-[var(--success)]">
+                  המבחן הסתיים
+                </span>
+              )}
+            </div>
+
+            <div className="flex gap-2 pt-2">
+              <button
+                disabled={record.attendanceStatus === "absent" || record.attendanceStatus ==="finished"}
+                onClick={() => updateToiletTime(record._id)}
+                className="flex-1 rounded-xl px-3 py-2 text-xs font-semibold text-white bg-[var(--info)] disabled:bg-[var(--border)]"
+              >
+                🚽 שירותים
+              </button>
+
+              <button
+                disabled={record.attendanceStatus === "absent" || record.attendanceStatus ==="finished"}
+                onClick={() => {
+                  setSelectedRecord(record);
+                  setOpenAddTime(true);
+                }}
+                className="flex-1 rounded-xl px-3 py-2 text-xs font-semibold text-white bg-[var(--warning)] disabled:bg-[var(--border)]"
+              >
+                הוספת זמן
+              </button>
+
+              <button
+                disabled={record.attendanceStatus === "absent" || record.attendanceStatus ==="finished"}
+                onClick={() => {
+                  setSelectedRecord(record);
+                  setOpenReport(true);
+                }}
+                className="flex-1 rounded-xl px-3 py-2 text-xs font-semibold text-white bg-[var(--danger)] disabled:bg-[var(--border)]"
+              >
+                דווח
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {openReport && selectedRecord && (
+        <ReportModal
+          attendanceRecord={selectedRecord}
+          onClose={() => {
+            setOpenReport(false);
+            setSelectedRecord(null);
+          }}
+          onSave={saveReport}
+        />
+      )}
+
+      {openAddTime && selectedRecord && (
+        <AddTimeModal
+          attendanceRecord={selectedRecord}
+          onClose={() => {
+            setOpenAddTime(false);
+            setSelectedRecord(null);
+          }}
+          onSave={handleAddTime}
+        />
+      )}
+    </>
+  );
 }

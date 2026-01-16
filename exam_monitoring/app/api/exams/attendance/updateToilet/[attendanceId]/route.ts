@@ -11,7 +11,6 @@ export async function PATCH(
   const { attendanceId } = await params;
 
   try {
-    // שלב 1: שליפת הרשומה
     const attendance = await Attendance.findById(attendanceId);
     if (!attendance) {
       return NextResponse.json(
@@ -20,7 +19,6 @@ export async function PATCH(
       );
     }
 
-    // שלב 2: toggle לשדה הנכון
     attendance.isOnToilet = !attendance.isOnToilet;
     await attendance.save();
 

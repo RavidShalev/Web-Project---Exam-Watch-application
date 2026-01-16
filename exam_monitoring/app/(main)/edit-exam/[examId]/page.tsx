@@ -12,7 +12,6 @@ type PageProps = {
   }>;
 };
 
-// Edit Exam Page Component
 export default function EditExamPage({ params }: PageProps) {
   const [examId, setExamId] = useState<string | null>(null);
   const [exam, setExam] = useState<ExamFormData | null>(null);
@@ -29,7 +28,6 @@ export default function EditExamPage({ params }: PageProps) {
 
     const data = await res.json();
 
-    // Update students list
     setStudents(
       data.exam.students?.map((s: { name: string; idNumber: string }) => ({
         name: s.name,
@@ -38,27 +36,21 @@ export default function EditExamPage({ params }: PageProps) {
     );
   };
 
-  // Fetch exam data on component mount
   useEffect(() => {
     const fetchExam = async () => {
       try {
         const { examId } = await params;
         const cleanExamId = String(examId).trim();
-
         setExamId(cleanExamId);
 
-        // Fetch exam details from API
         const res = await fetch(`/api/exams/${cleanExamId}`);
-
         if (!res.ok) {
           alert("שגיאה בטעינת המבחן");
           return;
         }
 
-        // Parse response data
         const data = await res.json();
 
-        // Build rules object
         const rules: ExamFormData["rules"] = {
           calculator: false,
           computer: false,
@@ -72,7 +64,6 @@ export default function EditExamPage({ params }: PageProps) {
           }
         });
 
-        // Set exam form data - STUDENTS ARE UPDATED SEPARATELY
         setExam({
           courseName: data.exam.courseName,
           courseCode: data.exam.courseCode,
@@ -88,8 +79,8 @@ export default function EditExamPage({ params }: PageProps) {
             .join(", "),
           rules,
         });
-      } catch (error) {
-        console.error("Failed to load exam:", error);
+      } catch (err) {
+        console.error(err);
         alert("שגיאת שרת");
       } finally {
         setLoading(false);
@@ -105,20 +96,49 @@ export default function EditExamPage({ params }: PageProps) {
   }, [examId]);
 
   if (loading) {
-    return <p className="text-center mt-10">טוען מבחן…</p>;
+    return (
+      <div className="min-h-screen flex items-center justify-center text-[var(--muted)]">
+        טוען מבחן…
+      </div>
+    );
   }
 
   if (!exam || !examId) {
-    return <p className="text-center mt-10">מבחן לא נמצא</p>;
+    return (
+      <div className="min-h-screen flex items-center justify-center text-[var(--muted)]">
+        מבחן לא נמצא
+      </div>
+    );
   }
 
   return (
-    <div className="mt-10">
-      <EditExam exam={exam} examId={examId} />
+    <div className="min-h-screen bg-[var(--surface)] px-4 py-8">
+      <div className="max-w-5xl mx-auto space-y-12">
+        {/* ===== Edit Exam Section ===== */}
+        <section>
+          <EditExam exam={exam} examId={examId} />
+        </section>
 
-      <UploadStudentsCsv examId={examId} onSuccess={refreshStudents} />
+        {/* ===== Students Management Section ===== */}
+        <section className="space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <h3 className="text-xl sm:text-2xl font-bold text-[var(--fg)]">
+              סטודנטים רשומים למבחן
+            </h3>
 
-      <ExamStudentsTable students={students} />
+            <span className="text-sm text-[var(--muted)]">
+              סה״כ: {students.length}
+            </span>
+          </div>
+
+          <UploadStudentsCsv
+            examId={examId}
+            onSuccess={refreshStudents}
+          />
+
+          <ExamStudentsTable students={students} />
+        </section>
+      </div>
     </div>
   );
 }

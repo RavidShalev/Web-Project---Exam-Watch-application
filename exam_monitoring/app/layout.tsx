@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Heebo } from 'next/font/google'
 import "./globals.css";
+import { Providers } from "./providers";
 
 const heebo = Heebo({ subsets: ['hebrew'] })
 
@@ -26,10 +27,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="he" dir="rtl">
-      <body className={heebo.className} >
-        {children}
+    <html lang="he" dir="rtl" suppressHydrationWarning>
+      
+      <body className={`${heebo.className} transition-colors duration-300`}>
+        
+        <Providers>
+          {children}
+        </Providers>
+        
       </body>
     </html>
   );
 }
+
+

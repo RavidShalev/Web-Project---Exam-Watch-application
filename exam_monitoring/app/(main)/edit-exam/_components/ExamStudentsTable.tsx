@@ -9,27 +9,64 @@ type Props = {
 
 export default function ExamStudentsTable({ students }: Props) {
   if (students.length === 0) {
-    return <p className="text-center mt-6">אין סטודנטים רשומים</p>;
+    return (
+      <p className="mt-6 text-center text-sm text-[var(--muted)]">
+        אין סטודנטים רשומים
+      </p>
+    );
   }
 
   return (
-    <div className="mt-8 flex justify-center">
-      <table className="min-w-[400px] border border-gray-300 text-right">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="border px-4 py-2">שם הסטודנט</th>
-            <th className="border px-4 py-2">תעודת זהות</th>
-          </tr>
-        </thead>
-        <tbody>
-          {students.map((s, idx) => (
-            <tr key={idx}>
-              <td className="border px-4 py-2">{s.name}</td>
-              <td className="border px-4 py-2">{s.idNumber}</td>
+    <div className="mt-8">
+      {/* ================= DESKTOP TABLE ================= */}
+      <div className="hidden sm:block overflow-x-auto rounded-2xl border border-[var(--border)] bg-[var(--bg)]">
+        <table className="min-w-full text-sm text-right">
+          <thead className="bg-[var(--surface-hover)] text-[var(--muted)] font-semibold">
+            <tr>
+              <th className="px-4 py-3">שם הסטודנט</th>
+              <th className="px-4 py-3">תעודת זהות</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody className="divide-y divide-[var(--border)]">
+            {students.map((s, idx) => (
+              <tr
+                key={idx}
+                className="transition hover:bg-[var(--surface-hover)]"
+              >
+                <td className="px-4 py-3 font-medium">
+                  {s.name}
+                </td>
+                <td className="px-4 py-3 font-mono">
+                  {s.idNumber}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* ================= MOBILE CARDS ================= */}
+      <div className="sm:hidden space-y-3">
+        {students.map((s, idx) => (
+          <div
+            key={idx}
+            className="
+              rounded-2xl
+              border border-[var(--border)]
+              bg-[var(--surface)]
+              px-4 py-3
+            "
+          >
+            <p className="font-semibold text-[var(--fg)]">
+              {s.name}
+            </p>
+            <p className="mt-1 text-sm font-mono text-[var(--muted)]">
+              {s.idNumber}
+            </p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

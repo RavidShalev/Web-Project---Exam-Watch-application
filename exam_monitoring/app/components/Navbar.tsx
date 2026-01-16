@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import ThemeToggle from './ThemeToggle';
 
 type CurrentUser = { username: string; role: string };
 
@@ -27,6 +28,7 @@ const Navbar = () => {
   const isStudent = currentUser?.role === 'student';
   const isLecturer = currentUser?.role === 'lecturer';
   const canViewProcedures = isStudent || isLecturer || isSupervisor;
+  const canViewClassMap = isAdmin || isSupervisor || isLecturer;
 
   // change the state of clicked when the button is clicked
   const handleClick = () => {
@@ -43,7 +45,56 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="flex items-center justify-between bg-[#1b2430] py-5 px-5 md:px-20 relative z-50">
+    <nav className="flex items-center justify-between bg-[#1b2430] py-5 px-5 md:px-20 relative z-50" dir="rtl">
+      {/* for big screens (such as computer) */}
+      <div>
+        <ul className="hidden md:flex items-center gap-8 list-none">
+                    <li className="pl-8 mr-8 border-l-2 border-gray-600">
+            <ThemeToggle />
+          </li>
+          <li><Link href="/home" className={getLinkClass('/home')}>בית</Link></li>
+          
+          {canViewClassMap && (
+            <li><Link href="/class-map" className={getLinkClass('/class-map')}>מפת כיתות</Link></li>
+          )}
+
+          {canViewProcedures && (
+            <li><Link href="/procedures" className={getLinkClass('/procedures')}>נהלים</Link></li>
+          )}
+          
+          {/* Supervisor only */}
+          {isSupervisor && (
+            <li><Link href="/exam-bot" className={getLinkClass('/exam-bot')}>בוט בחינות</Link></li>
+          )}
+
+          {/* Admin only */}
+          {isAdmin && (
+            <li>
+              <Link href="/register-user" className={getLinkClass('/register-user')}>
+                רישום משתמש
+              </Link>
+            </li>
+          )}
+
+          {isAdmin && (
+            <li>
+              <Link href="/add-exam" className={getLinkClass('/add-exam')}>
+                הוספת בחינה
+              </Link>
+            </li>
+          )}
+
+          {isAdmin && (
+            <li>
+              <Link href="/admin/audit-logs" className={getLinkClass('/admin/audit-logs')}>
+                יומן פעולות
+              </Link>
+            </li>
+          )}
+          
+        </ul>
+      </div>
+
       <Link href="/">
         <svg
           id="logo-15"
@@ -72,39 +123,6 @@ const Navbar = () => {
         </svg>
       </Link>
 
-      {/* for big screens (such as computer) */}
-      <div>
-        <ul className="hidden md:flex items-center gap-8 list-none">
-          <li><Link href="/home" className={getLinkClass('/home')}>בית</Link></li>
-          
-          {canViewProcedures && (
-            <li><Link href="/procedures" className={getLinkClass('/procedures')}>נהלים</Link></li>
-          )}
-          
-          {/* Supervisor only */}
-          {isSupervisor && (
-            <li><Link href="/exam-bot" className={getLinkClass('/exam-bot')}>בוט בחינות</Link></li>
-          )}
-
-          {/* Admin only */}
-          {isAdmin && (
-            <li>
-              <Link href="/register-user" className={getLinkClass('/register-user')}>
-                רישום משתמש
-              </Link>
-            </li>
-          )}
-
-          {isAdmin && (
-            <li>
-              <Link href="/add-exam" className={getLinkClass('/add-exam')}>
-                הוספת בחינה
-              </Link>
-            </li>
-          )}
-        </ul>
-      </div>
-
       <div className="md:hidden text-white text-2xl cursor-pointer" onClick={handleClick}>
         {clicked ? '✕' : '☰'}
       </div>
@@ -115,6 +133,11 @@ const Navbar = () => {
       >
         <Link href="/home" className={`${getLinkClass('/home')} py-2 block`} onClick={() => setClicked(false)}>בית</Link>
         
+        {/* Supervisors, Lecturers and Admin */}
+        {canViewClassMap && (
+          <Link href="/class-map" className={`${getLinkClass('/class-map')} py-2 block`} onClick={() => setClicked(false)}>מפת כיתות</Link>
+        )}
+
         {canViewProcedures && (
           <Link href="/procedures" className={`${getLinkClass('/procedures')} py-2 block`} onClick={() => setClicked(false)}>נהלים</Link>
         )}
@@ -144,6 +167,22 @@ const Navbar = () => {
             הוספת בחינה
           </Link>
         )}
+
+        {isAdmin && (
+          <Link
+            href="/admin/audit-logs"
+            className={`${getLinkClass('/admin/audit-logs')} py-2 block`}
+            onClick={() => setClicked(false)}
+          >
+            יומן פעולות
+          </Link>
+        )}
+
+        <div className="mt-4 pt-4 border-t border-gray-600 flex items-center gap-3">
+<li className="mr-4 border-r border-gray-600 pr-4">
+              <ThemeToggle />
+            </li>
+      </div>
       </div>
     </nav>
   );

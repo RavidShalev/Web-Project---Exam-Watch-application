@@ -1,27 +1,85 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  /* base */
+  --bg: #ffffff;
+  --fg: #171717;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  /* text */
+  --muted: #555555;
+
+  /* UI */
+  --accent: #2563eb;
+  --border: #e5e7eb;
+
+  /* surfaces */
+  --surface: #f9fafb;        /* cards / sections */
+  --surface-hover: #f3f4f6;  /* hover states */
+
+  /* focus / ring */
+  --ring: rgba(37, 99, 235, 0.4);
+
+    --success: #16a34a;
+  --success-bg: #dcfce7;
+
+  --danger: #dc2626;
+  --danger-bg: #fee2e2;
+
+  --warning: #ea580c;
+  --warning-bg: #ffedd5;
+
+  --info: #2563eb;
+  --info-bg: #dbeafe;
+
+  --purple: #7c3aed;
+  --purple-bg: #ede9fe;
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  /* base */
+  --bg: #0a0a0a;
+  --fg: #ededed;
+
+  /* text */
+  --muted: #a1a1aa;
+
+  /* UI */
+  --accent: #60a5fa;
+  --border: #374151;
+
+  /* surfaces */
+  --surface: #111827;        /* cards */
+  --surface-hover: #1f2937;
+
+  /* focus / ring */
+  --ring: rgba(96, 165, 250, 0.4);
+
+   --success: #4ade80;
+  --success-bg: rgba(22, 163, 74, 0.2);
+
+  --danger: #f87171;
+  --danger-bg: rgba(220, 38, 38, 0.2);
+
+  --warning: #fb923c;
+  --warning-bg: rgba(234, 88, 12, 0.25);
+
+  --info: #60a5fa;
+  --info-bg: rgba(37, 99, 235, 0.25);
+
+  --purple: #c4b5fd;
+  --purple-bg: rgba(124, 58, 237, 0.25);
+}
+
+html, body {
+  min-height: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background-color: var(--bg);
+  color: var(--fg);
   font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
-

@@ -28,7 +28,6 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-
     if (!name) return;
 
     setFormData((prev) => ({
@@ -65,9 +64,7 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
 
     const res = await fetch("/api/exams", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         ...formData,
         supervisorsTz,
@@ -77,49 +74,50 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
 
     const data = await res.json();
 
-    // case 1: conflict - room already taken
     if (res.status === 409) {
-      alert(
-        "Cannot create exam: the selected locכation is already occupied during this time range."
-      );
+      alert("לא ניתן ליצור מבחן: הכיתה תפוסה בטווח הזמן שנבחר.");
       return;
     }
 
-    // case 2: any other server error
     if (!res.ok) {
-      alert(data.message || "An unexpected error occurred. Please try again.");
+      alert(data.message || "אירעה שגיאה. נסי שוב.");
       return;
     }
 
     alert("המבחן נוסף בהצלחה!");
-
-    // Reset form
     onSuccess?.();
   };
 
   return (
-    <div className="flex justify-center mt-10">
+    <div className="mt-10 flex justify-center">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-lg bg-white border border-gray-200
-                   rounded-xl shadow-md p-8 space-y-5"
+        className="w-full max-w-lg space-y-5 rounded-xl border border-border bg-bg p-8 shadow-md"
       >
-        <h2 className="text-2xl font-semibold text-center mb-4">הוספת מבחן</h2>
+        <h2 className="mb-4 text-center text-2xl font-semibold text-fg">
+          הוספת מבחן
+        </h2>
 
+        {/* Course Name */}
         <div>
-          <label className="block text-sm font-medium mb-1">שם הקורס</label>
+          <label className="mb-1 block text-sm font-medium text-muted">
+            שם הקורס
+          </label>
           <input
             type="text"
             name="courseName"
             value={formData.courseName}
             onChange={handleChange}
-            className="w-full rounded-md border border-gray-300 px-3 py-2
-                       focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-md border border-border bg-bg px-3 py-2 text-fg
+                       focus:outline-none focus:ring-2 focus:ring-accent"
           />
         </div>
 
+        {/* Course Code */}
         <div>
-          <label className="block text-sm font-medium mb-1">קוד הקורס</label>
+          <label className="mb-1 block text-sm font-medium text-muted">
+            קוד הקורס
+          </label>
           <input
             type="number"
             name="courseCode"
@@ -133,64 +131,76 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
                 }));
               }
             }}
-            className="w-full rounded-md border border-gray-300 px-3 py-2
-               focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-md border border-border bg-bg px-3 py-2 text-fg
+                       focus:outline-none focus:ring-2 focus:ring-accent"
           />
         </div>
 
+        {/* Date */}
         <div>
-          <label className="block text-sm font-medium mb-1">תאריך</label>
+          <label className="mb-1 block text-sm font-medium text-muted">
+            תאריך
+          </label>
           <input
             type="date"
             name="date"
             value={formData.date}
             onChange={handleChange}
-            className="w-full rounded-md border border-gray-300 px-3 py-2
-                       focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-md border border-border bg-bg px-3 py-2 text-fg
+                       focus:outline-none focus:ring-2 focus:ring-accent"
           />
         </div>
 
+        {/* Times */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-1">שעת התחלה</label>
+            <label className="mb-1 block text-sm font-medium text-muted">
+              שעת התחלה
+            </label>
             <input
               type="time"
               name="startTime"
               value={formData.startTime}
               onChange={handleChange}
-              className="w-full rounded-md border border-gray-300 px-3 py-2
-                         focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-md border border-border bg-bg px-3 py-2 text-fg
+                         focus:outline-none focus:ring-2 focus:ring-accent"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">שעת סיום</label>
+            <label className="mb-1 block text-sm font-medium text-muted">
+              שעת סיום
+            </label>
             <input
               type="time"
               name="endTime"
               value={formData.endTime}
               min={formData.startTime || undefined}
               onChange={handleChange}
-              className="w-full rounded-md border border-gray-300 px-3 py-2
-             focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-md border border-border bg-bg px-3 py-2 text-fg
+                         focus:outline-none focus:ring-2 focus:ring-accent"
             />
           </div>
         </div>
 
+        {/* Location */}
         <div>
-          <label className="block text-sm font-medium mb-1">כיתה</label>
+          <label className="mb-1 block text-sm font-medium text-muted">
+            כיתה
+          </label>
           <input
             type="text"
             name="location"
             value={formData.location}
             onChange={handleChange}
-            className="w-full rounded-md border border-gray-300 px-3 py-2
-                       focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-md border border-border bg-bg px-3 py-2 text-fg
+                       focus:outline-none focus:ring-2 focus:ring-accent"
           />
         </div>
 
+        {/* Supervisors */}
         <div>
-          <label className="block text-sm font-medium mb-1">
+          <label className="mb-1 block text-sm font-medium text-muted">
             תעודות זהות של משגיחים (מופרדות בפסיק)
           </label>
           <input
@@ -198,14 +208,15 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
             name="supervisors"
             value={formData.supervisors}
             onChange={handleChange}
-            placeholder="10000001, 100000002, ..."
-            className="w-full rounded-md border border-gray-300 px-3 py-2
-               focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="10000001, 10000002"
+            className="w-full rounded-md border border-border bg-bg px-3 py-2 text-fg
+                       focus:outline-none focus:ring-2 focus:ring-accent"
           />
         </div>
 
+        {/* Lecturers */}
         <div>
-          <label className="block text-sm font-medium mb-1">
+          <label className="mb-1 block text-sm font-medium text-muted">
             תעודות זהות של מרצים (מופרדות בפסיק)
           </label>
           <input
@@ -213,14 +224,17 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
             name="lecturers"
             value={formData.lecturers}
             onChange={handleChange}
-            placeholder="10000001, 100000002, ..."
-            className="w-full rounded-md border border-gray-300 px-3 py-2
-               focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="10000001, 10000002"
+            className="w-full rounded-md border border-border bg-bg px-3 py-2 text-fg
+                       focus:outline-none focus:ring-2 focus:ring-accent"
           />
         </div>
 
+        {/* Rules */}
         <div className="space-y-2">
-          <label className="block text-sm font-medium">חוקים לבחינה</label>
+          <label className="block text-sm font-medium text-muted">
+            חוקים לבחינה
+          </label>
 
           {[
             { key: "calculator", label: "מחשבון" },
@@ -228,7 +242,10 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
             { key: "headphones", label: "אוזניות" },
             { key: "openBook", label: "חומר פתוח" },
           ].map(({ key, label }) => (
-            <label key={key} className="flex items-center gap-2 text-sm">
+            <label
+              key={key}
+              className="flex items-center gap-2 text-sm text-fg"
+            >
               <input
                 type="checkbox"
                 checked={rules[key as keyof typeof rules]}
@@ -238,6 +255,7 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
                     [key]: e.target.checked,
                   }))
                 }
+                className="accent-accent"
               />
               {label}
             </label>
@@ -246,8 +264,7 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded-md
-                     hover:bg-blue-700 transition font-medium"
+          className="w-full rounded-md bg-accent py-2 font-medium text-white hover:opacity-90 transition"
         >
           הוספת בחינה
         </button>
