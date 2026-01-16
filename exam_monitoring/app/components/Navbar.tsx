@@ -88,6 +88,10 @@ const Navbar = () => {
               </Link>
             </li>
           )}
+          
+          <li>
+            <ThemeToggle />
+          </li>
         </ul>
       </div>
 
