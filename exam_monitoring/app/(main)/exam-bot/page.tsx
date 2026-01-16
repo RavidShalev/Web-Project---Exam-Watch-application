@@ -92,8 +92,8 @@ export default function ExamBotPage() {
           timestamp: new Date(),
         },
       ]);
-    } catch (e: any) {
-      setError(e.message || "שגיאה לא צפויה");
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "שגיאה לא צפויה");
     } finally {
       setIsLoading(false);
     }
