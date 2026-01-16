@@ -2,16 +2,14 @@
 
 import { Exam } from "@/types/examtypes";
 import ExamTimer from "./examTimer";
-import { useState, useEffect, use } from "react";
-import { useParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
 import AttendanceList from "./attendanceList";
 import { AttendanceRow } from "@/types/attendance";
 import ReportEvents from "./reportEvents";
-import { useRouter } from "next/navigation";
 import SmartBotAssistant from "./SmartBotAssistant";
 
 export default function ActiveExamPage() {
-  // hooks and states
   const [exam, setExam] = useState<Exam | null>(null);
   const [attendance, setAttendance] = useState<AttendanceRow[]>([]);
   const { examId } = useParams<{ examId: string }>();
@@ -20,266 +18,247 @@ export default function ActiveExamPage() {
   const [minutes, setMinutes] = useState("");
   const router = useRouter();
 
-  // this function will update a record attendance status to present
   async function makePresent(attendanceId: string) {
-    const res = await fetch(`/api/exams/attendance/updateRecord/${attendanceId}`, {
-      // change in attendance status to present
+    await fetch(`/api/exams/attendance/updateRecord/${attendanceId}`, {
       method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({attendanceStatus: "present"}),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ attendanceStatus: "present" }),
     });
-    setAttendance((prevAttendance) => {
-      // search for the attendance record and update its status without update all records
-      const updatedAttendance = prevAttendance.map((record) => {
-        if (record._id === attendanceId) {
-          return { ...record, attendanceStatus: "present" as const };
-        }
-        return record;
-      });
-      return updatedAttendance;
-    });
-  };
 
-  // this function will update a record attendance status to absent
-  async function makeAbsent(attendanceId: string) {
-    const res = await fetch(`/api/exams/attendance/updateRecord/${attendanceId}`, {
-      // change in attendance status to absent
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({attendanceStatus: "absent"}),
-    });
-    setAttendance((prevAttendance) => {
-      // search for the attendance record and update its status without update all records
-      const updatedAttendance = prevAttendance.map((record) => {
-        if (record._id === attendanceId) {
-          return { ...record, attendanceStatus: "absent" as const };
-        }
-        return record;
-      });
-      return updatedAttendance;
-    });
-  };
-
-  // Finish exam for specific student
-  async function finishExamForStudent(attendanceId: string) {
-    // check if the student is on toilet, if he on toilet- can't finish his exam
-    const currentRecord = attendance.find(record => record._id === attendanceId);
-    if (currentRecord?.isOnToilet) {
-      alert("לא ניתן לסמן סיום מבחן לסטודנט שנמצא כרגע בשירותים.");
-      return; 
-    }
-    const res = await fetch(`/api/exams/attendance/updateRecord/${attendanceId}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({attendanceStatus: "finished"}),
-    });
-    // update attendance state to reflect the change
-     setAttendance(prevAttendance =>
-      prevAttendance.map(record =>
-      record._id === attendanceId
-        ? { ...record, attendanceStatus: "finished" as const }
-        : record
-    )
-  );
+    setAttendance(prev =>
+      prev.map(r =>
+        r._id === attendanceId ? { ...r, attendanceStatus: "present" } : r
+      )
+    );
   }
 
-  // save general report to the DB (not specific student)
-  async function saveGeneralReport(data: {examId: string; eventType: string; description?: string}) {
+  async function makeAbsent(attendanceId: string) {
+    await fetch(`/api/exams/attendance/updateRecord/${attendanceId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ attendanceStatus: "absent" }),
+    });
+
+    setAttendance(prev =>
+      prev.map(r =>
+        r._id === attendanceId ? { ...r, attendanceStatus: "absent" } : r
+      )
+    );
+  }
+
+  async function finishExamForStudent(attendanceId: string) {
+    const record = attendance.find(r => r._id === attendanceId);
+    if (record?.isOnToilet) {
+      alert("לא ניתן לסמן סיום מבחן לסטודנט שנמצא בשירותים");
+      return;
+    }
+
+    await fetch(`/api/exams/attendance/updateRecord/${attendanceId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ attendanceStatus: "finished" }),
+    });
+
+    setAttendance(prev =>
+      prev.map(r =>
+        r._id === attendanceId ? { ...r, attendanceStatus: "finished" } : r
+      )
+    );
+  }
+
+  async function saveGeneralReport(data: {
+    examId: string;
+    eventType: string;
+    description?: string;
+  }) {
     const supervisorId = localStorage.getItem("supervisorId");
     const res = await fetch(`/api/exams/${examId}/reporting`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({...data, supervisorId}),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...data, supervisorId }),
     });
-    const result = await res.json();
-    return result;
+    return res.json();
   }
 
-  // save report to the DB (only report on specific student)
-  async function saveReport(data: {examId: string; studentId: string; eventType: string; description?: string;
-}) {
+  async function saveReport(data: {
+    examId: string;
+    studentId: string;
+    eventType: string;
+    description?: string;
+  }) {
     const supervisorId = localStorage.getItem("supervisorId");
-    const res = await fetch(`/api/exams/${examId}/reporting/${data.studentId}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({...data, supervisorId}),
-    });
-    const result = await res.json();
-    return result;
+    const res = await fetch(
+      `/api/exams/${examId}/reporting/${data.studentId}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...data, supervisorId }),
+      }
+    );
+    return res.json();
   }
 
-  // update toilet time for specific attendance record (send report as well)
   async function updateToiletTime(attendanceId: string) {
-    const currentRecord = attendance.find(record => record._id === attendanceId);
-    if (!currentRecord) return;
-    const newToiletStatus = currentRecord && !currentRecord.isOnToilet;
-    const res = await fetch(`/api/exams/attendance/updateToilet/${attendanceId}`, {
+    const record = attendance.find(r => r._id === attendanceId);
+    if (!record) return;
+
+    const newStatus = !record.isOnToilet;
+
+    await fetch(`/api/exams/attendance/updateToilet/${attendanceId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ isOnToilet: newToiletStatus }),
+      body: JSON.stringify({ isOnToilet: newStatus }),
     });
-    // send report about toilet event
+
     await saveReport({
-      examId: examId,
-      studentId: currentRecord.studentId._id,
-      eventType: newToiletStatus ? "יצא לשירותים" : "חזר משירותים",
-      description: "",
+      examId,
+      studentId: record.studentId._id,
+      eventType: newStatus ? "יצא לשירותים" : "חזר משירותים",
     });
-    // Update local state
-    setAttendance(prevAttendance =>
-    prevAttendance.map(record =>
-      record._id === attendanceId
-        ? { ...record, isOnToilet: newToiletStatus }
-        : record
-    )
-  );
+
+    setAttendance(prev =>
+      prev.map(r =>
+        r._id === attendanceId ? { ...r, isOnToilet: newStatus } : r
+      )
+    );
   }
 
-  // Add time to exam function
   async function handleAddTime() {
     const minutesToAdd = parseInt(minutes, 10);
     if (isNaN(minutesToAdd) || minutesToAdd <= 0) {
-      alert("אנא הזן מספר תקין של דקות.");
+      alert("אנא הזן מספר תקין");
       return;
     }
+
     const res = await fetch(`/api/exams/${examId}/addTime`, {
       method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ minutesToAdd, userId: localStorage.getItem("supervisorId") }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        minutesToAdd,
+        userId: localStorage.getItem("supervisorId"),
+      }),
     });
+
     const data = await res.json();
     setExam(data.exam);
     setMinutes("");
     setShowAddTimeModal(false);
   }
 
-  async function handleAddTimeForStudent(attendanceId: string, minutesToAdd: number){
-    const res= await fetch (`/api/exams/attendance/addTime/${attendanceId}`, {
+  async function handleAddTimeForStudent(
+    attendanceId: string,
+    minutesToAdd: number
+  ) {
+    await fetch(`/api/exams/attendance/addTime/${attendanceId}`, {
       method: "PATCH",
-      headers:{
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ minutesToAdd }),
     });
-    const data= await res.json();
-     setAttendance(prev =>
-    prev.map(record =>
-      record._id === attendanceId
-        ? {
-            ...record,
-            extraTimeMinutes:
-              record.extraTimeMinutes + minutesToAdd,
-          }
-        : record
-    )
-  );
+
+    setAttendance(prev =>
+      prev.map(r =>
+        r._id === attendanceId
+          ? { ...r, extraTimeMinutes: r.extraTimeMinutes + minutesToAdd }
+          : r
+      )
+    );
   }
 
-  // Finish exam function
   async function finishExam() {
-    // if there are at least 1 student that present
-    const activeStudents = attendance.filter(student => student.attendanceStatus === "present");
-    if (activeStudents.length > 0) {
-        alert(`לא ניתן לסיים את המבחן. ישנם ${activeStudents.length} סטודנטים שעדיין בסטטוס 'נוכח' ולא סיימו.`);
-        return;
+    const active = attendance.filter(a => a.attendanceStatus === "present");
+    if (active.length > 0) {
+      alert(`יש ${active.length} סטודנטים שעדיין נוכחים`);
+      return;
     }
-    const confirmed = window.confirm("האם את/ה בטוח/ה שברצונך לסיים את המבחן?");
-    if (!confirmed) return;
-    const res = await fetch(`/api/exams/${examId}`, {
+
+    if (!window.confirm("האם לסיים את המבחן?")) return;
+
+    await fetch(`/api/exams/${examId}`, {
       method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({userId: localStorage.getItem("supervisorId") }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: localStorage.getItem("supervisorId"),
+      }),
     });
-    const result = await res.json();
-    setExam(result.exam);
-    router.push(`/home/`);
+
+    router.push("/home");
   }
 
-  // Fetch exam details
   useEffect(() => {
-    async function fetchExam() {
-      const res = await fetch(`/api/exams/${examId}`);
-      const data = await res.json();
-      setExam(data.exam ?? data);
-    }
-
-    if (examId) {
-      fetchExam();
-    }
+    if (!examId) return;
+    fetch(`/api/exams/${examId}`)
+      .then(res => res.json())
+      .then(data => setExam(data.exam ?? data));
   }, [examId]);
 
-  // Fetch attendance records
   useEffect(() => {
-    async function fetchAttendance() {
-      const res = await fetch(`/api/exams/attendance/${examId}`);
-      const data = await res.json();
-      console.log("attendance response:", data);
-      setAttendance(data.attendance ?? data);
-    }
-
-    if (examId) {
-      fetchAttendance();
-    }
+    if (!examId) return;
+    fetch(`/api/exams/attendance/${examId}`)
+      .then(res => res.json())
+      .then(data => setAttendance(data.attendance ?? data));
   }, [examId]);
 
   if (!exam) {
-    return <div>טוען...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center text-[var(--muted)]">
+        טוען…
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen px-3 sm:px-6 py-6">
+    <div className="min-h-screen bg-[var(--bg)] text-[var(--fg)] px-3 sm:px-4 py-4 sm:py-6 space-y-6 sm:space-y-8">
 
-      {/* Exam timer section */}
       {exam.actualStartTime && (
-        <div className="max-w-4xl mx-auto bg-white rounded-xl py-6 sm:py-10 px-4 text-center mb-6">
+        <div className="max-w-4xl mx-auto rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-8 text-center shadow-sm space-y-4 sm:space-y-6">
+
           <ExamTimer
             startTime={exam.actualStartTime}
             duration={exam.durationMinutes}
           />
-          <p className="text-sm text-gray-500 mt-2">
-            זמן שנשאר במבחן
+
+          <p className="text-sm text-[var(--muted)]">
+            זמן שנותר למבחן
           </p>
-           <button onClick={() => setShowAddTimeModal(true)} className="bg-blue-600 text-white px-4 py-2 my-5 rounded w-full sm:w-auto">הוספת זמן לבחינה</button>
-          <button onClick={finishExam} className="bg-red-600 text-white px-4 py-2 my-5 rounded w-full sm:w-auto">סיים מבחן</button>
+
+          <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+            <button
+              onClick={() => setShowAddTimeModal(true)}
+              className="rounded-xl px-6 py-3 text-sm font-semibold text-white bg-[var(--warning)] hover:brightness-110"
+            >
+              הוספת זמן לבחינה
+            </button>
+
+            <button
+              onClick={finishExam}
+              className="rounded-xl px-6 py-3 text-sm font-semibold text-white bg-[var(--danger)] hover:brightness-110"
+            >
+              סיים מבחן
+            </button>
+          </div>
         </div>
       )}
 
-      <div className="max-w-4xl mx-auto mt-8">
-
-        {/* General actions (responsive layout) */}
-        <div className="flex flex-col gap-3 sm:flex-row sm:gap-5 mb-4">
+      <div className="max-w-4xl mx-auto space-y-4">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
           <button
-            className="bg-blue-600 text-white px-4 py-2 rounded w-full sm:w-auto"
             onClick={() => setShowReportModal(true)}
+            className="rounded-xl px-5 py-2 text-sm font-semibold text-white bg-[var(--accent)] hover:brightness-110"
           >
             + דיווח אירוע כללי
           </button>
 
-          <button className="bg-blue-600 text-white px-4 py-2 rounded w-full sm:w-auto">
+          <button
+            className="rounded-xl px-5 py-2 text-sm font-semibold bg-[var(--surface-hover)] hover:brightness-105"
+          >
             קרא למרצה
           </button>
         </div>
 
-        {/* Attendance list title */}
-        <h2 className="text-xl sm:text-2xl my-2 font-semibold mb-4 text-black ">
+        <h2 className="text-xl sm:text-2xl font-bold">
           רשימת נוכחות
         </h2>
 
-        {/* Attendance list */}
         <AttendanceList
           attendance={attendance}
           makePresent={makePresent}
@@ -291,7 +270,6 @@ export default function ActiveExamPage() {
         />
       </div>
 
-      {/* General report modal */}
       {showReportModal && (
         <ReportEvents
           attendanceRecord={{ examId }}
@@ -303,7 +281,6 @@ export default function ActiveExamPage() {
         />
       )}
 
-            {/* Smart Bot Assistant - proactive alerts and check-ins */}
       {exam.actualStartTime && (
         <SmartBotAssistant
           examId={examId}
@@ -314,32 +291,37 @@ export default function ActiveExamPage() {
         />
       )}
 
-      {/* Add time modal */}
-        {showAddTimeModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded shadow-lg w-80 text-black">
-            <h2 className="text-lg font-semibold mb-4">הוסף זמן למבחן</h2>
-            <input type="number" min={1} value={minutes}
-              onChange={(e) => setMinutes(e.target.value)}
+      {showAddTimeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="w-[90vw] max-w-md rounded-2xl bg-[var(--bg)] border border-[var(--border)] p-5 sm:p-6 shadow-xl space-y-4">
+            <h2 className="text-lg font-bold">הוספת זמן למבחן</h2>
+
+            <input
+              type="number"
+              min={1}
+              value={minutes}
+              onChange={e => setMinutes(e.target.value)}
               placeholder="כמה דקות להוסיף?"
-              className="w-full border border-gray-300 rounded px-3 py-2 bg-white text-gray-900 "
+              className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[var(--ring)]"
             />
-            <button
-              className="border px-4 py-2 rounded text-gray-700 "
-              onClick={() => setShowAddTimeModal(false)}
-            >
-              ביטול
-            </button>
-            <button
+
+            <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3">
+              <button
+                onClick={() => setShowAddTimeModal(false)}
+                className="rounded-xl px-4 py-2 bg-[var(--surface-hover)] hover:brightness-105"
+              >
+                ביטול
+              </button>
+              <button
                 onClick={handleAddTime}
-                className="bg-blue-600 text-white px-4 py-2 rounded"
+                className="rounded-xl px-4 py-2 text-white bg-[var(--warning)] hover:brightness-110"
               >
                 אישור
               </button>
+            </div>
           </div>
         </div>
       )}
     </div>
   );
 }
-

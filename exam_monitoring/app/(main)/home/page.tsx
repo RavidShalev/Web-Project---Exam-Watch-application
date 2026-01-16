@@ -11,28 +11,34 @@ import { Exam } from "@/types/examtypes";
 export default function HomePage() {
   const [exam, setExam] = useState<Exam | null>(null);
   const [loading, setLoading] = useState(true);
-  const [userRole, setUserRole] = useState(""); //save user role
+  const [userRole, setUserRole] = useState(""); // save user role
   const router = useRouter();
 
   async function handleStartExam() {
     if (!exam) return;
+
     const res = await fetch("/api/exams/activate", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ examId: exam._id, userId: localStorage.getItem("supervisorId") }),
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        examId: exam._id,
+        userId: localStorage.getItem("supervisorId"),
+      }),
     });
+
     const updatedExam = await res.json();
     setExam(updatedExam.exam);
+
     // Navigate to active exam page
     router.push(`/active-exam/${exam._id}`);
   }
 
   // run once on component mount
   useEffect(() => {
-    
-    // checlk user role from sessionStorage
-    const storedUser = sessionStorage.getItem('currentUser');
+    // check user role from sessionStorage
+    const storedUser = sessionStorage.getItem("currentUser");
     if (storedUser) {
+<<<<<<< HEAD
         const user = JSON.parse(storedUser);
         setUserRole(user.role);
         
@@ -41,8 +47,17 @@ export default function HomePage() {
             setLoading(false);
             return; 
         }
+=======
+      const user = JSON.parse(storedUser);
+      setUserRole(user.role);
+
+      // If student or lecturer, stop further execution
+      if (user.role === "student" || user.role === "lecturer") {
+        setLoading(false);
+        return;
+      }
+>>>>>>> origin/dark-light-mode
     }
-  
 
     async function fetchClosestExam() {
       try {
@@ -55,7 +70,6 @@ export default function HomePage() {
         );
 
         const data = await res.json();
-
         const findedExam = data.closestExam;
 
         if (findedExam && findedExam.status === "active") {
@@ -76,7 +90,11 @@ export default function HomePage() {
   }, []);
 
   if (loading) {
-    return <div>טוען...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[var(--bg)] text-[var(--muted)]">
+        טוען...
+      </div>
+    );
   }
 
   // Admin dashboard view
@@ -85,17 +103,21 @@ export default function HomePage() {
   }
 
   // Lecturer dashboard view
-  if (userRole === 'lecturer') {
-      return <LecturerDashboard />;
+  if (userRole === "lecturer") {
+    return <LecturerDashboard />;
   }
 
-  //student dashboard view
-  if (userRole === 'student') {
-      return <StudentDashboard />;
+  // Student dashboard view
+  if (userRole === "student") {
+    return <StudentDashboard />;
   }
 
   if (!exam) {
-    return <div>אין מבחנים קרובים</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[var(--bg)] text-[var(--muted)]">
+        אין מבחנים קרובים
+      </div>
+    );
   }
 
   return <ReadyForExams exam={exam} onStartExam={handleStartExam} />;

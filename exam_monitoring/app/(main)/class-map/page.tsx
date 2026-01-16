@@ -8,7 +8,6 @@ const ClassMapPage = () => {
   const [classrooms, setClassrooms] = useState<Classroom[]>([]);
 
   useEffect(() => {
-    // Retrieve user information from session storage
     const rawUser = sessionStorage.getItem("currentUser");
 
     if (!rawUser) {
@@ -16,11 +15,9 @@ const ClassMapPage = () => {
     }
 
     const parsedUser = JSON.parse(rawUser);
-
     const role = parsedUser.role;
     const userId = parsedUser._id;
 
-    // Fetch classroom data with user-specific headers
     fetch("/api/class-map", {
       headers: {
         "x-user-role": role,
@@ -33,7 +30,10 @@ const ClassMapPage = () => {
 
   return (
     <div className="p-8 min-h-screen">
-      <h1 className="text-2xl font-bold mb-6 text-gray-900">מפת כיתות</h1>
+      <h1 className="text-2xl font-bold mb-6">
+        מפת כיתות
+      </h1>
+
       <ClassGrid classrooms={classrooms} />
     </div>
   );

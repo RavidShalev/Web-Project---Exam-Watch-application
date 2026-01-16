@@ -91,7 +91,7 @@ export default function ExamReportPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="flex items-center justify-center min-h-screen bg-bg text-fg">
         <div className="animate-pulse text-xl">טוען דוח...</div>
       </div>
     );
@@ -99,34 +99,36 @@ export default function ExamReportPage() {
 
   if (!exam) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="flex items-center justify-center min-h-screen bg-bg text-fg">
         <div className="text-xl">מבחן לא נמצא</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-6" dir="rtl">
+    <div className="min-h-screen bg-bg p-4 md:p-6 text-fg" dir="rtl">
       {/* Header */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+      <div className="bg-surface rounded-lg shadow-sm border border-border p-4 mb-6">
         {/* Title and Export Buttons */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <FileText className="text-blue-600" size={28} />
-            <h1 className="text-2xl font-bold text-gray-900">דוח מבחן</h1>
+            <FileText className="text-accent" size={28} />
+            <h1 className="text-2xl font-bold">דוח מבחן</h1>
           </div>
           
           <div className="flex gap-2">
             <button
               onClick={handleExportExcel}
-              className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors font-semibold text-sm"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white hover:opacity-90 transition"
+              style={{ backgroundColor: "var(--success)" }}
             >
               <Download size={16} />
               Excel
             </button>
             <button
               onClick={handleExportPDF}
-              className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors font-semibold text-sm"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white hover:opacity-90 transition"
+              style={{ backgroundColor: "var(--danger)" }}
             >
               <Download size={16} />
               PDF
@@ -135,19 +137,19 @@ export default function ExamReportPage() {
         </div>
 
         {/* Exam Details */}
-        <div className="border-t border-gray-200 pt-4">
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">{exam.courseName}</h2>
-          <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+        <div className="border-t border-border pt-4">
+          <h2 className="text-xl font-semibold mb-3">{exam.courseName}</h2>
+          <div className="flex flex-wrap gap-4 text-sm text-muted">
             <div className="flex items-center gap-2">
-              <MapPin size={16} className="text-gray-400" />
+              <MapPin size={16} />
               <span>{exam.location}</span>
             </div>
             <div className="flex items-center gap-2">
-              <Calendar size={16} className="text-gray-400" />
+              <Calendar size={16} />
               <span>{exam.date}</span>
             </div>
             <div className="flex items-center gap-2">
-              <Clock size={16} className="text-gray-400" />
+              <Clock size={16} />
               <span>{exam.startTime} - {exam.endTime}</span>
             </div>
           </div>
@@ -156,98 +158,68 @@ export default function ExamReportPage() {
 
       {/* Summary Stats */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-        <div className="bg-white p-5 rounded-xl shadow-sm border-r-4 border-blue-500">
-          <div className="flex items-center justify-between">
+        {[
+          { label: 'סה"כ סטודנטים', value: stats.total, icon: Users, bg: 'var(--info-bg)', color: 'var(--info)' },
+          { label: 'נוכחו', value: stats.present, icon: CheckCircle2, bg: 'var(--success-bg)', color: 'var(--success)' },
+          { label: 'נעדרו', value: stats.absent, icon: XCircle, bg: 'var(--danger-bg)', color: 'var(--danger)' },
+          { label: 'סיימו', value: stats.finished, icon: TrendingUp, bg: 'var(--purple-bg)', color: 'var(--purple)' },
+          { label: '% נוכחות', value: `${stats.attendanceRate}%`, icon: BarChart3, bg: 'var(--warning-bg)', color: 'var(--warning)' },
+        ].map(({ label, value, icon: Icon, bg, color }) => (
+          <div
+            key={label}
+            className="p-5 rounded-xl shadow-sm border border-border flex items-center justify-between"
+            style={{ backgroundColor: bg }}
+          >
             <div>
-              <p className="text-xs text-gray-500 mb-1">סה"כ סטודנטים</p>
-              <p className="text-3xl font-bold text-gray-900">{stats.total}</p>
+              <p className="text-xs text-muted mb-1">{label}</p>
+              <p className="text-3xl font-bold">{value}</p>
             </div>
-            <Users className="text-blue-600" size={28} />
+            <Icon size={28} style={{ color }} />
           </div>
-        </div>
-
-        <div className="bg-white p-5 rounded-xl shadow-sm border-r-4 border-green-500">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs text-gray-500 mb-1">נוכחו</p>
-              <p className="text-3xl font-bold text-gray-900">{stats.present}</p>
-            </div>
-            <CheckCircle2 className="text-green-600" size={28} />
-          </div>
-        </div>
-
-        <div className="bg-white p-5 rounded-xl shadow-sm border-r-4 border-red-500">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs text-gray-500 mb-1">נעדרו</p>
-              <p className="text-3xl font-bold text-gray-900">{stats.absent}</p>
-            </div>
-            <XCircle className="text-red-600" size={28} />
-          </div>
-        </div>
-
-        <div className="bg-white p-5 rounded-xl shadow-sm border-r-4 border-purple-500">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs text-gray-500 mb-1">סיימו</p>
-              <p className="text-3xl font-bold text-gray-900">{stats.finished}</p>
-            </div>
-            <TrendingUp className="text-purple-600" size={28} />
-          </div>
-        </div>
-
-        <div className="bg-white p-5 rounded-xl shadow-sm border-r-4 border-orange-500">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs text-gray-500 mb-1">% נוכחות</p>
-              <p className="text-3xl font-bold text-gray-900">{stats.attendanceRate}%</p>
-            </div>
-            <BarChart3 className="text-orange-600" size={28} />
-          </div>
-        </div>
+        ))}
       </div>
 
       {/* Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Attendance Table */}
-        <div className="bg-white rounded-2xl shadow-sm p-6">
+        <div className="bg-surface rounded-2xl shadow-sm p-6 border border-border">
           <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
             <Users size={24} />
             רשימת נוכחות מלאה
           </h2>
+
           <div className="overflow-x-auto max-h-[600px] overflow-y-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b-2 sticky top-0">
+            <table className="w-full text-sm">
+              <thead className="bg-surface-hover border-b sticky top-0">
                 <tr>
-                  <th className="text-right p-3 text-sm font-semibold text-gray-700">#</th>
-                  <th className="text-right p-3 text-sm font-semibold text-gray-700">שם</th>
-                  <th className="text-right p-3 text-sm font-semibold text-gray-700">ת.ז</th>
-                  <th className="text-right p-3 text-sm font-semibold text-gray-700">סטטוס</th>
+                  <th className="text-right p-3 font-semibold text-muted">#</th>
+                  <th className="text-right p-3 font-semibold text-muted">שם</th>
+                  <th className="text-right p-3 font-semibold text-muted">ת.ז</th>
+                  <th className="text-right p-3 font-semibold text-muted">סטטוס</th>
                 </tr>
               </thead>
-              <tbody className="divide-y">
+              <tbody className="divide-y divide-border">
                 {attendance.map((record, idx) => (
-                  <tr key={record._id} className="hover:bg-gray-50">
-                    <td className="p-3 text-sm text-gray-600">{idx + 1}</td>
-                    <td className="p-3 text-sm font-medium text-gray-900">
-                      {record.studentId.name}
-                    </td>
-                    <td className="p-3 text-sm text-gray-600">
-                      {record.studentId.idNumber}
-                    </td>
+                  <tr key={record._id} className="hover:bg-surface-hover">
+                    <td className="p-3 text-muted">{idx + 1}</td>
+                    <td className="p-3 font-medium">{record.studentId.name}</td>
+                    <td className="p-3 text-muted">{record.studentId.idNumber}</td>
                     <td className="p-3">
                       {record.attendanceStatus === 'present' && (
-                        <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">
+                        <span className="px-3 py-1 rounded-full text-xs font-semibold"
+                              style={{ backgroundColor: 'var(--success-bg)', color: 'var(--success)' }}>
                           נוכח
                         </span>
                       )}
                       {record.attendanceStatus === 'absent' && (
-                        <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold">
+                        <span className="px-3 py-1 rounded-full text-xs font-semibold"
+                              style={{ backgroundColor: 'var(--danger-bg)', color: 'var(--danger)' }}>
                           נעדר
                         </span>
                       )}
                       {record.attendanceStatus === 'finished' && (
-                        <span className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-semibold">
+                        <span className="px-3 py-1 rounded-full text-xs font-semibold"
+                              style={{ backgroundColor: 'var(--purple-bg)', color: 'var(--purple)' }}>
                           סיים
                         </span>
                       )}
@@ -261,22 +233,27 @@ export default function ExamReportPage() {
 
         {/* Reports Section */}
         <div className="space-y-6">
-          {/* Reports Summary */}
-          <div className="bg-white rounded-2xl shadow-sm p-6">
-            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+          <div className="bg-surface rounded-2xl shadow-sm p-6 border border-border">
+            <h2 className="text-xl font-bold mb-4 flex items-center gap-2"
+                style={{ color: 'var(--warning)' }}>
               <AlertCircle size={24} />
               סיכום דיווחים ({reports.length})
             </h2>
-            
+
             {Object.keys(reportsByType).length === 0 ? (
-              <p className="text-gray-500 text-center py-8">לא נרשמו דיווחים במבחן זה</p>
+              <p className="text-muted text-center py-8">לא נרשמו דיווחים במבחן זה</p>
             ) : (
               <div className="space-y-3">
                 {Object.entries(reportsByType).map(([type, reportsOfType]: [string, any]) => (
-                  <div key={type} className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                  <div
+                    key={type}
+                    className="p-4 rounded-lg border border-border"
+                    style={{ backgroundColor: 'var(--warning-bg)' }}
+                  >
                     <div className="flex items-center justify-between">
-                      <span className="font-semibold text-gray-900">{type}</span>
-                      <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-bold">
+                      <span className="font-semibold">{type}</span>
+                      <span className="px-3 py-1 rounded-full text-sm font-bold"
+                            style={{ backgroundColor: 'var(--info-bg)', color: 'var(--info)' }}>
                         {reportsOfType.length}
                       </span>
                     </div>
@@ -286,46 +263,44 @@ export default function ExamReportPage() {
             )}
           </div>
 
-          {/* Detailed Reports */}
-          <div className="bg-white rounded-2xl shadow-sm p-6">
+          <div className="bg-surface rounded-2xl shadow-sm p-6 border border-border">
             <h2 className="text-xl font-bold mb-4">כל הדיווחים</h2>
+
             <div className="space-y-3 max-h-[500px] overflow-y-auto">
               {reports.length === 0 ? (
-                <p className="text-gray-500 text-center py-4">אין דיווחים</p>
+                <p className="text-muted text-center py-4">אין דיווחים</p>
               ) : (
                 reports.map((report) => (
-                  <div key={report._id} className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                  <div
+                    key={report._id}
+                    className="p-4 rounded-lg border border-border"
+                    style={{ backgroundColor: 'var(--warning-bg)' }}
+                  >
                     <div className="flex items-start gap-3">
-                      <AlertCircle className="text-orange-500 flex-shrink-0 mt-1" size={18} />
+                      <AlertCircle size={18} style={{ color: 'var(--warning)' }} />
                       <div className="flex-1 min-w-0">
-                        <p className="font-bold text-gray-900">{report.eventType}</p>
-                        
+                        <p className="font-bold">{report.eventType}</p>
+
                         {report.studentId && (
-                          <p className="text-sm text-gray-700 mt-1">
+                          <p className="text-sm mt-1">
                             <span className="font-semibold">סטודנט:</span> {report.studentId.name} ({report.studentId.idNumber})
                           </p>
                         )}
-                        
+
                         {report.supervisorId && (
-                          <p className="text-sm text-gray-600 mt-1">
+                          <p className="text-sm text-muted mt-1">
                             <span className="font-semibold">משגיח:</span> {report.supervisorId.name}
                           </p>
                         )}
-                        
+
                         {report.description && (
-                          <p className="text-sm text-gray-600 mt-2 bg-white p-2 rounded border">
+                          <p className="text-sm mt-2 bg-bg p-2 rounded border border-border">
                             {report.description}
                           </p>
                         )}
-                        
-                        <p className="text-xs text-gray-400 mt-2">
-                          {new Date(report.timestamp).toLocaleString('he-IL', {
-                            day: '2-digit',
-                            month: '2-digit',
-                            year: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          })}
+
+                        <p className="text-xs text-muted mt-2">
+                          {new Date(report.timestamp).toLocaleString('he-IL')}
                         </p>
                       </div>
                     </div>

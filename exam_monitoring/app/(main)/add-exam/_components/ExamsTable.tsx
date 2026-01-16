@@ -20,18 +20,11 @@ type ExamsTableProps = {
 };
 
 // Helper function to display a value or a dash if the value is empty/null/undefined
-// in case of arrays it shows a dash instead of joining the array elements
-type NamedEntity = { name: string };
-
-// Helper function to display a value or a dash if the value is empty/null/undefined
 const showOrDash = (value: unknown): string => {
   if (value === null || value === undefined) return "—";
 
-  // Array of populated users (lecturers / supervisors)
   if (Array.isArray(value)) {
     if (value.length === 0) return "—";
-
-    // If the array contains objects with a 'name' property, join their names
     if (
       typeof value[0] === "object" &&
       value[0] !== null &&
@@ -41,42 +34,31 @@ const showOrDash = (value: unknown): string => {
         .map((u) => u.name)
         .join(", ");
     }
-
     return "—";
   }
 
   if (typeof value === "number") return value.toString();
-
-  if (typeof value === "string")
-    return value.trim() === "" ? "—" : value;
+  if (typeof value === "string") return value.trim() === "" ? "—" : value;
 
   return "—";
 };
 
-// Component to display a table of existing exams
 export default function ExamsTable({ refreshKey }: ExamsTableProps) {
   const [exams, setExams] = useState<Exam[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Function to handle delete of an exam
   const handleDelete = async (examId: string) => {
     const confirmed = window.confirm("למחוק את המבחן?");
     if (!confirmed) return;
 
-    // Call the API to delete the exam
     try {
-      const res = await fetch(`/api/exams/${examId}`, {
-        method: "DELETE",
-      });
-
+      const res = await fetch(`/api/exams/${examId}`, { method: "DELETE" });
       if (!res.ok) {
         alert("שגיאה במחיקה");
         return;
       }
 
       alert("המבחן נמחק בהצלחה");
-
-      // Update the local state to remove the deleted exam
       setExams((prev) => prev.filter((exam) => exam._id !== examId));
     } catch (err) {
       console.error("Delete exam error:", err);
@@ -84,7 +66,6 @@ export default function ExamsTable({ refreshKey }: ExamsTableProps) {
     }
   };
 
-  // Fetch existing exams from the API on component mount
   useEffect(() => {
     const fetchExams = async () => {
       try {
@@ -102,44 +83,60 @@ export default function ExamsTable({ refreshKey }: ExamsTableProps) {
   }, [refreshKey]);
 
   if (loading) {
-    return <p className="mt-10 text-center text-gray-900">טוען מבחנים…</p>;
+    return (
+      <p className="mt-10 text-center text-fg">
+        טוען מבחנים…
+      </p>
+    );
   }
 
   return (
     <div dir="rtl" className="mt-10">
-      <h3 className="text-lg font-semibold mb-4 text-right text-gray-900">
+      <h3 className="mb-4 text-lg font-semibold text-fg text-right">
         רשימת מבחנים קיימים
       </h3>
 
-      <div className="overflow-x-auto border border-gray-300 rounded-lg bg-white">
-        <table className="w-full text-sm text-right border-collapse text-gray-900">
-          <thead className="bg-gray-100">
+      <div className="overflow-x-auto rounded-lg border border-border bg-bg">
+        <table className="w-full border-collapse text-sm text-right text-fg">
+          <thead className="bg-border/40">
             <tr>
-              <th className="p-2 border border-gray-300 text-gray-900">שם הקורס</th>
-              <th className="p-2 border border-gray-300 text-gray-900">קוד</th>
-              <th className="p-2 border border-gray-300 text-gray-900">תאריך</th>
-              <th className="p-2 border border-gray-300 text-gray-900">שעה</th>
-              <th className="p-2 border border-gray-300 text-gray-900">מרצים</th>
-              <th className="p-2 border border-gray-300 text-gray-900">משגיחים</th>
-              <th className="p-2 border border-gray-300 text-gray-900">כיתה</th>
-              <th className="p-2 border border-gray-300 text-gray-900">סטטוס</th>
+              {[
+                "שם הקורס",
+                "קוד",
+                "תאריך",
+                "שעה",
+                "מרצים",
+                "משגיחים",
+                "כיתה",
+                "סטטוס",
+              ].map((title) => (
+                <th
+                  key={title}
+                  className="p-2 border border-border font-semibold text-fg"
+                >
+                  {title}
+                </th>
+              ))}
             </tr>
           </thead>
 
           <tbody>
             {exams.map((exam) => (
-              <tr key={exam._id} className="hover:bg-gray-50  border-gray-300 ">
-                <td className="p-2 border border-gray-300">
+              <tr
+                key={exam._id}
+                className="hover:bg-border/20 transition-colors"
+              >
+                <td className="p-2 border border-border">
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-900 ">{showOrDash(exam.courseName)}</span>
+                    <span>{showOrDash(exam.courseName)}</span>
 
-                    <div className="flex flex-col gap-1 ml-6">
+                    <div className="ml-6 flex flex-col gap-1">
                       <button
                         type="button"
-                        onClick={() => {
-                          window.location.href = `/edit-exam/${exam._id}`;
-                        }}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-xs"
+                        onClick={() =>
+                          (window.location.href = `/edit-exam/${exam._id}`)
+                        }
+                        className="rounded bg-accent px-2 py-1 text-xs text-white hover:opacity-90"
                       >
                         ערוך
                       </button>
@@ -147,27 +144,43 @@ export default function ExamsTable({ refreshKey }: ExamsTableProps) {
                       <button
                         type="button"
                         onClick={() => handleDelete(exam._id)}
-                        className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs"
+                        className="rounded bg-red-600 px-2 py-1 text-xs text-white hover:opacity-90"
                       >
                         מחק
                       </button>
                     </div>
                   </div>
                 </td>
-                <td className="p-2 border border-gray-300 text-gray-900 ">{showOrDash(exam.courseCode)}</td>
-                <td className="p-2 border border-gray-300 text-gray-900 ">{showOrDash(exam.date)}</td>
 
-                <td className="p-2 border border-gray-300 text-gray-900">
+                <td className="p-2 border border-border">
+                  {showOrDash(exam.courseCode)}
+                </td>
+
+                <td className="p-2 border border-border">
+                  {showOrDash(exam.date)}
+                </td>
+
+                <td className="p-2 border border-border">
                   {exam.startTime && exam.endTime
                     ? `${exam.startTime} - ${exam.endTime}`
                     : "—"}
                 </td>
 
-                <td className="p-2 border border-gray-300 text-gray-900">{showOrDash(exam.lecturers)}</td>
-                <td className="p-2 border border-gray-300 text-gray-900">{showOrDash(exam.supervisors)}</td>
+                <td className="p-2 border border-border">
+                  {showOrDash(exam.lecturers)}
+                </td>
 
-                <td className="p-2 border border-gray-300 text-gray-900">{showOrDash(exam.location)}</td>
-                <td className="p-2 border border-gray-300 text-gray-900">{showOrDash(exam.status)}</td>
+                <td className="p-2 border border-border">
+                  {showOrDash(exam.supervisors)}
+                </td>
+
+                <td className="p-2 border border-border">
+                  {showOrDash(exam.location)}
+                </td>
+
+                <td className="p-2 border border-border">
+                  {showOrDash(exam.status)}
+                </td>
               </tr>
             ))}
           </tbody>
