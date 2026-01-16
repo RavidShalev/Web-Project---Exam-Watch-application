@@ -44,7 +44,7 @@ export default function RegisterUserPage() {
     if (!password) return { strength: 0, label: "", color: "" };
     
     let strength = 0;
-    if (password.length >= 8) strength++;
+    if (password.length >= 6) strength++;
     if (password.length >= 12) strength++;
     if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
     if (/\d/.test(password)) strength++;
@@ -80,7 +80,7 @@ export default function RegisterUserPage() {
         break;
       case "password":
         if (!value) return "סיסמה היא שדה חובה";
-        if (value.length < 8) return "סיסמה חייבת להכיל לפחות 8 תווים";
+        if (value.length < 6) return "סיסמה חייבת להכיל לפחות 6 תווים";
         break;
     }
     return undefined;
@@ -342,7 +342,7 @@ export default function RegisterUserPage() {
               required 
               error={errors.password}
               icon={<Lock size={18} />}
-              helpText="מינימום 8 תווים, מומלץ: אותיות גדולות וקטנות, מספרים וסימנים"
+              helpText="מינימום 6 תווים, מומלץ: אותיות גדולות וקטנות, מספרים וסימנים"
             >
               <div className="relative">
                 <input
