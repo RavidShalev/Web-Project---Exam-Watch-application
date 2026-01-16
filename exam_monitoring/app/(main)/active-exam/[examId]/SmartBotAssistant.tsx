@@ -210,14 +210,16 @@ export default function SmartBotAssistant({
       
       // Generate final summary when exam is finished
       if (isFinished) {
-        const hasEndSummary = messages.some(m => m.content.includes("סיכום סופי"));
-        if (!hasEndSummary) {
-          const presentCount = attendance.filter(a => a.attendanceStatus === "present").length;
-          const absentCount = attendance.filter(a => a.attendanceStatus === "absent").length;
-          
-          addMessage({
-            type: "summary",
-            content: `🏁 סיכום סופי - הבחינה הסתיימה!
+        setMessages(prevMessages => {
+          const hasEndSummary = prevMessages.some(m => m.content.includes("סיכום סופי"));
+          if (!hasEndSummary) {
+            const presentCount = attendance.filter(a => a.attendanceStatus === "present").length;
+            const absentCount = attendance.filter(a => a.attendanceStatus === "absent").length;
+            
+            const summaryMessage: BotMessage = {
+              id: Date.now().toString(),
+              type: "summary",
+              content: `🏁 סיכום סופי - הבחינה הסתיימה!
 
 📊 נתוני נוכחות סופיים:
 • סה"כ נבחנים שהגיעו: ${presentCount}
@@ -231,30 +233,50 @@ export default function SmartBotAssistant({
 5. החזר את החומרים למרכז ההשגחה
 
 תודה על עבודתך! 🙏`,
-          }, true);
-          
-          playNotificationSound("alert");
-          setShowScreenAlert("🏁 הבחינה הסתיימה!\n\nאנא אסוף את כל המחברות");
-        }
+              timestamp: new Date(),
+            };
+            
+            // Play sound and show alert
+            if (soundEnabled) {
+              playNotificationSound("alert");
+            }
+            setShowScreenAlert("🏁 הבחינה הסתיימה!\n\nאנא אסוף את כל המחברות");
+            
+            if (!isOpen) {
+              setUnreadCount(prev => prev + 1);
+              setHasNewAlert(true);
+            }
+            
+            return [...prevMessages, summaryMessage];
+          }
+          return prevMessages;
+        });
         return;
       }
 
       setAlerts(prevAlerts => {
-        let hasChanges = false;
+        const alertsToTrigger: Array<{ message: string }> = [];
         const updatedAlerts = prevAlerts.map(alert => {
           if (!alert.triggered && remainingMinutes <= alert.triggerMinutesBefore) {
-            hasChanges = true;
-            // Add the alert message
-            addMessage({
-              type: "alert",
-              content: alert.message,
-            });
+            alertsToTrigger.push({ message: alert.message });
             return { ...alert, triggered: true };
           }
           return alert;
         });
         
-        return hasChanges ? updatedAlerts : prevAlerts;
+        // Trigger alerts after state update completes
+        if (alertsToTrigger.length > 0) {
+          setTimeout(() => {
+            alertsToTrigger.forEach(({ message }) => {
+              addMessage({
+                type: "alert",
+                content: message,
+              });
+            });
+          }, 0);
+        }
+        
+        return updatedAlerts;
       });
     };
 
@@ -262,7 +284,7 @@ export default function SmartBotAssistant({
     checkAlerts(); // Initial check
     
     return () => clearInterval(interval);
-  }, [getTimeInfo, addMessage, messages, attendance]);
+  }, [getTimeInfo, addMessage, attendance, soundEnabled, isOpen]);
 
   // Check-in questions checker
   useEffect(() => {
@@ -272,23 +294,30 @@ export default function SmartBotAssistant({
       if (isFinished) return;
 
       setCheckIns(prevCheckIns => {
-        let hasChanges = false;
+        const checkInsToTrigger: Array<{ question: string; options: string[] }> = [];
         const updatedCheckIns = prevCheckIns.map(checkIn => {
           if (!checkIn.triggered && elapsedMinutes >= checkIn.triggerMinutesAfterStart) {
-            hasChanges = true;
-            // Add the check-in question
-            addMessage({
-              type: "check-in",
-              content: checkIn.question,
-              requiresResponse: true,
-              responseOptions: checkIn.options,
-            });
+            checkInsToTrigger.push({ question: checkIn.question, options: checkIn.options });
             return { ...checkIn, triggered: true };
           }
           return checkIn;
         });
         
-        return hasChanges ? updatedCheckIns : prevCheckIns;
+        // Trigger check-ins after state update completes
+        if (checkInsToTrigger.length > 0) {
+          setTimeout(() => {
+            checkInsToTrigger.forEach(({ question, options }) => {
+              addMessage({
+                type: "check-in",
+                content: question,
+                requiresResponse: true,
+                responseOptions: options,
+              });
+            });
+          }, 0);
+        }
+        
+        return updatedCheckIns;
       });
     };
 
@@ -301,26 +330,28 @@ export default function SmartBotAssistant({
   // Monitor toilet breaks - alert if someone is out too long
   useEffect(() => {
     const studentsOnToilet = attendance.filter(a => a.isOnToilet);
+    const currentToiletIds = studentsOnToilet.map(s => s._id).join(",");
     
-    if (studentsOnToilet.length > 0 && lastToiletAlert !== studentsOnToilet.map(s => s._id).join(",")) {
-      const names = studentsOnToilet.map(s => s.studentId.name).join(", ");
-      
-      // Alert about students currently in bathroom
-      if (studentsOnToilet.length === 1) {
-        addMessage({
-          type: "alert",
-          content: `📍 תזכורת: ${names} יצא/ה לשירותים. זכור לוודא שחזר/ה בזמן סביר.`,
-        });
-      } else {
-        addMessage({
-          type: "alert",
-          content: `⚠️ שים לב: ${studentsOnToilet.length} סטודנטים בשירותים כרגע (${names}). לפי הנהלים, לא יותר מסטודנט אחד בשירותים בו-זמנית!`,
-        });
+    // Only alert if the list of students changed (new student went or someone returned)
+    if (currentToiletIds !== lastToiletAlert) {
+      if (studentsOnToilet.length > 0) {
+        const names = studentsOnToilet.map(s => s.studentId.name).join(", ");
+        
+        // Alert about students currently in bathroom
+        if (studentsOnToilet.length === 1) {
+          addMessage({
+            type: "alert",
+            content: `📍 תזכורת: ${names} יצא/ה לשירותים. זכור לוודא שחזר/ה בזמן סביר.`,
+          });
+        } else {
+          addMessage({
+            type: "alert",
+            content: `⚠️ שים לב: ${studentsOnToilet.length} סטודנטים בשירותים כרגע (${names}). לפי הנהלים, לא יותר מסטודנט אחד בשירותים בו-זמנית!`,
+          });
+        }
       }
       
-      setLastToiletAlert(studentsOnToilet.map(s => s._id).join(","));
-    } else if (studentsOnToilet.length === 0) {
-      setLastToiletAlert(null);
+      setLastToiletAlert(currentToiletIds || null);
     }
   }, [attendance, addMessage, lastToiletAlert]);
 
