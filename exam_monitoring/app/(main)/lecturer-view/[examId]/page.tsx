@@ -4,15 +4,14 @@ import { Exam } from "@/types/examtypes";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { AttendanceRow } from "@/types/attendance";
-import { Calendar, Clock, MapPin, Users, AlertCircle, CheckCircle2, XCircle, User, MessageSquare, Bell, Activity, TrendingUp, Send } from "lucide-react";
-import SendMessageModal from "./SendMessageModal";
+import { Calendar, Clock, MapPin, Users, AlertCircle, CheckCircle2, XCircle, User, MessageSquare, Bell, Activity, TrendingUp } from "lucide-react";
 import { ToastProvider, useToast } from "@/app/components/ToastProvider";
 
 // Interface for report structure from database
 interface Report {
   _id: string;
   eventType: string;
-  description: string;
+  description: string;  
   timestamp: string;
   supervisorId?: { name: string };
   studentId?: { name: string; idNumber: string };
@@ -30,7 +29,6 @@ function LecturerViewExamContent() {
   const [reports, setReports] = useState<Report[]>([]);                     // List of incident reports
   const [loading, setLoading] = useState(true);                             // Loading state
   const [alerts, setAlerts] = useState<string[]>([]);                       // Alert messages to show
-  const [showMessageModal, setShowMessageModal] = useState(false);          // Show/hide message modal
   const [wasCalled, setWasCalled] = useState(false);                        // Track if lecturer was called
   const [previousCalledLecturerId, setPreviousCalledLecturerId] = useState<string | null>(null);
   const { examId } = useParams<{ examId: string }>();                       // Get examId from URL
@@ -295,19 +293,6 @@ function LecturerViewExamContent() {
             </div>
           </div>
         )}
-        
-        {/* Action Button - Send Message */}
-        <div className="mt-4 pt-4 border-t border-border">
-          <button
-            onClick={() => setShowMessageModal(true)}
-            className="w-full md:w-auto flex items-center justify-center gap-2
-                       bg-[var(--accent)] hover:opacity-90 text-white
-                       px-6 py-3 rounded-xl font-semibold transition"
-          >
-            <Send size={20} />
-            שלח הודעה למשגיחים
-          </button>
-        </div>
       </div>
 
     {/* Stats Grid */}
@@ -556,19 +541,6 @@ function LecturerViewExamContent() {
         </div>
       </div>
     </div>
-
-    {/* Message Modal */}
-    {showMessageModal && (
-      <SendMessageModal
-        examId={examId}
-        supervisors={(exam.supervisors || []).map(supervisor =>
-          typeof supervisor === 'string'
-            ? { _id: supervisor, name: 'משגיח' }
-            : supervisor
-        )}
-        onClose={() => setShowMessageModal(false)}
-      />
-    )}
     </div>
   );
 }
