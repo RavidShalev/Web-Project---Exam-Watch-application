@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { AttendanceRow } from "@/types/attendance";
 import { Calendar, Clock, MapPin, Users, AlertCircle, CheckCircle2, XCircle, User, MessageSquare, Bell, Activity, TrendingUp, Send } from "lucide-react";
 import SendMessageModal from "./SendMessageModal";
-import { ToastProvider } from "@/app/components/ToastProvider";
+import { ToastProvider, useToast } from "@/app/components/ToastProvider";
 
 // Interface for report structure from database
 interface Report {
@@ -23,7 +23,7 @@ interface Report {
  * This page shows real-time view of active exam for lecturer
  * Updates automatically every 10 seconds
  */
-export default function LecturerViewExam() {
+function LecturerViewExamContent() {
   // State variables to store exam data
   const [exam, setExam] = useState<Exam | null>(null);                      // Exam details
   const [attendance, setAttendance] = useState<AttendanceRow[]>([]);        // List of students attendance
@@ -31,7 +31,10 @@ export default function LecturerViewExam() {
   const [loading, setLoading] = useState(true);                             // Loading state
   const [alerts, setAlerts] = useState<string[]>([]);                       // Alert messages to show
   const [showMessageModal, setShowMessageModal] = useState(false);          // Show/hide message modal
+  const [wasCalled, setWasCalled] = useState(false);                        // Track if lecturer was called
+  const [previousCalledLecturerId, setPreviousCalledLecturerId] = useState<string | null>(null);
   const { examId } = useParams<{ examId: string }>();                       // Get examId from URL
+  const { showToast } = useToast();
 
   // Fetch exam data from API - runs on component load
   useEffect(() => {
@@ -40,7 +43,8 @@ export default function LecturerViewExam() {
         // Get exam details
         const examRes = await fetch(`/api/exams/${examId}`);
         const examData = await examRes.json();
-        setExam(examData);
+        const examObj = examData.exam || examData;
+        setExam(examObj);
 
         // Get attendance list (who is present/absent)
         const attendanceRes = await fetch(`/api/exams/attendance/${examId}`);
@@ -48,10 +52,17 @@ export default function LecturerViewExam() {
         setAttendance(attendanceData);
 
         // Get incident reports
-        const reportsRes = await fetch(`/api/exams/${examId}/reporting`);
-        const reportsData = await reportsRes.json();
-        if (reportsData.success) {
-          setReports(reportsData.data);
+        try {
+          const reportsRes = await fetch(`/api/exams/${examId}/reporting`);
+          if (reportsRes.ok) {
+            const reportsData = await reportsRes.json();
+            if (reportsData.success) {
+              setReports(reportsData.data);
+            }
+          }
+        } catch (reportsError) {
+          // If reports endpoint fails, just log it and continue
+          console.warn("Could not fetch reports:", reportsError);
         }
       } catch (error) {
         console.error("Error fetching exam data:", error);
@@ -67,6 +78,87 @@ export default function LecturerViewExam() {
     // Cleanup: stop auto-refresh when component unmounts
     return () => clearInterval(interval);
   }, [examId]);
+
+  // Check if this lecturer was called
+  useEffect(() => {
+    if (!exam) return;
+
+    const currentUser = sessionStorage.getItem("currentUser");
+    if (!currentUser) return;
+
+    const user = JSON.parse(currentUser);
+    const currentLecturerId = user._id;
+
+    const calledLecturer = (exam as any).calledLecturer;
+    const calledLecturerId = calledLecturer 
+      ? (typeof calledLecturer === 'string' ? calledLecturer : calledLecturer._id)
+      : null;
+
+    // Check if ANY lecturer was called - if so, show alert to all lecturers
+    // This way, all lecturers are notified even if only one is marked in DB
+    if (calledLecturerId && calledLecturerId !== previousCalledLecturerId) {
+      // Check if current lecturer is in the lecturers list
+      const examLecturers = (exam as any).lecturers || [];
+      const lecturerIds = examLecturers.map((l: any) => 
+        typeof l === 'string' ? l : l._id?.toString()
+      );
+      
+      // If this lecturer is assigned to the exam, show them the alert
+      if (lecturerIds.includes(currentLecturerId)) {
+        setWasCalled(true);
+        showToast(
+          `🔔 נקראת לכיתה ${exam.location}! אנא פנה לכיתה.`,
+          "alert",
+          8000
+        );
+        
+        // Play notification sound
+        try {
+          const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+          const oscillator = audioContext.createOscillator();
+          const gainNode = audioContext.createGain();
+          
+          oscillator.connect(gainNode);
+          gainNode.connect(audioContext.destination);
+          oscillator.frequency.value = 880;
+          oscillator.type = "sine";
+          gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+          oscillator.start(audioContext.currentTime);
+          oscillator.stop(audioContext.currentTime + 0.5);
+          
+          // Double beep
+          setTimeout(() => {
+            const osc2 = audioContext.createOscillator();
+            const gain2 = audioContext.createGain();
+            osc2.connect(gain2);
+            gain2.connect(audioContext.destination);
+            osc2.frequency.value = 880;
+            osc2.type = "sine";
+            gain2.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gain2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+            osc2.start(audioContext.currentTime);
+            osc2.stop(audioContext.currentTime + 0.5);
+          }, 300);
+        } catch (e) {
+          console.log("Audio not supported");
+        }
+      }
+    }
+
+    setPreviousCalledLecturerId(calledLecturerId);
+    
+    // Show alert if any lecturer was called and this lecturer is assigned to the exam
+    if (calledLecturerId) {
+      const examLecturers = (exam as any).lecturers || [];
+      const lecturerIds = examLecturers.map((l: any) => 
+        typeof l === 'string' ? l : l._id?.toString()
+      );
+      setWasCalled(lecturerIds.includes(currentLecturerId));
+    } else {
+      setWasCalled(false);
+    }
+  }, [exam, showToast, previousCalledLecturerId]);
 
   // Check for unusual situations and create alerts
   useEffect(() => {
@@ -114,54 +206,109 @@ export default function LecturerViewExam() {
     );
   }
 
- return (
-  <ToastProvider>
+  return (
     <div className="min-h-screen bg-bg text-fg p-4 md:p-6" dir="rtl">
-    {/* Header */}
-    <div className="bg-surface border border-border rounded-2xl shadow-sm p-6 mb-6">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">{exam.courseName}</h1>
-          <div className="flex flex-wrap gap-4 text-sm text-muted">
-            <div className="flex items-center gap-2">
-              <Calendar size={16} />
-              {exam.date}
+      {/* Header */}
+      <div className="bg-surface border border-border rounded-2xl shadow-sm p-6 mb-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">{exam.courseName}</h1>
+            <div className="flex flex-wrap gap-4 text-sm text-muted">
+              <div className="flex items-center gap-2">
+                <Calendar size={16} />
+                {exam.date}
+              </div>
+              <div className="flex items-center gap-2">
+                <Clock size={16} />
+                {exam.startTime} - {exam.endTime}
+              </div>
+              <div className="flex items-center gap-2">
+                <MapPin size={16} />
+                {exam.location}
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Clock size={16} />
-              {exam.startTime} - {exam.endTime}
-            </div>
-            <div className="flex items-center gap-2">
-              <MapPin size={16} />
-              {exam.location}
-            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span
+              className="px-4 py-2 rounded-full text-sm font-semibold"
+              style={{ backgroundColor: "var(--success-bg)", color: "var(--success)" }}
+            >
+              פעיל
+            </span>
+            <Activity className="text-[var(--success)]" size={24} />
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <span
-            className="px-4 py-2 rounded-full text-sm font-semibold"
-            style={{ backgroundColor: "var(--success-bg)", color: "var(--success)" }}
+        {/* Called Lecturer Alert */}
+        {wasCalled && (
+          <div className="mt-4 pt-4 border-t border-border">
+            <div className="p-4 rounded-lg flex items-center gap-3" style={{ backgroundColor: "var(--warning-bg)", borderRight: "4px solid var(--warning)" }}>
+              <Bell className="flex-shrink-0" size={24} style={{ color: "var(--warning)" }} />
+              <div className="flex-1">
+                <h3 className="font-bold text-lg mb-1">
+                  🔔 נקראת לכיתה!
+                </h3>
+                <p className="mb-3" style={{ color: "var(--fg)" }}>
+                  המשגיח קרא לך להגיע לכיתה <strong>{exam.location}</strong>. אנא פנה לכיתה בהקדם.
+                </p>
+                <button
+                  onClick={async () => {
+                    try {
+                      const currentUser = sessionStorage.getItem("currentUser");
+                      const user = currentUser ? JSON.parse(currentUser) : null;
+                      
+                      const res = await fetch(`/api/exams/${examId}/call-lecturer`, {
+                        method: "DELETE",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          userId: user?._id,
+                        }),
+                      });
+
+                      const data = await res.json();
+
+                      if (!res.ok) {
+                        alert(data.message || "אירעה שגיאה בביטול הקריאה");
+                        return;
+                      }
+
+                      showToast("הקריאה בוטלה", "info", 3000);
+                      
+                      // Refresh exam data
+                      const examRes = await fetch(`/api/exams/${examId}`);
+                      const examData = await examRes.json();
+                      setExam(examData.exam || examData);
+                    } catch (error) {
+                      console.error("Error dismissing call:", error);
+                      alert("אירעה שגיאה בביטול הקריאה");
+                    }
+                  }}
+                  className="px-4 py-2 rounded-lg text-sm font-semibold transition-colors text-white"
+                  style={{ backgroundColor: "var(--warning)", opacity: 0.9 }}
+                  onMouseEnter={(e) => e.currentTarget.style.opacity = "1"}
+                  onMouseLeave={(e) => e.currentTarget.style.opacity = "0.9"}
+                >
+                  ✓ הבנתי, הגעתי לכיתה
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {/* Action Button - Send Message */}
+        <div className="mt-4 pt-4 border-t border-border">
+          <button
+            onClick={() => setShowMessageModal(true)}
+            className="w-full md:w-auto flex items-center justify-center gap-2
+                       bg-[var(--accent)] hover:opacity-90 text-white
+                       px-6 py-3 rounded-xl font-semibold transition"
           >
-            פעיל
-          </span>
-          <Activity className="text-[var(--success)]" size={24} />
+            <Send size={20} />
+            שלח הודעה למשגיחים
+          </button>
         </div>
       </div>
-
-      {/* Action Button - Send Message */}
-      <div className="mt-4 pt-4 border-t border-border">
-        <button
-          onClick={() => setShowMessageModal(true)}
-          className="w-full md:w-auto flex items-center justify-center gap-2
-                     bg-[var(--accent)] hover:opacity-90 text-white
-                     px-6 py-3 rounded-xl font-semibold transition"
-        >
-          <Send size={20} />
-          שלח הודעה למשגיחים
-        </button>
-      </div>
-    </div>
 
     {/* Stats Grid */}
     <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
@@ -423,6 +570,13 @@ export default function LecturerViewExam() {
       />
     )}
     </div>
-  </ToastProvider>
-);
+  );
+}
+
+export default function LecturerViewExam() {
+  return (
+    <ToastProvider>
+      <LecturerViewExamContent />
+    </ToastProvider>
+  );
 }

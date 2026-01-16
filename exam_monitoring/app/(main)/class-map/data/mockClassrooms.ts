@@ -5,6 +5,7 @@ export type Classroom = {
   courseName: string;
   examDate: string; 
   supervisors: string[];
+  calledLecturer?: string | null;
 };
 
 export const mockClassrooms: Classroom[] = [

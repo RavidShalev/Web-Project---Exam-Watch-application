@@ -16,6 +16,7 @@ type ExamWithRelations = {
   date: string;
   supervisors: PopulatedUser[];
   lecturers: PopulatedUser[];
+  calledLecturer?: PopulatedUser | null;
 };
 
 type ClassroomDTO = {
@@ -25,6 +26,7 @@ type ClassroomDTO = {
   courseName: string;
   examDate: string;
   supervisors: string[];
+  calledLecturer?: string | null;
 };
 
 
@@ -38,6 +40,7 @@ export async function GET(req: Request) {
   const exams = (await Exam.find()
     .populate("supervisors", "name")
     .populate("lecturers", "name")
+    .populate("calledLecturer", "name")
     .lean()) as ExamWithRelations[];
 
   // Filter exams to only include upcoming ones
@@ -71,6 +74,7 @@ export async function GET(req: Request) {
     courseName: exam.courseName,
     examDate: exam.date,
     supervisors: exam.supervisors.map((s) => s.name),
+    calledLecturer: exam.calledLecturer?.name || null,
   }));
 
   return NextResponse.json(classrooms);

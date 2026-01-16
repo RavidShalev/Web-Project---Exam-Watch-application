@@ -97,6 +97,15 @@ const ExamSchema = new mongoose.Schema(
       ref: "User",
       default: [],
     },
+    calledLecturer: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+    lecturerCalledAt: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,

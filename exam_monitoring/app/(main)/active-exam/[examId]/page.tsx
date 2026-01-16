@@ -8,6 +8,7 @@ import AttendanceList from "./attendanceList";
 import { AttendanceRow } from "@/types/attendance";
 import ReportEvents from "./reportEvents";
 import SmartBotAssistant from "./SmartBotAssistant";
+import CallLecturerModal from "./CallLecturerModal";
 
 export default function ActiveExamPage() {
   const [exam, setExam] = useState<Exam | null>(null);
@@ -15,6 +16,7 @@ export default function ActiveExamPage() {
   const { examId } = useParams<{ examId: string }>();
   const [showReportModal, setShowReportModal] = useState(false);
   const [showAddTimeModal, setShowAddTimeModal] = useState(false);
+  const [showCallLecturerModal, setShowCallLecturerModal] = useState(false);
   const [minutes, setMinutes] = useState("");
   const router = useRouter();
 
@@ -184,11 +186,103 @@ export default function ActiveExamPage() {
     router.push("/home");
   }
 
+  async function handleCallLecturer() {
+    if (!exam) return;
+
+    type LecturerRef = string | { _id: string; idNumber?: string; name?: string };
+    const lecturers = (exam as Exam & { lecturers?: LecturerRef[] }).lecturers || [];
+    const lecturersArray = lecturers.map((l: LecturerRef) =>
+      typeof l === 'string' ? { _id: l } : l
+    );
+
+    if (lecturersArray.length === 0) {
+      alert("אין מרצים משובצים למבחן זה");
+      return;
+    }
+
+    // Call the first lecturer (all lecturers will be notified in their view)
+    const lecturerId = lecturersArray[0]._id;
+    const supervisorId = localStorage.getItem("supervisorId");
+
+    try {
+      const res = await fetch(`/api/exams/${examId}/call-lecturer`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lecturerId,
+          supervisorId,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message || "אירעה שגיאה בקריאה למרצה");
+        return;
+      }
+
+      const lecturersNames = lecturersArray.map(l => typeof l === 'object' && l.name ? l.name : 'מרצה').join(', ');
+      alert(`כל המרצים נקראו בהצלחה! (${lecturersNames})`);
+      
+      // Refresh exam data
+      fetch(`/api/exams/${examId}`)
+        .then(res => res.json())
+        .then(data => setExam(data.exam ?? data));
+    } catch (error) {
+      console.error("Error calling lecturer:", error);
+      alert("אירעה שגיאה בקריאה למרצה");
+    }
+  }
+
+  async function handleCancelLecturerCall() {
+    if (!exam) return;
+
+    if (!window.confirm("האם לבטל את הקריאה למרצה?")) return;
+
+    const supervisorId = localStorage.getItem("supervisorId");
+
+    try {
+      const res = await fetch(`/api/exams/${examId}/call-lecturer`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: supervisorId,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message || "אירעה שגיאה בביטול הקריאה");
+        return;
+      }
+
+      alert("הקריאה בוטלה בהצלחה!");
+      
+      // Refresh exam data
+      fetch(`/api/exams/${examId}`)
+        .then(res => res.json())
+        .then(data => setExam(data.exam ?? data));
+    } catch (error) {
+      console.error("Error canceling call:", error);
+      alert("אירעה שגיאה בביטול הקריאה");
+    }
+  }
+
   useEffect(() => {
     if (!examId) return;
-    fetch(`/api/exams/${examId}`)
-      .then(res => res.json())
-      .then(data => setExam(data.exam ?? data));
+    
+    async function fetchExamData() {
+      const res = await fetch(`/api/exams/${examId}`);
+      const data = await res.json();
+      setExam(data.exam ?? data);
+    }
+    
+    fetchExamData();
+    
+    // Auto-refresh exam data every 10 seconds to catch lecturer call changes
+    const interval = setInterval(fetchExamData, 10000);
+    return () => clearInterval(interval);
   }, [examId]);
 
   useEffect(() => {
@@ -248,11 +342,21 @@ export default function ActiveExamPage() {
             + דיווח אירוע כללי
           </button>
 
-          <button
-            className="rounded-xl px-5 py-2 text-sm font-semibold bg-[var(--surface-hover)] hover:brightness-105"
-          >
-            קרא למרצה
-          </button>
+          {((exam as Exam & { calledLecturer?: { _id: string } | null }).calledLecturer) ? (
+            <button
+              onClick={handleCancelLecturerCall}
+              className="rounded-xl px-5 py-2 text-sm font-semibold text-white bg-orange-600 hover:bg-orange-700"
+            >
+              ביטול קריאה למרצה
+            </button>
+          ) : (
+            <button
+              onClick={handleCallLecturer}
+              className="rounded-xl px-5 py-2 text-sm font-semibold bg-[var(--surface-hover)] hover:brightness-105"
+            >
+              קרא למרצה
+            </button>
+          )}
         </div>
 
         <h2 className="text-xl sm:text-2xl font-bold">
@@ -321,6 +425,26 @@ export default function ActiveExamPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {showCallLecturerModal && exam && (
+        <CallLecturerModal
+          examId={examId}
+          lecturers={
+            ((exam as Exam & { lecturers?: Array<string | { _id: string; idNumber?: string; name?: string }> }).lecturers || [])
+              .map((l) =>
+                typeof l === 'string' ? { _id: l, idNumber: '', name: '' } : l
+              )
+          }
+          calledLecturer={((exam as Exam & { calledLecturer?: { _id: string; idNumber?: string; name?: string } | null }).calledLecturer || null) as { _id: string; idNumber: string; name: string } | null}
+          onClose={() => setShowCallLecturerModal(false)}
+          onSuccess={() => {
+            // Refresh exam data
+            fetch(`/api/exams/${examId}`)
+              .then(res => res.json())
+              .then(data => setExam(data.exam ?? data));
+          }}
+        />
       )}
     </div>
   );

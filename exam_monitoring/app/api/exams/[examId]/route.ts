@@ -23,7 +23,8 @@ export async function GET(
     const exam = await Exam.findById(examId)
       .populate("lecturers", "idNumber name")
       .populate("supervisors", "idNumber name")
-      .populate("students", "idNumber name");
+      .populate("students", "idNumber name")
+      .populate("calledLecturer", "idNumber name");
 
     if (!exam) {
       return NextResponse.json({ message: "Exam not found" }, { status: 404 });

@@ -49,7 +49,7 @@ const ClassCard = ({ classroom }: Props) => {
       </div>
 
       {/* Supervisors */}
-      <div>
+      <div className="mb-3">
         <p className="font-medium mb-1 text-[var(--fg)]">משגיחים:</p>
 
         {hasSupervisors ? (
@@ -64,6 +64,18 @@ const ClassCard = ({ classroom }: Props) => {
           </p>
         )}
       </div>
+
+      {/* Called Lecturer */}
+      {classroom.calledLecturer && (
+        <div className="border-t border-[var(--border)] pt-3 mt-3">
+          <p className="font-medium mb-1 text-[var(--fg)]">מרצה נקרא:</p>
+          <div className="flex items-center gap-2">
+            <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-3 py-1 rounded-full text-sm font-semibold">
+              {classroom.calledLecturer}
+            </span>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
