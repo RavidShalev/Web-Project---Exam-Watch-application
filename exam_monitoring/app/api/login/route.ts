@@ -44,6 +44,18 @@ export async function POST(req: Request) {
       );
     }
 
+    // ✅ Log successful login to audit log for admin dashboard
+    const { logAuditAction } = await import("../../lib/auditLogger");
+    await logAuditAction({
+        actionType: 'SYSTEM_LOGIN',
+        description: `${user.name} התחבר למערכת`,
+        userId: user._id.toString(),
+        metadata: {
+            userName: user.name,
+            userRole: user.role,
+        }
+    });
+
     // if no errors return to the user the information
     return NextResponse.json({
       _id: user._id.toString(),

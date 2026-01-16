@@ -47,6 +47,18 @@ export async function POST(request: NextRequest) {
       password: hashedPassword, // save the hashed password
     });
 
+    // ✅ Log new user registration to audit log for admin dashboard
+    const { logAuditAction } = await import("../../lib/auditLogger");
+    await logAuditAction({
+        actionType: 'USER_REGISTERED',
+        description: `משתמש חדש נרשם: ${newUser.name} (${newUser.role})`,
+        metadata: {
+            userName: newUser.name,
+            userRole: newUser.role,
+            userEmail: newUser.email,
+        }
+    });
+
     // 6. answer without the password field
     const userObj = newUser.toObject();
     delete userObj.password;

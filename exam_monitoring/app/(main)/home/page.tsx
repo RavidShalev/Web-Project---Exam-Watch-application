@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import ReadyForExams from "./_components/ReadyForExams";
 import StudentDashboard from "./_components/StudentDashboard"; 
 import LecturerDashboard from "./_components/LecturerDashboard";
+import AdminDashboard from "./_components/AdminDashboard";
 import { Exam } from "@/types/examtypes";
 
 export default function HomePage() {
@@ -35,8 +36,8 @@ export default function HomePage() {
         const user = JSON.parse(storedUser);
         setUserRole(user.role);
         
-        // If student or lecturer, stop further execution
-        if (user.role === 'student' || user.role === 'lecturer') {
+        // If student, lecturer or admin, stop further execution
+        if (user.role === 'student' || user.role === 'lecturer' || user.role === 'admin') {
             setLoading(false);
             return; 
         }
@@ -76,6 +77,11 @@ export default function HomePage() {
 
   if (loading) {
     return <div>טוען...</div>;
+  }
+
+  // Admin dashboard view
+  if (userRole === 'admin') {
+      return <AdminDashboard />;
   }
 
   // Lecturer dashboard view

@@ -199,6 +199,18 @@ export async function PATCH(
     );
 
     await logAuditEvent({userId, action: "סיום בחינה", examId: examId.toString(), status: true,});
+    
+    // ✅ Log important action to audit log for admin dashboard
+    const { logAuditAction } = await import("../../../lib/auditLogger");
+    await logAuditAction({
+        actionType: 'EXAM_FINISHED',
+        description: `מבחן "${updatedExam.courseName}" הסתיים`,
+        examId: examId.toString(),
+        metadata: {
+            courseName: updatedExam.courseName,
+            duration: updatedExam.durationMinutes,
+        }
+    });
 
     return NextResponse.json({ success: true, exam: updatedExam });
   } catch (error) {

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import dbConnect from "../../../lib/db";
 import Exam from "../../../models/Exams";
 import Attendance from "../../../models/Attendance";
-import { logAuditEvent } from "../../../lib/auditLogger";
+import { logAuditEvent, logAuditAction } from "../../../lib/auditLogger";
 
 export async function POST(req: Request) {
     try {
@@ -56,7 +56,19 @@ export async function POST(req: Request) {
 
         }
         await logAuditEvent({userId, action: "התחלת מבחן", examId: exam._id.toString(), status: true,});
-
+        
+        // ✅ Log important action to audit log for admin dashboard
+        await logAuditAction({
+            actionType: 'EXAM_STARTED',
+            description: `מבחן "${exam.courseName}" התחיל`,
+            userId,
+            examId: exam._id.toString(),
+            metadata: {
+                courseName: exam.courseName,
+                location: exam.location,
+                startTime: exam.actualStartTime,
+            }
+        });
 
         // return success response
         return NextResponse.json({ message: "Exam activated successfully", exam });

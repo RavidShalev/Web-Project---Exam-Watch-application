@@ -109,6 +109,14 @@ const Navbar = () => {
             </li>
           )}
 
+          {isAdmin && (
+            <li>
+              <Link href="/admin/audit-logs" className={getLinkClass('/admin/audit-logs')}>
+                יומן פעולות
+              </Link>
+            </li>
+          )}
+
             <li className="mr-4 border-r border-gray-600 pr-4">
               <ThemeToggle />
             </li>
@@ -157,6 +165,16 @@ const Navbar = () => {
             onClick={() => setClicked(false)}
           >
             הוספת בחינה
+          </Link>
+        )}
+
+        {isAdmin && (
+          <Link
+            href="/admin/audit-logs"
+            className={`${getLinkClass('/admin/audit-logs')} py-2 block`}
+            onClick={() => setClicked(false)}
+          >
+            יומן פעולות
           </Link>
         )}
 
