@@ -38,25 +38,14 @@ export default function HomePage() {
     // check user role from sessionStorage
     const storedUser = sessionStorage.getItem("currentUser");
     if (storedUser) {
-<<<<<<< HEAD
-        const user = JSON.parse(storedUser);
-        setUserRole(user.role);
-        
-        // If student, lecturer or admin, stop further execution
-        if (user.role === 'student' || user.role === 'lecturer' || user.role === 'admin') {
-            setLoading(false);
-            return; 
-        }
-=======
       const user = JSON.parse(storedUser);
       setUserRole(user.role);
 
-      // If student or lecturer, stop further execution
-      if (user.role === "student" || user.role === "lecturer") {
+      // If student, lecturer or admin, stop further execution
+      if (user.role === "student" || user.role === "lecturer" || user.role === "admin") {
         setLoading(false);
         return;
       }
->>>>>>> origin/dark-light-mode
     }
 
     async function fetchClosestExam() {
