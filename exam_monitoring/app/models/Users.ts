@@ -32,6 +32,21 @@ const UserSchema = new mongoose.Schema(
       enum: ALLOWED_ROLES,
       default: "student",
     },
+    // 🔒 Security fields for account locking
+    failedLoginAttempts: {
+      type: Number,
+      default: 0,
+      required: false,
+    },
+    accountLocked: {
+      type: Boolean,
+      default: false,
+      required: false,
+    },
+    lockedUntil: {
+      type: Date,
+      required: false,
+    },
   },
   { timestamps: true }
 );

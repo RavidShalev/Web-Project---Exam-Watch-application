@@ -49,13 +49,17 @@ function Login() {
 
     console.log("sending:", { idNumber, password });
 
+    // Parse the JSON response from the server (for both success and error)
+    const data = await res.json();
+
     if (!res.ok) {
-      setError("תעודת הזהות או הסיסמה שגויים");
+      // Display the server's error message (includes attempts left)
+      setError(data.message || "תעודת הזהות או הסיסמה שגויים");
       return;
     }
 
-    // Parse the JSON response returned from the server
-    const user = await res.json();
+    // On success, data contains user info
+    const user = data;
 
     if (user.role === "supervisor") {
       localStorage.setItem("supervisorId", user._id);
