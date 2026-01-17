@@ -9,6 +9,8 @@ import { AttendanceRow } from "@/types/attendance";
 import ReportEvents from "./reportEvents";
 import SmartBotAssistant from "./SmartBotAssistant";
 import CallLecturerModal from "./CallLecturerModal";
+import AddStudentModal from "./AddStudentModal";
+
 
 export default function ActiveExamPage() {
   const [exam, setExam] = useState<Exam | null>(null);
@@ -17,6 +19,7 @@ export default function ActiveExamPage() {
   const [showReportModal, setShowReportModal] = useState(false);
   const [showAddTimeModal, setShowAddTimeModal] = useState(false);
   const [showCallLecturerModal, setShowCallLecturerModal] = useState(false);
+  const [showAddStudentModal, setShowAddStudentModal]=useState(false);
   const [minutes, setMinutes] = useState("");
   const router = useRouter();
 
@@ -146,6 +149,30 @@ export default function ActiveExamPage() {
     setMinutes("");
     setShowAddTimeModal(false);
   }
+
+  async function addStudentToExam(studentIdNumber: string) {
+    const res = await fetch(`/api/exams/attendance/addNewAttendance`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        examId,
+        studentIdNumber,
+        userId: localStorage.getItem("supervisorId"),
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.message || "שגיאה בהוספת סטודנט");
+      return;
+    }
+
+    setAttendance(prev => [...prev, data.attendance]);
+  }
+
+
+
 
   async function handleAddTimeForStudent(
     attendanceId: string,
@@ -342,6 +369,11 @@ export default function ActiveExamPage() {
             + דיווח אירוע כללי
           </button>
 
+          <button onClick={() => setShowAddStudentModal(true)}
+            className="rounded-xl px-5 py-2 text-sm font-semibold text-white bg-[var(--info)]">
+            + הוספת סטודנט
+         </button>
+
           {((exam as Exam & { calledLecturer?: { _id: string } | null }).calledLecturer) ? (
             <button
               onClick={handleCancelLecturerCall}
@@ -446,6 +478,15 @@ export default function ActiveExamPage() {
           }}
         />
       )}
+
+      {showAddStudentModal && (
+        <AddStudentModal
+          examId={examId}
+          onClose={() => setShowAddStudentModal(false)}
+          onAdd={addStudentToExam}
+        />
+      )}
+
     </div>
   );
 }
