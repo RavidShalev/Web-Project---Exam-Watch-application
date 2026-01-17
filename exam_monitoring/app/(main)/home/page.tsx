@@ -22,7 +22,7 @@ export default function HomePage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         examId: exam._id,
-        userId: localStorage.getItem("supervisorId"),
+        userId: sessionStorage.getItem("supervisorId"),
       }),
     });
 
@@ -50,8 +50,8 @@ export default function HomePage() {
 
     async function fetchClosestExam() {
       try {
-        // get supervisorId from localStorage
-        const supervisorId = localStorage.getItem("supervisorId");
+        // get supervisorId from sessionStorage
+        const supervisorId = sessionStorage.getItem("supervisorId");
 
         // API call to get the closest exam for the supervisor
         const res = await fetch(

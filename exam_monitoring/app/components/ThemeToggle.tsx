@@ -13,12 +13,7 @@ export default function ThemeToggle() {
     setMounted(true);
   }, []);
 
-  useEffect(() => {
-    if (mounted) {
-      console.log("ThemeToggle mounted — theme:", theme, "resolved:", resolvedTheme);
-    }
-  }, [mounted, theme, resolvedTheme]);
-
+  // Saving a place for the button
   if (!mounted) {
     return <div className="w-10 h-10" />;
   }

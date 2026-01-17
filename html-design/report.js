@@ -6,8 +6,8 @@ function initReport() {
     const submitBtn = document.getElementById('add-report-btn');
     const tableBody = document.getElementById('incident-table-body');
 
-    // load all existing reports from localStorage
-    let reports = JSON.parse(localStorage.getItem("examReports")) || [];
+    // load all existing reports from sessionStorage
+    let reports = JSON.parse(sessionStorage.getItem("examReports")) || [];
 
     // render the reports table
     tableBody.innerHTML = "";
@@ -43,9 +43,9 @@ function initReport() {
             note: note || "—"
         };
 
-        // add new report to localStorage
+        // add new report to sessionStorage
         reports.push(newReport);
-        localStorage.setItem("examReports", JSON.stringify(reports));
+        sessionStorage.setItem("examReports", JSON.stringify(reports));
 
         // add the report in the front
         addRow(newReport);

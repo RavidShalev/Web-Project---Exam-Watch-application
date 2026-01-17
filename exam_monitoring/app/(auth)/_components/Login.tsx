@@ -58,7 +58,7 @@ function Login() {
     const user = await res.json();
 
     if (user.role === "supervisor") {
-      localStorage.setItem("supervisorId", user._id);
+      sessionStorage.setItem("supervisorId", user._id);
     }
 
     // Store authenticated user data in sessionStorage

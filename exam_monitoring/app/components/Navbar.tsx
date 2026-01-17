@@ -44,7 +44,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     sessionStorage.removeItem('currentUser');
-    localStorage.removeItem('supervisorId');
+    sessionStorage.removeItem('supervisorId');
     setCurrentUser(null);
     router.push('/');
   };

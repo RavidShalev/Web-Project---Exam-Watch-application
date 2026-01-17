@@ -96,7 +96,7 @@ export default function ActiveExamPage() {
     eventType: string;
     description?: string;
   }) {
-    const supervisorId = localStorage.getItem("supervisorId");
+    const supervisorId = sessionStorage.getItem("supervisorId");
     const res = await fetch(`/api/exams/${examId}/reporting`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -111,7 +111,7 @@ export default function ActiveExamPage() {
     eventType: string;
     description?: string;
   }) {
-    const supervisorId = localStorage.getItem("supervisorId");
+    const supervisorId = sessionStorage.getItem("supervisorId");
     const res = await fetch(
       `/api/exams/${examId}/reporting/${data.studentId}`,
       {
@@ -160,7 +160,7 @@ export default function ActiveExamPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         minutesToAdd,
-        userId: localStorage.getItem("supervisorId"),
+        userId: sessionStorage.getItem("supervisorId"),
       }),
     });
 
@@ -177,7 +177,7 @@ export default function ActiveExamPage() {
       body: JSON.stringify({
         examId,
         studentIdNumber,
-        userId: localStorage.getItem("supervisorId"),
+        userId: sessionStorage.getItem("supervisorId"),
       }),
     });
 
@@ -199,7 +199,7 @@ async function transferStudent(attendanceId: string, targetExamId: string)
     body: JSON.stringify({
       attendanceId,
       targetExamId,
-      userId: localStorage.getItem("supervisorId"),
+      userId: sessionStorage.getItem("supervisorId"),
     }),
   });
 
@@ -253,7 +253,7 @@ async function transferStudent(attendanceId: string, targetExamId: string)
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        userId: localStorage.getItem("supervisorId"),
+        userId: sessionStorage.getItem("supervisorId"),
       }),
     });
 
@@ -276,7 +276,7 @@ async function transferStudent(attendanceId: string, targetExamId: string)
 
     // Call the first lecturer (all lecturers will be notified in their view)
     const lecturerId = lecturersArray[0]._id;
-    const supervisorId = localStorage.getItem("supervisorId");
+    const supervisorId = sessionStorage.getItem("supervisorId");
 
     try {
       const res = await fetch(`/api/exams/${examId}/call-lecturer`, {
@@ -313,7 +313,7 @@ async function transferStudent(attendanceId: string, targetExamId: string)
 
     if (!window.confirm("האם לבטל את הקריאה למרצה?")) return;
 
-    const supervisorId = localStorage.getItem("supervisorId");
+    const supervisorId = sessionStorage.getItem("supervisorId");
 
     try {
       const res = await fetch(`/api/exams/${examId}/call-lecturer`, {

@@ -38,7 +38,7 @@ export default function CallLecturerModal({
     setCalling(true);
 
     try {
-      const supervisorId = localStorage.getItem("supervisorId");
+      const supervisorId = sessionStorage.getItem("supervisorId");
       
       const res = await fetch(`/api/exams/${examId}/call-lecturer`, {
         method: "POST",
@@ -132,7 +132,7 @@ export default function CallLecturerModal({
                 onClick={async () => {
                   setCalling(true);
                   try {
-                    const supervisorId = localStorage.getItem("supervisorId");
+                    const supervisorId = sessionStorage.getItem("supervisorId");
                     
                     const res = await fetch(`/api/exams/${examId}/call-lecturer`, {
                       method: "DELETE",
