@@ -33,6 +33,9 @@ export default function AddStudentModal({ examId, onClose, onAdd }: Props) {
         bg-black/40 dark:bg-black/60
         px-3
       "
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="add-student-title"
     >
       <div
         className="
@@ -47,7 +50,7 @@ export default function AddStudentModal({ examId, onClose, onAdd }: Props) {
       >
         {/* Header */}
         <div className="space-y-1">
-          <h2 className="text-lg sm:text-xl font-bold">
+          <h2 id="add-student-title" className="text-lg sm:text-xl font-bold">
             הוספת סטודנט למבחן
           </h2>
           <p className="text-sm text-[var(--muted)]">
@@ -56,22 +59,26 @@ export default function AddStudentModal({ examId, onClose, onAdd }: Props) {
         </div>
 
         {/* Input */}
-        <input
-          type="text"
-          value={idNumber}
-          onChange={e => setIdNumber(e.target.value)}
-          placeholder="תעודת זהות"
-          className="
-            w-full
-            rounded-xl
-            border border-[var(--border)]
-            bg-[var(--surface)]
-            px-4 py-3
-            text-sm
-            focus:outline-none
-            focus:ring-2 focus:ring-[var(--ring)]
-          "
-        />
+        <div>
+          <label htmlFor="student-id" className="sr-only">תעודת זהות</label>
+          <input
+            id="student-id"
+            type="text"
+            value={idNumber}
+            onChange={e => setIdNumber(e.target.value)}
+            placeholder="תעודת זהות"
+            className="
+              w-full
+              rounded-xl
+              border border-[var(--border)]
+              bg-[var(--surface)]
+              px-4 py-3
+              text-sm
+              focus:outline-none
+              focus:ring-2 focus:ring-[var(--ring)]
+            "
+          />
+        </div>
 
         {/* Actions */}
         <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 pt-2">

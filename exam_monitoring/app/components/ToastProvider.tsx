@@ -121,6 +121,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               <button
                 onClick={() => dismissToast(toast.id)}
                 className="flex-shrink-0 hover:bg-white/20 rounded p-1"
+                aria-label="סגור הודעה"
               >
                 <X className="w-4 h-4" />
               </button>

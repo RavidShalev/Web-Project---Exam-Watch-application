@@ -22,7 +22,7 @@ export default function ReportModal({
   const [description, setDescription] = useState("");
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-3">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-3" role="dialog" aria-modal="true" aria-labelledby="report-title">
       <div
         className="
           w-full max-w-md
@@ -35,7 +35,7 @@ export default function ReportModal({
           space-y-4
         "
       >
-        <h2 className="text-lg sm:text-xl font-bold text-[var(--fg)]">
+        <h2 id="report-title" className="text-lg sm:text-xl font-bold text-[var(--fg)]">
           דיווח על סטודנט
         </h2>
 
@@ -44,49 +44,57 @@ export default function ReportModal({
           {attendanceRecord.studentId.idNumber}
         </div>
 
-        <select
-          value={eventType}
-          onChange={(e) => setEventType(e.target.value)}
-          className="
-            w-full
-            rounded-xl
-            border border-[var(--border)]
-            bg-[var(--surface)]
-            px-3 py-2
-            text-sm sm:text-base
-            text-[var(--fg)]
-            focus:outline-none
-            focus:ring-2
-            focus:ring-[var(--ring)]
-          "
-        >
-          <option value="">בחר סוג אירוע חריג</option>
-          <option>איחור</option>
-          <option>עזיבה מוקדמת</option>
-          <option>יצא מהכיתה</option>
-          <option>חשד להעתקה (תיאור חובה)</option>
-          <option>אחר</option>
-        </select>
+        <div>
+          <label htmlFor="event-type" className="sr-only">סוג אירוע חריג</label>
+          <select
+            id="event-type"
+            value={eventType}
+            onChange={(e) => setEventType(e.target.value)}
+            className="
+              w-full
+              rounded-xl
+              border border-[var(--border)]
+              bg-[var(--surface)]
+              px-3 py-2
+              text-sm sm:text-base
+              text-[var(--fg)]
+              focus:outline-none
+              focus:ring-2
+              focus:ring-[var(--ring)]
+            "
+          >
+            <option value="">בחר סוג אירוע חריג</option>
+            <option>איחור</option>
+            <option>עזיבה מוקדמת</option>
+            <option>יצא מהכיתה</option>
+            <option>חשד להעתקה (תיאור חובה)</option>
+            <option>אחר</option>
+          </select>
+        </div>
 
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="מלא תיאור על האירוע אם יש צורך"
-          rows={4}
-          className="
-            w-full
-            rounded-xl
-            border border-[var(--border)]
-            bg-[var(--surface)]
-            px-3 py-2
-            text-sm sm:text-base
-            text-[var(--fg)]
-            placeholder:text-[var(--muted)]
-            focus:outline-none
-            focus:ring-2
-            focus:ring-[var(--ring)]
-          "
-        />
+        <div>
+          <label htmlFor="event-description" className="sr-only">תיאור האירוע</label>
+          <textarea
+            id="event-description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="מלא תיאור על האירוע אם יש צורך"
+            rows={4}
+            className="
+              w-full
+              rounded-xl
+              border border-[var(--border)]
+              bg-[var(--surface)]
+              px-3 py-2
+              text-sm sm:text-base
+              text-[var(--fg)]
+              placeholder:text-[var(--muted)]
+              focus:outline-none
+              focus:ring-2
+              focus:ring-[var(--ring)]
+            "
+          />
+        </div>
 
         <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 pt-2">
           <button

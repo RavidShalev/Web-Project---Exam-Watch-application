@@ -76,11 +76,13 @@ export default function UploadExamCsv({ onSuccess }: UploadExamCsvProps) {
 
         <div className="flex flex-col gap-4">
           <input
+            id="exam-csv-upload"
             ref={fileInputRef}
             type="file"
             accept=".csv"
             className="hidden"
             onChange={(e) => setFile(e.target.files?.[0] || null)}
+            aria-label="העלה קובץ CSV של מבחנים"
           />
 
           <button

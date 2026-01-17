@@ -28,8 +28,13 @@ export default function MainLayout({
 }>) {
   return (
     <>
+      <a href="#main-content" className="skip-to-main">
+        דלג לתוכן הראשי
+      </a>
       <Navbar />
-      {children}
+      <main id="main-content">
+        {children}
+      </main>
     </>
   );
 }

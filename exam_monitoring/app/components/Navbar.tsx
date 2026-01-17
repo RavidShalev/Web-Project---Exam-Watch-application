@@ -83,7 +83,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="flex items-center justify-between bg-[#1b2430] py-5 px-5 md:px-20 relative z-50" dir="rtl">
+    <nav role="navigation" aria-label="תפריט ניווט ראשי" className="flex items-center justify-between bg-[#1b2430] py-5 px-5 md:px-20 relative z-50" dir="rtl">
       {/* Logo - Right side (RTL) */}
       <Link href="/home" className="shrink-0">
         <svg
@@ -166,6 +166,7 @@ const Navbar = () => {
           className="md:hidden text-white text-2xl cursor-pointer p-2 hover:bg-gray-700 rounded transition-colors"
           onClick={handleClick}
           aria-label="תפריט"
+          aria-expanded={clicked}
         >
           {clicked ? '✕' : '☰'}
         </button>
@@ -188,6 +189,7 @@ const Navbar = () => {
               onClick={handleLogout}
               className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-sm transition-colors"
               title="התנתק"
+              aria-label="התנתק"
             >
               <LogOut size={16} />
               <span className="hidden lg:inline">התנתק</span>

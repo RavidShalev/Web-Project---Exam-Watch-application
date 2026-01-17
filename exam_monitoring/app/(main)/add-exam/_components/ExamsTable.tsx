@@ -96,9 +96,10 @@ export default function ExamsTable({ refreshKey }: ExamsTableProps) {
         רשימת מבחנים קיימים
       </h3>
 
-      {/* ================= DESKTOP TABLE ================= */}
+      {/*  DESKTOP TABLE */}
       <div className="hidden sm:block overflow-x-auto rounded-2xl border border-[var(--border)] bg-[var(--bg)]">
         <table className="min-w-full text-sm text-right">
+          <caption className="sr-only">רשימת מבחנים קיימים במערכת</caption>
           <thead className="bg-[var(--surface-hover)] text-[var(--muted)] font-semibold">
             <tr>
               {[
@@ -113,6 +114,7 @@ export default function ExamsTable({ refreshKey }: ExamsTableProps) {
               ].map((title) => (
                 <th
                   key={title}
+                  scope="col"
                   className="px-4 py-3 border-b border-[var(--border)] whitespace-nowrap"
                 >
                   {title}
@@ -146,6 +148,7 @@ export default function ExamsTable({ refreshKey }: ExamsTableProps) {
                           text-white
                           hover:brightness-110
                         "
+                        aria-label={`ערוך בחינה ${exam.courseName}`}
                       >
                         ערוך
                       </button>
@@ -162,6 +165,7 @@ export default function ExamsTable({ refreshKey }: ExamsTableProps) {
                           text-white
                           hover:brightness-110
                         "
+                        aria-label={`מחק בחינה ${exam.courseName}`}
                       >
                         מחק
                       </button>

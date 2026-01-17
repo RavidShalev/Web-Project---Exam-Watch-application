@@ -67,11 +67,13 @@ export default function UploadStudentsCsv({ examId, onSuccess }: Props) {
         </h3>
 
         <input
+          id="students-csv-upload"
           ref={fileInputRef}
           type="file"
           accept=".csv"
           className="hidden"
           onChange={(e) => setFile(e.target.files?.[0] || null)}
+          aria-label="העלה קובץ CSV של סטודנטים"
         />
 
         <button

@@ -227,15 +227,18 @@ export default function ExamBotPage() {
               className="flex gap-3"
             >
               <input
+                id="bot-question"
                 ref={inputRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="שאלי שאלה על נהלי בחינות…"
                 className="flex-1 bg-surface border border-ui rounded-2xl px-5 py-3 focus:outline-none focus:ring-2 ring-accent"
+                aria-label="שאל שאלה"
               />
               <button
                 disabled={!input.trim() || isLoading}
                 className="w-12 h-12 rounded-2xl bg-accent text-white flex items-center justify-center hover:opacity-90 disabled:opacity-40 transition"
+                aria-label="שלח שאלה"
               >
                 {isLoading ? (
                   <Loader2 className="w-5 h-5 animate-spin" />

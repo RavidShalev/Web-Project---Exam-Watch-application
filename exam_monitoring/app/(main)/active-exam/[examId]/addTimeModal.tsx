@@ -16,7 +16,7 @@ export default function AddTimeModal({
   const [minuteToAdd, setMinuteToAdd] = useState("");
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-3">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-3" role="dialog" aria-modal="true" aria-labelledby="add-time-title">
       <div
         className="
           w-full max-w-md
@@ -29,7 +29,7 @@ export default function AddTimeModal({
           text-right
         "
       >
-        <h2 className="text-lg sm:text-xl font-bold text-[var(--fg)]">
+        <h2 id="add-time-title" className="text-lg sm:text-xl font-bold text-[var(--fg)]">
           הוספת זמן לסטודנט
         </h2>
 
@@ -38,25 +38,29 @@ export default function AddTimeModal({
           {attendanceRecord.studentId.idNumber}
         </div>
 
-        <input
-          type="number"
-          min={1}
-          value={minuteToAdd}
-          onChange={(e) => setMinuteToAdd(e.target.value)}
-          placeholder="כמה דקות להוסיף?"
-          className="
-            w-full
-            rounded-xl
-            border border-[var(--border)]
-            bg-[var(--surface)]
-            px-3 sm:px-4 py-3
-            text-sm sm:text-base
-            text-[var(--fg)]
-            focus:outline-none
-            focus:ring-2
-            focus:ring-[var(--ring)]
-          "
-        />
+        <div>
+          <label htmlFor="minutes-to-add" className="sr-only">כמה דקות להוסיף</label>
+          <input
+            id="minutes-to-add"
+            type="number"
+            min={1}
+            value={minuteToAdd}
+            onChange={(e) => setMinuteToAdd(e.target.value)}
+            placeholder="כמה דקות להוסיף?"
+            className="
+              w-full
+              rounded-xl
+              border border-[var(--border)]
+              bg-[var(--surface)]
+              px-3 sm:px-4 py-3
+              text-sm sm:text-base
+              text-[var(--fg)]
+              focus:outline-none
+              focus:ring-2
+              focus:ring-[var(--ring)]
+            "
+          />
+        </div>
 
         <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 pt-2">
           <button

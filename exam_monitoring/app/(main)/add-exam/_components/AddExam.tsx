@@ -107,8 +107,9 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
         </h2>
 
         <div className="grid gap-5">
-          <Field label="שם הקורס">
+          <Field label="שם הקורס" htmlFor="courseName">
             <input
+              id="courseName"
               type="text"
               name="courseName"
               value={formData.courseName}
@@ -117,8 +118,9 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
             />
           </Field>
 
-          <Field label="קוד הקורס">
+          <Field label="קוד הקורס" htmlFor="courseCode">
             <input
+              id="courseCode"
               type="number"
               name="courseCode"
               value={formData.courseCode}
@@ -135,8 +137,9 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
             />
           </Field>
 
-          <Field label="תאריך">
+          <Field label="תאריך" htmlFor="date">
             <input
+              id="date"
               type="date"
               name="date"
               value={formData.date}
@@ -146,8 +149,9 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
           </Field>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Field label="שעת התחלה">
+            <Field label="שעת התחלה" htmlFor="startTime">
               <input
+                id="startTime"
                 type="time"
                 name="startTime"
                 value={formData.startTime}
@@ -156,8 +160,9 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
               />
             </Field>
 
-            <Field label="שעת סיום">
+            <Field label="שעת סיום" htmlFor="endTime">
               <input
+                id="endTime"
                 type="time"
                 name="endTime"
                 min={formData.startTime || undefined}
@@ -168,8 +173,9 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
             </Field>
           </div>
 
-          <Field label="כיתה">
+          <Field label="כיתה" htmlFor="location">
             <input
+              id="location"
               type="text"
               name="location"
               value={formData.location}
@@ -178,8 +184,9 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
             />
           </Field>
 
-          <Field label="תעודות זהות של משגיחים">
+          <Field label="תעודות זהות של משגיחים" htmlFor="supervisors">
             <input
+              id="supervisors"
               type="text"
               name="supervisors"
               value={formData.supervisors}
@@ -189,8 +196,9 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
             />
           </Field>
 
-          <Field label="תעודות זהות של מרצים">
+          <Field label="תעודות זהות של מרצים" htmlFor="lecturers">
             <input
+              id="lecturers"
               type="text"
               name="lecturers"
               value={formData.lecturers}
@@ -267,13 +275,15 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
 function Field({
   label,
   children,
+  htmlFor,
 }: {
   label: string;
   children: React.ReactNode;
+  htmlFor?: string;
 }) {
   return (
     <div className="space-y-1.5">
-      <label className="text-sm font-medium text-[var(--muted)]">
+      <label htmlFor={htmlFor} className="text-sm font-medium text-[var(--muted)]">
         {label}
       </label>
       {children}

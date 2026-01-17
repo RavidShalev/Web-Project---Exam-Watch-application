@@ -19,10 +19,10 @@ export default function TransferStudentModal({
   const [targetExamId, setTargetExamId] = useState("");
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" role="dialog" aria-modal="true" aria-labelledby="transfer-title">
       <div className="w-full max-w-md rounded-2xl bg-[var(--bg)] border border-[var(--border)] p-6 space-y-4">
 
-        <h2 className="text-lg font-bold">
+        <h2 id="transfer-title" className="text-lg font-bold">
           העברת סטודנט
         </h2>
 
@@ -30,18 +30,22 @@ export default function TransferStudentModal({
           {attendanceRecord.studentId.name} – {attendanceRecord.studentId.idNumber}
         </p>
 
-        <select
-          value={targetExamId}
-          onChange={e => setTargetExamId(e.target.value)}
-          className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3"
-        >
-          <option value="">בחר כיתה חדשה</option>
-          {availableExams.map(exam => (
-            <option key={exam._id} value={exam._id}>
-              {exam.location}
-            </option>
-          ))}
-        </select>
+        <div>
+          <label htmlFor="target-exam" className="sr-only">בחר כיתה חדשה</label>
+          <select
+            id="target-exam"
+            value={targetExamId}
+            onChange={e => setTargetExamId(e.target.value)}
+            className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3"
+          >
+            <option value="">בחר כיתה חדשה</option>
+            {availableExams.map(exam => (
+              <option key={exam._id} value={exam._id}>
+                {exam.location}
+              </option>
+            ))}
+          </select>
+        </div>
 
         <div className="flex justify-end gap-2">
           <button

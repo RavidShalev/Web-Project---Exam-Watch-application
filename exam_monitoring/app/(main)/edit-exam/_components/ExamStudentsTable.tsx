@@ -21,10 +21,11 @@ export default function ExamStudentsTable({ students }: Props) {
       {/* ================= DESKTOP TABLE ================= */}
       <div className="hidden sm:block overflow-x-auto rounded-2xl border border-[var(--border)] bg-[var(--bg)]">
         <table className="min-w-full text-sm text-right">
+          <caption className="sr-only">רשימת סטודנטים רשומים לבחינה</caption>
           <thead className="bg-[var(--surface-hover)] text-[var(--muted)] font-semibold">
             <tr>
-              <th className="px-5 py-3">שם הסטודנט</th>
-              <th className="px-5 py-3">תעודת זהות</th>
+              <th scope="col" className="px-5 py-3">שם הסטודנט</th>
+              <th scope="col" className="px-5 py-3">תעודת זהות</th>
             </tr>
           </thead>
 

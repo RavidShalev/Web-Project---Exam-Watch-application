@@ -94,28 +94,51 @@ function Login() {
         <form
           onSubmit={handleLogin}
           className="flex flex-col gap-4"
+          aria-label="טופס התחברות"
         >
-          <input
-            ref={userRef}
-            value={idNumber}
-            onChange={(e) => handleChange("user", e)}
-            placeholder="תעודת זהות"
-            className="input-field"
-          />
+          <div>
+            <label htmlFor="idNumber" className="sr-only">
+              תעודת זהות
+            </label>
+            <input
+              id="idNumber"
+              ref={userRef}
+              value={idNumber}
+              onChange={(e) => handleChange("user", e)}
+              placeholder="תעודת זהות"
+              className="input-field"
+              aria-required="true"
+              aria-invalid={error ? "true" : "false"}
+              autoComplete="username"
+            />
+          </div>
 
-          <input
-            ref={passRef}
-            type="password"
-            value={password}
-            onChange={(e) => handleChange("pass", e)}
-            placeholder="סיסמה"
-            className="input-field"
-          />
+          <div>
+            <label htmlFor="password" className="sr-only">
+              סיסמה
+            </label>
+            <input
+              id="password"
+              ref={passRef}
+              type="password"
+              value={password}
+              onChange={(e) => handleChange("pass", e)}
+              placeholder="סיסמה"
+              className="input-field"
+              aria-required="true"
+              aria-invalid={error ? "true" : "false"}
+              autoComplete="current-password"
+            />
+          </div>
 
           {error && (
-            <p className="text-sm text-[var(--danger)] text-center">
+            <div 
+              role="alert" 
+              aria-live="polite"
+              className="text-sm text-[var(--danger)] text-center"
+            >
               {error}
-            </p>
+            </div>
           )}
 
           <button

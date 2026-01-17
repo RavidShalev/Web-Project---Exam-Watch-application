@@ -72,15 +72,19 @@ export default function CallLecturerModal({
       <div
         className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
         dir="rtl"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="call-lecturer-title"
       >
         <div className="w-full max-w-md rounded-2xl bg-[var(--bg)] border border-[var(--border)] p-6 shadow-xl">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-[var(--fg)]">
+            <h2 id="call-lecturer-title" className="text-xl font-bold text-[var(--fg)]">
               קרא למרצה
             </h2>
             <button
               onClick={onClose}
               className="text-[var(--muted)] hover:text-[var(--fg)] transition-colors"
+              aria-label="סגור"
             >
               <X size={24} />
             </button>

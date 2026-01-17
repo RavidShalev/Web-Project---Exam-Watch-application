@@ -42,6 +42,9 @@ export default function SendMessageModal({
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
       dir="rtl"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="send-message-title"
     >
       <div
         className="
@@ -52,12 +55,13 @@ export default function SendMessageModal({
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-[var(--fg)]">
+          <h2 id="send-message-title" className="text-xl font-bold text-[var(--fg)]">
             שליחת הודעה למשגיח
           </h2>
           <button
             onClick={onClose}
             className="text-[var(--muted)] hover:text-[var(--fg)] transition-colors"
+            aria-label="סגור"
           >
             <X size={24} />
           </button>

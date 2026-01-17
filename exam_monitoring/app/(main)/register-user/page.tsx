@@ -253,8 +253,10 @@ export default function RegisterUserPage() {
               error={errors.idNumber}
               icon={<CreditCard size={18} />}
               helpText="9 ספרות בלבד"
+              htmlFor="id-number"
             >
               <input
+                id="id-number"
                 name="idNumber"
                 value={formData.idNumber}
                 onChange={handleChange}
@@ -271,8 +273,10 @@ export default function RegisterUserPage() {
               required 
               error={errors.name}
               icon={<User size={18} />}
+              htmlFor="user-name"
             >
               <input
+                id="user-name"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
@@ -296,8 +300,10 @@ export default function RegisterUserPage() {
               error={errors.email}
               icon={<Mail size={18} />}
               helpText="כתובת אימייל תקינה"
+              htmlFor="user-email"
             >
               <input
+                id="user-email"
                 type="email"
                 name="email"
                 value={formData.email}
@@ -314,8 +320,10 @@ export default function RegisterUserPage() {
               error={errors.phone}
               icon={<Phone size={18} />}
               helpText="אופציונלי - לדוגמה: 050-1234567"
+              htmlFor="user-phone"
             >
               <input
+                id="user-phone"
                 type="tel"
                 name="phone"
                 value={formData.phone}
@@ -343,9 +351,11 @@ export default function RegisterUserPage() {
               error={errors.password}
               icon={<Lock size={18} />}
               helpText="מינימום 6 תווים, מומלץ: אותיות גדולות וקטנות, מספרים וסימנים"
+              htmlFor="user-password"
             >
               <div className="relative">
                 <input
+                  id="user-password"
                   type={showPassword ? "text" : "password"}
                   name="password"
                   value={formData.password}
@@ -405,8 +415,10 @@ export default function RegisterUserPage() {
               required 
               icon={<Shield size={18} />}
               helpText="בחר את תפקיד המשתמש במערכת"
+              htmlFor="user-role"
             >
               <select
+                id="user-role"
                 name="role"
                 value={formData.role}
                 onChange={handleChange}
@@ -467,6 +479,7 @@ function Field({
   error,
   icon,
   helpText,
+  htmlFor,
 }: {
   label: string;
   children: React.ReactNode;
@@ -474,10 +487,11 @@ function Field({
   error?: string;
   icon?: React.ReactNode;
   helpText?: string;
+  htmlFor?: string;
 }) {
   return (
     <div className="space-y-1.5">
-      <label className="text-sm font-semibold text-[var(--fg)] flex items-center gap-2">
+      <label htmlFor={htmlFor} className="text-sm font-semibold text-[var(--fg)] flex items-center gap-2">
         {icon && <span className="text-[var(--muted)]">{icon}</span>}
         <span>{label}</span>
         {required && <span className="text-[var(--danger)]" aria-label="שדה חובה">*</span>}

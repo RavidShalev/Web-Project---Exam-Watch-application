@@ -91,8 +91,9 @@ export default function EditExamForm({ exam, examId }: EditExamFormProps) {
         </h2>
 
         <div className="grid gap-6">
-          <Field label="שם הקורס">
+          <Field label="שם הקורס" htmlFor="course-name">
             <input
+              id="course-name"
               name="courseName"
               value={formData.courseName}
               onChange={handleChange}
@@ -100,8 +101,9 @@ export default function EditExamForm({ exam, examId }: EditExamFormProps) {
             />
           </Field>
 
-          <Field label="קוד הקורס">
+          <Field label="קוד הקורס" htmlFor="course-code">
             <input
+              id="course-code"
               type="number"
               name="courseCode"
               value={formData.courseCode}
@@ -117,8 +119,9 @@ export default function EditExamForm({ exam, examId }: EditExamFormProps) {
             />
           </Field>
 
-          <Field label="תאריך">
+          <Field label="תאריך" htmlFor="exam-date">
             <input
+              id="exam-date"
               type="date"
               name="date"
               value={formData.date}
@@ -128,8 +131,9 @@ export default function EditExamForm({ exam, examId }: EditExamFormProps) {
           </Field>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Field label="שעת התחלה">
+            <Field label="שעת התחלה" htmlFor="start-time">
               <input
+                id="start-time"
                 type="time"
                 name="startTime"
                 value={formData.startTime}
@@ -138,8 +142,9 @@ export default function EditExamForm({ exam, examId }: EditExamFormProps) {
               />
             </Field>
 
-            <Field label="שעת סיום">
+            <Field label="שעת סיום" htmlFor="end-time">
               <input
+                id="end-time"
                 type="time"
                 name="endTime"
                 min={formData.startTime || undefined}
@@ -150,8 +155,9 @@ export default function EditExamForm({ exam, examId }: EditExamFormProps) {
             </Field>
           </div>
 
-          <Field label="כיתה">
+          <Field label="כיתה" htmlFor="exam-location">
             <input
+              id="exam-location"
               name="location"
               value={formData.location}
               onChange={handleChange}
@@ -159,8 +165,9 @@ export default function EditExamForm({ exam, examId }: EditExamFormProps) {
             />
           </Field>
 
-          <Field label="תעודות זהות של משגיחים">
+          <Field label="תעודות זהות של משגיחים" htmlFor="supervisors">
             <input
+              id="supervisors"
               name="supervisors"
               value={formData.supervisors}
               onChange={handleChange}
@@ -169,8 +176,9 @@ export default function EditExamForm({ exam, examId }: EditExamFormProps) {
             />
           </Field>
 
-          <Field label="תעודות זהות של מרצים">
+          <Field label="תעודות זהות של מרצים" htmlFor="lecturers">
             <input
+              id="lecturers"
               name="lecturers"
               value={formData.lecturers}
               onChange={handleChange}
@@ -246,13 +254,15 @@ export default function EditExamForm({ exam, examId }: EditExamFormProps) {
 function Field({
   label,
   children,
+  htmlFor,
 }: {
   label: string;
   children: React.ReactNode;
+  htmlFor?: string;
 }) {
   return (
     <div className="space-y-1.5">
-      <label className="text-sm font-medium text-[var(--muted)]">
+      <label htmlFor={htmlFor} className="text-sm font-medium text-[var(--muted)]">
         {label}
       </label>
       {children}
