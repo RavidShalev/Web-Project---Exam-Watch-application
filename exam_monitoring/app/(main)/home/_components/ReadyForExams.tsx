@@ -31,6 +31,7 @@ export default function ReadyForExams({ exam, onStartExam }: ReadyForExamsProps)
 
   // return true if all items in the checklist are done, else false
   const allDone = checklist.every(item => item.isDone);
+  localStorage.setItem("examCourseName", exam.courseName);
 
   return (
     // detailed card with exam info

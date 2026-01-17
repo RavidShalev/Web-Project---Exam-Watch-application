@@ -4,6 +4,7 @@ import { AttendanceRow } from "@/types/attendance";
 import { useState } from "react";
 import ReportModal from "./reportModal";
 import AddTimeModal from "./addTimeModal";
+import TransferStudentModal from "./TransferStudentModal";
 
 type props = {
   attendance: AttendanceRow[];
@@ -18,6 +19,8 @@ type props = {
   updateToiletTime: (attendanceId: string) => void;
   finishExamForStudent: (attendanceId: string) => void;
   addTimeForStudent: (attendanceId: string, minutesToAdd: number) => void;
+  onOpenTransfer: (rattendanceId: string, targetExamId: string) => void;
+  availableExams: {_id: string; location:string;}[]
 };
 
 export default function AttemdanceList({
@@ -28,9 +31,12 @@ export default function AttemdanceList({
   updateToiletTime,
   finishExamForStudent,
   addTimeForStudent,
+  onOpenTransfer,
+  availableExams,
 }: props) {
   const [openReport, setOpenReport] = useState(false);
   const [openAddTime, setOpenAddTime] = useState(false);
+  const [openTransfer, setOpenTransfer] = useState(false);
   const [selectedRecord, setSelectedRecord] =
     useState<AttendanceRow | null>(null);
 
@@ -53,6 +59,7 @@ export default function AttemdanceList({
               <th className="px-4 py-3">תמונת תעודה</th>
               <th className="px-4 py-3">שירותים</th>
               <th className="px-4 py-3">הוספת זמן</th>
+              <th className="px-4 py-3">העברת כיתה</th>
               <th className="px-4 py-3">דיווח</th>
             </tr>
           </thead>
@@ -117,14 +124,14 @@ export default function AttemdanceList({
                     <button
                         disabled={
                         record.attendanceStatus === "absent" ||
-                        record.attendanceStatus === "finished"
+                        record.attendanceStatus === "finished" || record.attendanceStatus ==="transferred"
                         }
                         onClick={() => updateToiletTime(record._id)}
                         className={`
                         rounded-lg px-3 py-1 text-xs font-semibold text-white
                         ${
                             record.attendanceStatus === "absent" ||
-                            record.attendanceStatus === "finished"
+                            record.attendanceStatus === "finished" || record.attendanceStatus ==="transferred"
                             ? "bg-[var(--border)] text-[var(--muted)] cursor-not-allowed"
                             : record.isOnToilet
                             ? "bg-[var(--success)]"
@@ -139,7 +146,7 @@ export default function AttemdanceList({
 
                 <td className="px-4 py-3">
                   <button
-                    disabled={record.attendanceStatus === "absent" || record.attendanceStatus ==="finished"}
+                    disabled={record.attendanceStatus === "absent" || record.attendanceStatus ==="finished" || record.attendanceStatus ==="transferred"}
                     onClick={() => {
                       setSelectedRecord(record);
                       setOpenAddTime(true);
@@ -151,8 +158,13 @@ export default function AttemdanceList({
                 </td>
 
                 <td className="px-4 py-3">
+                    <button disabled={record.attendanceStatus === "transferred"} onClick={()=>{setSelectedRecord(record); setOpenTransfer(true);}}
+                      className="rounded-lg px-3 py-1 text-xs font-semibold bg-[var(--purple)] text-white disabled:bg-[var(--border)] disabled:text-[var(--muted)]">העבר כיתה</button>
+                </td>
+
+                <td className="px-4 py-3">
                   <button
-                    disabled={record.attendanceStatus === "absent"|| record.attendanceStatus ==="finished"}
+                    disabled={record.attendanceStatus === "absent"|| record.attendanceStatus ==="finished" || record.attendanceStatus ==="transferred"}
                     onClick={() => {
                       setSelectedRecord(record);
                       setOpenReport(true);
@@ -282,6 +294,27 @@ export default function AttemdanceList({
           onSave={handleAddTime}
         />
       )}
+
+      {openTransfer && selectedRecord && (
+      <TransferStudentModal
+        attendanceRecord={selectedRecord}
+        availableExams={availableExams}
+        onClose={() => {
+          setOpenTransfer(false);
+          setSelectedRecord(null);
+        }}
+        onTransfer={async (targetExamId) => {
+          await onOpenTransfer(
+            selectedRecord._id,
+            targetExamId
+          );
+          setOpenTransfer(false);
+          setSelectedRecord(null);
+        }}
+      />
+    )}
+
+
     </>
   );
 }

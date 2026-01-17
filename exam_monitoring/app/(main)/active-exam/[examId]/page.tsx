@@ -20,8 +20,28 @@ export default function ActiveExamPage() {
   const [showAddTimeModal, setShowAddTimeModal] = useState(false);
   const [showCallLecturerModal, setShowCallLecturerModal] = useState(false);
   const [showAddStudentModal, setShowAddStudentModal]=useState(false);
+  const [availableExams, setAvailableExams] = useState<{ _id: string; location: string }[]>([]);
   const [minutes, setMinutes] = useState("");
   const router = useRouter();
+
+  useEffect(() => {
+  if (!examId) return;
+
+  async function fetchAvailableClasses() {
+    const res = await fetch(`/api/exams/activeByCourse/${examId}`);
+    const data = await res.json();
+
+    if (!res.ok) {
+      console.error(data.message);
+      return;
+    }
+
+    setAvailableExams(data.exams);
+  }
+
+  fetchAvailableClasses();
+}, [examId]);
+
 
   async function makePresent(attendanceId: string) {
     await fetch(`/api/exams/attendance/updateRecord/${attendanceId}`, {
@@ -171,6 +191,33 @@ export default function ActiveExamPage() {
     setAttendance(prev => [...prev, data.attendance]);
   }
 
+async function transferStudent(attendanceId: string, targetExamId: string) 
+{
+  const res = await fetch("/api/exams/attendance/transfer", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      attendanceId,
+      targetExamId,
+      userId: localStorage.getItem("supervisorId"),
+    }),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    alert(data.message);
+    return;
+  }
+
+  setAttendance(prev =>
+    prev.map(a =>
+      a._id === attendanceId
+        ? { ...a, attendanceStatus: "transferred" }
+        : a
+    )
+  );
+}
 
 
 
@@ -339,7 +386,7 @@ export default function ActiveExamPage() {
           />
 
           <p className="text-sm text-[var(--muted)]">
-            זמן שנותר למבחן
+           זמן שנותר למבחן
           </p>
 
           <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
@@ -403,6 +450,8 @@ export default function ActiveExamPage() {
           updateToiletTime={updateToiletTime}
           finishExamForStudent={finishExamForStudent}
           addTimeForStudent={handleAddTimeForStudent}
+          onOpenTransfer={transferStudent}
+          availableExams={availableExams}
         />
       </div>
 

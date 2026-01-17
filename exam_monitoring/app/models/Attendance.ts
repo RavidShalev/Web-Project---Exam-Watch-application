@@ -17,7 +17,7 @@ const Attendance = new mongoose.Schema({
   },
   attendanceStatus: {
     type: String,
-    enum: ['present', 'absent', 'finished'],
+    enum: ['present', 'absent', 'finished', "transferred"],
     default: 'absent', 
   },
   IdImage: {
@@ -39,7 +39,21 @@ const Attendance = new mongoose.Schema({
    extraTimeMinutes: {
       type: Number,
       default: 0
-}
+  },
+  transferredAt:{
+      type:String,
+      required: false,
+  },
+  transferredToExamId:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref:"Exam",
+    required: false,
+  },
+  transferredFromAttendanceId:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref:"Exam",
+    required: false,
+  }
 });
 
 export default mongoose.models.Attendance || mongoose.model("Attendance", Attendance);

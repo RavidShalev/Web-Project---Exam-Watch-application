@@ -8,10 +8,13 @@ export type AttendanceRow = {
     name: string;
   }
   studentNumInExam: number;
-  attendanceStatus: "present" | "absent" | "finished";
+  attendanceStatus: "present" | "absent" | "finished" | "transferred";
   IdImage: string | null;
   isOnToilet: boolean;
   startTime: string | null;
   endTime: string | null;
   extraTimeMinutes: number;
+  transferredAt?: string;
+  transferredToExamId?: string;
+  transferredFromAttendanceId?:string;
 };
