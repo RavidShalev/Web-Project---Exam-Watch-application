@@ -36,27 +36,29 @@ function Login() {
       return;
     }
 
-  // Send login request to api
-  const res = await fetch("/api/login", {
-    method: "POST",
-    headers: {
+    // Send login request to api
+    const res = await fetch("/api/login", {
+      method: "POST",
+      headers: {
         // Inform the server that the request body is JSON
-        "Content-Type" : "application/json",
-    },
-    // Send idNumber and password as JSON in the request body
-    body : JSON.stringify({idNumber,password}),
-  });
+        "Content-Type": "application/json",
+      },
+      // Send idNumber and password as JSON in the request body
+      body: JSON.stringify({ idNumber, password }),
+    });
+
     console.log("sending:", { idNumber, password });
-    if(!res.ok) {
-       setError("תעודת הזהות או הסיסמה שגויים");
-       return;
+
+    if (!res.ok) {
+      setError("תעודת הזהות או הסיסמה שגויים");
+      return;
     }
 
     // Parse the JSON response returned from the server
     const user = await res.json();
 
     if (user.role === "supervisor") {
-        localStorage.setItem("supervisorId", user._id);
+      localStorage.setItem("supervisorId", user._id);
     }
 
     // Store authenticated user data in sessionStorage
@@ -67,19 +69,34 @@ function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[100vh] bg-[#1b2430]">
-      <div className="bg-[#232d3b] p-8 rounded-xl shadow w-full max-w-sm">
-        <h2 className="text-3xl font-bold text-[#17cf97] mb-6 text-center">
+    <div
+      dir="rtl"
+      className="min-h-screen flex items-center justify-center bg-[var(--surface)] px-4"
+    >
+      <div
+        className="
+          w-full max-w-sm
+          rounded-3xl
+          bg-[var(--bg)]
+          border border-[var(--border)]
+          shadow-sm
+          p-6 sm:p-8
+        "
+      >
+        <h2 className="text-2xl sm:text-3xl font-bold text-[var(--accent)] mb-6 text-center">
           ברוך שובך!
         </h2>
 
-        <form onSubmit={handleLogin} className="flex flex-col gap-4 text-white">
+        <form
+          onSubmit={handleLogin}
+          className="flex flex-col gap-4"
+        >
           <input
             ref={userRef}
             value={idNumber}
             onChange={(e) => handleChange("user", e)}
             placeholder="תעודת זהות"
-            className="p-3 rounded bg-white text-gray-900 border border-gray-300"
+            className="input-field"
           />
 
           <input
@@ -87,15 +104,29 @@ function Login() {
             type="password"
             value={password}
             onChange={(e) => handleChange("pass", e)}
-            placeholder="סיסמא"
-            className="p-3 rounded bg-white text-gray-900 border border-gray-300"
+            placeholder="סיסמה"
+            className="input-field"
           />
 
-          {error && <p className="text-red-500">{error}</p>}
+          {error && (
+            <p className="text-sm text-[var(--danger)] text-center">
+              {error}
+            </p>
+          )}
 
           <button
             type="submit"
-            className="bg-[#17cf97] text-black font-bold py-2 rounded"
+            className="
+              w-full
+              rounded-2xl
+              bg-[var(--accent)]
+              py-3
+              font-semibold
+              text-white
+              hover:brightness-110
+              active:scale-[0.99]
+              transition
+            "
           >
             כניסה למערכת
           </button>
