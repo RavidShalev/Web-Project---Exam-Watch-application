@@ -1,5 +1,5 @@
 import ClassCard from "./ClassCard";
-import type { Classroom } from "../data/mockClassrooms";
+import type { Classroom } from "../data/classRoomType";
 
 type Props = {
   classrooms: Classroom[];

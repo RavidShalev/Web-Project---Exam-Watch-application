@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import ClassGrid from "./_components/ClassGrid";
-import type { Classroom } from "./data/mockClassrooms";
+import type { Classroom } from "./data/classRoomType";
 
 const ClassMapPage = () => {
   const [classrooms, setClassrooms] = useState<Classroom[]>([]);

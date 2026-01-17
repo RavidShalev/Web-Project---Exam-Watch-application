@@ -1,4 +1,4 @@
-import type { Classroom } from "../data/mockClassrooms";
+import type { Classroom } from "../data/classRoomType";
 
 type Props = {
   classroom: Classroom;
