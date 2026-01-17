@@ -112,15 +112,23 @@ export default function EditExamPage({ params }: PageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--surface)] px-4 py-8">
-      <div className="max-w-5xl mx-auto space-y-12">
+    <div className="min-h-screen bg-[var(--surface)] px-4 py-8 sm:py-12">
+      <div className="max-w-6xl mx-auto space-y-14">
         {/* ===== Edit Exam Section ===== */}
         <section>
           <EditExam exam={exam} examId={examId} />
         </section>
 
         {/* ===== Students Management Section ===== */}
-        <section className="space-y-6">
+        <section
+          className="
+            rounded-3xl
+            bg-[var(--bg)]
+            border border-[var(--border)]
+            p-6 sm:p-8
+            space-y-8
+          "
+        >
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <h3 className="text-xl sm:text-2xl font-bold text-[var(--fg)]">
               סטודנטים רשומים למבחן

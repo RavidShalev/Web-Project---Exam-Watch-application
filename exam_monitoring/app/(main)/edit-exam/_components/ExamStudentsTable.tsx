@@ -17,14 +17,14 @@ export default function ExamStudentsTable({ students }: Props) {
   }
 
   return (
-    <div className="mt-8">
+    <div className="mt-8 space-y-4">
       {/* ================= DESKTOP TABLE ================= */}
       <div className="hidden sm:block overflow-x-auto rounded-2xl border border-[var(--border)] bg-[var(--bg)]">
         <table className="min-w-full text-sm text-right">
           <thead className="bg-[var(--surface-hover)] text-[var(--muted)] font-semibold">
             <tr>
-              <th className="px-4 py-3">שם הסטודנט</th>
-              <th className="px-4 py-3">תעודת זהות</th>
+              <th className="px-5 py-3">שם הסטודנט</th>
+              <th className="px-5 py-3">תעודת זהות</th>
             </tr>
           </thead>
 
@@ -34,10 +34,10 @@ export default function ExamStudentsTable({ students }: Props) {
                 key={idx}
                 className="transition hover:bg-[var(--surface-hover)]"
               >
-                <td className="px-4 py-3 font-medium">
+                <td className="px-5 py-3 font-medium text-[var(--fg)]">
                   {s.name}
                 </td>
-                <td className="px-4 py-3 font-mono">
+                <td className="px-5 py-3 font-mono text-[var(--muted)]">
                   {s.idNumber}
                 </td>
               </tr>
@@ -56,14 +56,17 @@ export default function ExamStudentsTable({ students }: Props) {
               border border-[var(--border)]
               bg-[var(--surface)]
               px-4 py-3
+              transition
+              hover:bg-[var(--surface-hover)]
             "
           >
             <p className="font-semibold text-[var(--fg)]">
               {s.name}
             </p>
-            <p className="mt-1 text-sm font-mono text-[var(--muted)]">
+
+            <div className="mt-1 text-sm font-mono text-[var(--muted)]">
               {s.idNumber}
-            </p>
+            </div>
           </div>
         ))}
       </div>

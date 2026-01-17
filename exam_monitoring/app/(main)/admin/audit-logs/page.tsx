@@ -2,7 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Activity, Filter, RefreshCw, Calendar, User, FileText } from "lucide-react";
+import {
+  Activity,
+  Filter,
+  RefreshCw,
+  User,
+  FileText,
+} from "lucide-react";
 
 // Type definitions for audit log
 interface AuditLog {
@@ -24,12 +30,30 @@ interface AuditLog {
 
 // Action type translations and colors
 const ACTION_TYPES = {
-  EXAM_STARTED: { label: "מבחן מתחיל", color: "bg-green-100 text-green-700" },
-  EXAM_FINISHED: { label: "מבחן הסתיים", color: "bg-blue-100 text-blue-700" },
-  USER_REGISTERED: { label: "רישום משתמש", color: "bg-purple-100 text-purple-700" },
-  SYSTEM_LOGIN: { label: "התחברות", color: "bg-gray-100 text-gray-700" },
-  GENERAL_REPORT: { label: "דיווח כללי", color: "bg-yellow-100 text-yellow-700" },
-  CRITICAL_REPORT: { label: "דיווח חריג", color: "bg-red-100 text-red-700" },
+  EXAM_STARTED: {
+    label: "מבחן מתחיל",
+    badge: "bg-[var(--success-bg)] text-[var(--success)]",
+  },
+  EXAM_FINISHED: {
+    label: "מבחן הסתיים",
+    badge: "bg-[var(--info-bg)] text-[var(--info)]",
+  },
+  USER_REGISTERED: {
+    label: "רישום משתמש",
+    badge: "bg-[var(--purple-bg)] text-[var(--purple)]",
+  },
+  SYSTEM_LOGIN: {
+    label: "התחברות",
+    badge: "bg-[var(--surface-hover)] text-[var(--muted)]",
+  },
+  GENERAL_REPORT: {
+    label: "דיווח כללי",
+    badge: "bg-[var(--warning-bg)] text-[var(--warning)]",
+  },
+  CRITICAL_REPORT: {
+    label: "דיווח חריג",
+    badge: "bg-[var(--danger-bg)] text-[var(--danger)]",
+  },
 };
 
 export default function AuditLogsPage() {
@@ -54,7 +78,6 @@ export default function AuditLogsPage() {
     }
   }, [router]);
 
-  // Fetch audit logs
   async function fetchLogs() {
     try {
       setLoading(true);
@@ -75,23 +98,16 @@ export default function AuditLogsPage() {
     }
   }
 
-  // Initial load and when filter/page changes
   useEffect(() => {
     fetchLogs();
   }, [filter, currentPage]);
 
-  // Auto-refresh every 10 seconds if enabled
   useEffect(() => {
     if (!autoRefresh) return;
-
-    const interval = setInterval(() => {
-      fetchLogs();
-    }, 10000); // 10 seconds
-
+    const interval = setInterval(fetchLogs, 10000);
     return () => clearInterval(interval);
   }, [autoRefresh, filter, currentPage]);
 
-  // Format date to Hebrew
   function formatDate(dateString: string) {
     return new Date(dateString).toLocaleString("he-IL", {
       year: "numeric",
@@ -104,103 +120,104 @@ export default function AuditLogsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-6" dir="rtl">
+    <div className="min-h-screen bg-[var(--surface)] px-4 py-6 sm:py-8" dir="rtl">
       {/* Header */}
-      <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
-        <div className="flex items-center justify-between mb-4">
+      <div className="rounded-3xl bg-[var(--bg)] border border-[var(--border)] p-6 mb-6 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-3">
-            <Activity className="text-blue-600" size={32} />
+            <Activity className="text-[var(--accent)]" size={32} />
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">יומן פעולות מערכת</h1>
-              <p className="text-sm text-gray-500">מעקב אחר פעולות משמעותיות בזמן אמת</p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-[var(--fg)]">
+                יומן פעולות מערכת
+              </h1>
+              <p className="text-sm text-[var(--muted)]">
+                מעקב אחר פעולות משמעותיות בזמן אמת
+              </p>
             </div>
           </div>
 
-          {/* Auto-refresh toggle */}
           <button
             onClick={() => setAutoRefresh(!autoRefresh)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-              autoRefresh
-                ? "bg-green-100 text-green-700"
-                : "bg-gray-100 text-gray-700"
-            }`}
+            className={`
+              flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition
+              ${
+                autoRefresh
+                  ? "bg-[var(--success-bg)] text-[var(--success)]"
+                  : "bg-[var(--surface-hover)] text-[var(--muted)]"
+              }
+            `}
           >
-            <RefreshCw className={autoRefresh ? "animate-spin" : ""} size={18} />
+            <RefreshCw
+              size={18}
+              className={autoRefresh ? "animate-spin" : ""}
+            />
             {autoRefresh ? "רענון אוטומטי פעיל" : "רענון אוטומטי כבוי"}
           </button>
         </div>
 
         {/* Filters */}
-        <div className="flex items-center gap-3 flex-wrap">
-          <Filter size={20} className="text-gray-500" />
-          <button
+        <div className="flex flex-wrap items-center gap-2">
+          <Filter size={18} className="text-[var(--muted)]" />
+
+          <FilterButton
+            active={filter === "ALL"}
             onClick={() => setFilter("ALL")}
-            className={`px-4 py-2 rounded-lg transition-colors ${
-              filter === "ALL"
-                ? "bg-blue-600 text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-            }`}
           >
             הכל
-          </button>
+          </FilterButton>
+
           {Object.entries(ACTION_TYPES).map(([key, value]) => (
-            <button
+            <FilterButton
               key={key}
+              active={filter === key}
               onClick={() => setFilter(key)}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                filter === key
-                  ? value.color
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
+              activeClass={value.badge}
             >
               {value.label}
-            </button>
+            </FilterButton>
           ))}
         </div>
       </div>
 
-      {/* Logs List */}
+      {/* Logs */}
       {loading && logs.length === 0 ? (
-        <div className="text-center py-12 text-gray-500">
-          <RefreshCw className="animate-spin mx-auto mb-2" size={32} />
-          טוען יומן פעולות...
-        </div>
+        <EmptyState text="טוען יומן פעולות…" />
       ) : logs.length === 0 ? (
-        <div className="bg-white rounded-2xl shadow-sm p-12 text-center text-gray-500">
-          <Activity className="mx-auto mb-4 text-gray-300" size={48} />
-          <p className="text-lg">אין פעולות להצגה</p>
-        </div>
+        <EmptyState text="אין פעולות להצגה" />
       ) : (
-        <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-          <div className="divide-y divide-gray-100">
+        <div className="rounded-3xl bg-[var(--bg)] border border-[var(--border)] overflow-hidden">
+          <div className="divide-y divide-[var(--border)]">
             {logs.map((log) => {
-              const actionInfo = ACTION_TYPES[log.actionType as keyof typeof ACTION_TYPES];
-              
+              const actionInfo =
+                ACTION_TYPES[log.actionType as keyof typeof ACTION_TYPES];
+
               return (
                 <div
                   key={log._id}
-                  className="p-4 hover:bg-gray-50 transition-colors"
+                  className="px-4 py-3 hover:bg-[var(--surface-hover)] transition"
                 >
-                  <div className="flex items-start gap-4">
-                    {/* Content */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1 space-y-1">
+                      <div className="flex items-center gap-2">
                         <span
-                          className={`text-xs px-2 py-1 rounded-full ${actionInfo?.color || "bg-gray-100"}`}
+                          className={`text-xs px-2 py-1 rounded-full ${
+                            actionInfo?.badge ||
+                            "bg-[var(--surface-hover)] text-[var(--muted)]"
+                          }`}
                         >
                           {actionInfo?.label || log.actionType}
                         </span>
-                        <span className="text-xs text-gray-500">
+
+                        <span className="text-xs text-[var(--muted)]">
                           {formatDate(log.createdAt)}
                         </span>
                       </div>
 
-                      <p className="text-sm font-semibold text-gray-900 mb-1">
+                      <p className="text-sm font-semibold text-[var(--fg)]">
                         {log.description}
                       </p>
 
-                      {/* Additional Details */}
-                      <div className="flex items-center gap-4 text-xs text-gray-500">
+                      <div className="flex flex-wrap gap-4 text-xs text-[var(--muted)]">
                         {log.userId && (
                           <span className="flex items-center gap-1">
                             <User size={12} />
@@ -223,21 +240,29 @@ export default function AuditLogsPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="p-4 border-t bg-gray-50 flex items-center justify-between">
+            <div className="flex items-center justify-between px-4 py-3 bg-[var(--surface)] border-t border-[var(--border)]">
               <button
-                onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                onClick={() =>
+                  setCurrentPage((prev) => Math.max(1, prev - 1))
+                }
                 disabled={currentPage === 1}
-                className="px-4 py-2 bg-white border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                className="px-4 py-2 rounded-xl border border-[var(--border)] text-sm disabled:opacity-50"
               >
                 הקודם
               </button>
-              <span className="text-sm text-gray-600">
+
+              <span className="text-sm text-[var(--muted)]">
                 עמוד {currentPage} מתוך {totalPages}
               </span>
+
               <button
-                onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                onClick={() =>
+                  setCurrentPage((prev) =>
+                    Math.min(totalPages, prev + 1)
+                  )
+                }
                 disabled={currentPage === totalPages}
-                className="px-4 py-2 bg-white border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                className="px-4 py-2 rounded-xl border border-[var(--border)] text-sm disabled:opacity-50"
               >
                 הבא
               </button>
@@ -245,6 +270,46 @@ export default function AuditLogsPage() {
           )}
         </div>
       )}
+    </div>
+  );
+}
+
+/* ================= SMALL UI ================= */
+
+function FilterButton({
+  active,
+  children,
+  onClick,
+  activeClass,
+}: {
+  active: boolean;
+  children: React.ReactNode;
+  onClick: () => void;
+  activeClass?: string;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`
+        px-4 py-2 rounded-xl text-sm font-medium transition
+        ${
+          active
+            ? activeClass ||
+              "bg-[var(--accent)] text-white"
+            : "bg-[var(--surface-hover)] text-[var(--muted)] hover:bg-[var(--border)]"
+        }
+      `}
+    >
+      {children}
+    </button>
+  );
+}
+
+function EmptyState({ text }: { text: string }) {
+  return (
+    <div className="text-center py-12 text-[var(--muted)]">
+      <Activity className="mx-auto mb-3 opacity-50" size={40} />
+      <p className="text-sm">{text}</p>
     </div>
   );
 }

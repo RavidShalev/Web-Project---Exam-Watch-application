@@ -54,15 +54,15 @@ export default function UploadStudentsCsv({ examId, onSuccess }: Props) {
       <div
         className="
           w-full max-w-md
-          rounded-2xl
+          rounded-3xl
           bg-[var(--bg)]
           border border-[var(--border)]
           shadow-sm
-          p-6
-          space-y-5
+          p-6 sm:p-7
+          space-y-6
         "
       >
-        <h3 className="text-lg sm:text-xl font-bold text-[var(--fg)] text-right">
+        <h3 className="text-lg sm:text-xl font-bold text-[var(--fg)]">
           העלאת סטודנטים מקובץ CSV
         </h3>
 
@@ -92,16 +92,16 @@ export default function UploadStudentsCsv({ examId, onSuccess }: Props) {
           בחירת קובץ CSV
         </button>
 
-        <div className="text-center text-sm text-[var(--muted)]">
+        <div className="rounded-xl bg-[var(--surface)] px-4 py-3 text-center text-sm">
           {file ? (
             <>
-              נבחר קובץ:
-              <span className="block mt-1 font-mono text-[var(--fg)]">
+              <span className="text-[var(--muted)]">נבחר קובץ</span>
+              <div className="mt-1 font-mono text-[var(--fg)] break-all">
                 {file.name}
-              </span>
+              </div>
             </>
           ) : (
-            "לא נבחר קובץ"
+            <span className="text-[var(--muted)]">לא נבחר קובץ</span>
           )}
         </div>
 
@@ -118,7 +118,7 @@ export default function UploadStudentsCsv({ examId, onSuccess }: Props) {
             ${
               loading || !file
                 ? "bg-[var(--border)] cursor-not-allowed"
-                : "bg-[var(--success)] hover:brightness-110"
+                : "bg-[var(--success)] hover:brightness-110 active:scale-[0.99]"
             }
           `}
         >

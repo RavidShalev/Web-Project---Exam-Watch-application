@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { 
-  Activity, 
-  Clock, 
+import {
+  Activity,
+  Clock,
   AlertCircle,
   ArrowLeft,
-  CheckCircle2
+  CheckCircle2,
 } from "lucide-react";
 
 // Statistics interface
@@ -55,42 +55,39 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     fetchDashboardData();
-    // Auto-refresh every 30 seconds
     const interval = setInterval(fetchDashboardData, 30000);
     return () => clearInterval(interval);
   }, []);
 
   async function fetchDashboardData() {
     try {
-      // Fetch statistics
       const [examsRes, usersRes, auditRes] = await Promise.all([
         fetch("/api/admin/exams"),
         fetch("/api/users"),
-        fetch("/api/admin/audit-logs?limit=5")
+        fetch("/api/admin/audit-logs?limit=5"),
       ]);
 
       const examsData = await examsRes.json();
       const usersData = await usersRes.json();
       const auditData = await auditRes.json();
 
-      // Calculate exam statistics
       const exams = examsData.exams || [];
       const users = usersData.users || [];
 
-      // Filter active and upcoming exams
       const now = new Date();
-      const today = now.toISOString().split('T')[0];
-      
+      const today = now.toISOString().split("T")[0];
+
       const active = exams.filter((e: Exam) => e.status === "active");
       const upcoming = exams
         .filter((e: Exam) => e.status === "scheduled" && e.date >= today)
-        .sort((a: Exam, b: Exam) => {
-          if (a.date !== b.date) return a.date.localeCompare(b.date);
-          return a.startTime.localeCompare(b.startTime);
-        })
+        .sort((a: Exam, b: Exam) =>
+          a.date !== b.date
+            ? a.date.localeCompare(b.date)
+            : a.startTime.localeCompare(b.startTime)
+        )
         .slice(0, 5);
 
-      const statistics: Stats = {
+      setStats({
         totalExams: exams.length,
         activeExams: active.length,
         scheduledExams: exams.filter((e: any) => e.status === "scheduled").length,
@@ -99,31 +96,18 @@ export default function AdminDashboard() {
         totalStudents: users.filter((u: any) => u.role === "student").length,
         totalLecturers: users.filter((u: any) => u.role === "lecturer").length,
         totalSupervisors: users.filter((u: any) => u.role === "supervisor").length,
-      };
+      });
 
-      setStats(statistics);
       setActiveExams(active);
       setUpcomingExams(upcoming);
       setRecentActivities(auditData.logs || []);
-    } catch (error) {
-      console.error("Error fetching dashboard data:", error);
+    } catch (err) {
+      console.error("Dashboard error:", err);
     } finally {
       setLoading(false);
     }
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <Activity className="animate-spin mx-auto mb-4 text-blue-600" size={48} />
-          <p className="text-gray-600">טוען נתונים...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Format date to Hebrew
   function formatDate(dateString: string) {
     return new Date(dateString).toLocaleString("he-IL", {
       month: "short",
@@ -133,190 +117,233 @@ export default function AdminDashboard() {
     });
   }
 
-  // Format exam date
   function formatExamDate(dateString: string) {
-    return new Date(dateString).toLocaleDateString("he-IL", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
+    return new Date(dateString).toLocaleDateString("he-IL");
   }
 
-  // Action type colors
   const actionTypeConfig: Record<string, string> = {
-    EXAM_STARTED: "text-green-600",
-    EXAM_FINISHED: "text-blue-600",
-    USER_REGISTERED: "text-purple-600",
-    SYSTEM_LOGIN: "text-gray-600",
-    GENERAL_REPORT: "text-yellow-600",
-    CRITICAL_REPORT: "text-red-600",
+    EXAM_STARTED: "text-[var(--success)]",
+    EXAM_FINISHED: "text-[var(--info)]",
+    USER_REGISTERED: "text-[var(--purple)]",
+    SYSTEM_LOGIN: "text-[var(--muted)]",
+    GENERAL_REPORT: "text-[var(--warning)]",
+    CRITICAL_REPORT: "text-[var(--danger)]",
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <Activity className="animate-spin mx-auto mb-4 text-[var(--accent)]" size={42} />
+          <p className="text-[var(--muted)]">טוען נתונים…</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50 p-6" dir="rtl">
+    <div className="min-h-screen bg-[var(--surface)] p-4 sm:p-8" dir="rtl">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-1">
+        <h1 className="text-2xl sm:text-3xl font-bold text-[var(--fg)]">
           לוח בקרה
         </h1>
-        <p className="text-gray-600 text-sm">סקירה כללית של המערכת</p>
+        <p className="text-sm text-[var(--muted)]">
+          סקירה כללית של המערכת
+        </p>
       </div>
 
-      {/* Statistics Cards */}
+      {/* Statistics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white rounded-lg shadow-sm p-5 border-r-4 border-blue-500">
-          <p className="text-gray-600 text-sm mb-1">סך הכל מבחנים</p>
-          <p className="text-3xl font-bold text-gray-900">{stats?.totalExams || 0}</p>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-sm p-5 border-r-4 border-green-500">
-          <p className="text-gray-600 text-sm mb-1">מבחנים פעילים</p>
-          <p className="text-3xl font-bold text-green-600">{stats?.activeExams || 0}</p>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-sm p-5 border-r-4 border-yellow-500">
-          <p className="text-gray-600 text-sm mb-1">מבחנים מתוכננים</p>
-          <p className="text-3xl font-bold text-yellow-600">{stats?.scheduledExams || 0}</p>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-sm p-5 border-r-4 border-purple-500">
-          <p className="text-gray-600 text-sm mb-1">משתמשים</p>
-          <p className="text-3xl font-bold text-purple-600">{stats?.totalUsers || 0}</p>
-          <p className="text-xs text-gray-500 mt-1">
-            {stats?.totalStudents} סטודנטים • {stats?.totalLecturers} מרצים • {stats?.totalSupervisors} משגיחים
-          </p>
-        </div>
+        <StatCard label="סך הכל מבחנים" value={stats?.totalExams} />
+        <StatCard label="מבחנים פעילים" value={stats?.activeExams} accent="success" />
+        <StatCard label="מבחנים מתוכננים" value={stats?.scheduledExams} accent="warning" />
+        <StatCard
+          label="משתמשים"
+          value={stats?.totalUsers}
+          footer={`${stats?.totalStudents} סטודנטים • ${stats?.totalLecturers} מרצים • ${stats?.totalSupervisors} משגיחים`}
+        />
       </div>
 
-      {/* Main Content Grid */}
+      {/* Main grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Active Exams */}
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-gray-900">מבחנים פעילים כעת</h2>
-            {activeExams.length > 0 && (
-              <span className="flex items-center gap-1 text-green-600 text-sm">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                </span>
-                פעיל
-              </span>
-            )}
-          </div>
-
+        <Section title="מבחנים פעילים כעת">
           {activeExams.length === 0 ? (
-            <div className="text-center py-8 text-gray-400">
-              <CheckCircle2 size={32} className="mx-auto mb-2" />
-              <p className="text-sm">אין מבחנים פעילים כרגע</p>
-            </div>
+            <Empty icon={CheckCircle2} text="אין מבחנים פעילים כרגע" />
           ) : (
-            <div className="space-y-3">
-              {activeExams.map((exam) => (
-                <div
-                  key={exam._id}
-                  className="p-4 border border-green-200 bg-green-50 rounded-lg hover:shadow-md transition-shadow cursor-pointer"
-                  onClick={() => router.push(`/lecturer-view/${exam._id}`)}
-                >
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <h3 className="font-semibold text-gray-900">{exam.courseName}</h3>
-                      <p className="text-sm text-gray-600">{exam.courseCode}</p>
-                    </div>
-                    <span className="text-xs bg-green-600 text-white px-2 py-1 rounded">פעיל</span>
-                  </div>
-                  <div className="text-sm text-gray-600 space-y-1">
-                    <p>📍 {exam.location}</p>
-                    <p>👥 {exam.students?.length || 0} סטודנטים</p>
-                    <p>🕐 {exam.startTime} - {exam.endTime}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+            activeExams.map((exam) => (
+              <ExamCard
+                key={exam._id}
+                exam={exam}
+                badge="פעיל"
+                badgeColor="success"
+                onClick={() => router.push(`/lecturer-view/${exam._id}`)}
+              />
+            ))
           )}
-        </div>
+        </Section>
 
         {/* Upcoming Exams */}
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-gray-900">מבחנים קרובים</h2>
-            <Clock size={20} className="text-gray-400" />
-          </div>
-
+        <Section title="מבחנים קרובים" icon={<Clock size={18} />}>
           {upcomingExams.length === 0 ? (
-            <div className="text-center py-8 text-gray-400">
-              <AlertCircle size={32} className="mx-auto mb-2" />
-              <p className="text-sm">אין מבחנים מתוכננים</p>
-            </div>
+            <Empty icon={AlertCircle} text="אין מבחנים מתוכננים" />
           ) : (
-            <div className="space-y-3">
-              {upcomingExams.map((exam) => (
-                <div
-                  key={exam._id}
-                  className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow cursor-pointer"
-                  onClick={() => router.push(`/edit-exam/${exam._id}`)}
-                >
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <h3 className="font-semibold text-gray-900">{exam.courseName}</h3>
-                      <p className="text-sm text-gray-600">{exam.courseCode}</p>
-                    </div>
-                    <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded">
-                      {formatExamDate(exam.date)}
-                    </span>
-                  </div>
-                  <div className="text-sm text-gray-600 space-y-1">
-                    <p>📍 {exam.location}</p>
-                    <p>🕐 {exam.startTime} - {exam.endTime}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+            upcomingExams.map((exam) => (
+              <ExamCard
+                key={exam._id}
+                exam={exam}
+                badge={formatExamDate(exam.date)}
+                badgeColor="warning"
+                onClick={() => router.push(`/edit-exam/${exam._id}`)}
+              />
+            ))
           )}
-        </div>
+        </Section>
 
         {/* Recent Activity */}
-        <div className="bg-white rounded-lg shadow-sm p-6 lg:col-span-2">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-gray-900">פעילות אחרונה</h2>
+        <Section
+          title="פעילות אחרונה"
+          action={
             <button
               onClick={() => router.push("/admin/audit-logs")}
-              className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center gap-1"
+              className="text-sm text-[var(--accent)] flex items-center gap-1"
             >
-              צפה בהכל
-              <ArrowLeft size={14} />
+              צפה בהכל <ArrowLeft size={14} />
             </button>
-          </div>
-
+          }
+          full
+        >
           {recentActivities.length === 0 ? (
-            <div className="text-center py-8 text-gray-400">
-              <Activity size={32} className="mx-auto mb-2" />
-              <p className="text-sm">אין פעילות אחרונה</p>
-            </div>
+            <Empty icon={Activity} text="אין פעילות אחרונה" />
           ) : (
-            <div className="space-y-2">
-              {recentActivities.map((activity) => {
-                const colorClass = actionTypeConfig[activity.actionType] || "text-gray-600";
-                
-                return (
-                  <div
-                    key={activity._id}
-                    className="flex items-start justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    <div className="flex-1">
-                      <p className={`text-sm font-medium ${colorClass}`}>
-                        {activity.description}
-                      </p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {formatDate(activity.createdAt)}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            recentActivities.map((a) => (
+              <div
+                key={a._id}
+                className="rounded-xl px-3 py-2 hover:bg-[var(--surface-hover)] transition"
+              >
+                <p className={`text-sm font-medium ${actionTypeConfig[a.actionType] || ""}`}>
+                  {a.description}
+                </p>
+                <p className="text-xs text-[var(--muted)]">
+                  {formatDate(a.createdAt)}
+                </p>
+              </div>
+            ))
           )}
+        </Section>
+      </div>
+    </div>
+  );
+}
+
+/* ================== SMALL COMPONENTS ================== */
+
+function StatCard({
+  label,
+  value,
+  footer,
+  accent,
+}: {
+  label: string;
+  value?: number;
+  footer?: string;
+  accent?: "success" | "warning";
+}) {
+  return (
+    <div className="rounded-2xl bg-[var(--bg)] border border-[var(--border)] p-4">
+      <p className="text-sm text-[var(--muted)]">{label}</p>
+      <p
+        className={`text-3xl font-bold ${
+          accent === "success"
+            ? "text-[var(--success)]"
+            : accent === "warning"
+            ? "text-[var(--warning)]"
+            : "text-[var(--fg)]"
+        }`}
+      >
+        {value ?? 0}
+      </p>
+      {footer && <p className="text-xs text-[var(--muted)] mt-1">{footer}</p>}
+    </div>
+  );
+}
+
+function Section({
+  title,
+  children,
+  icon,
+  action,
+  full,
+}: {
+  title: string;
+  children: React.ReactNode;
+  icon?: React.ReactNode;
+  action?: React.ReactNode;
+  full?: boolean;
+}) {
+  return (
+    <div
+      className={`rounded-3xl bg-[var(--bg)] border border-[var(--border)] p-6 space-y-4 ${
+        full ? "lg:col-span-2" : ""
+      }`}
+    >
+      <div className="flex items-center justify-between">
+        <h2 className="font-bold text-[var(--fg)] flex items-center gap-2">
+          {title} {icon}
+        </h2>
+        {action}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function Empty({ icon: Icon, text }: { icon: any; text: string }) {
+  return (
+    <div className="text-center py-8 text-[var(--muted)]">
+      <Icon size={32} className="mx-auto mb-2" />
+      <p className="text-sm">{text}</p>
+    </div>
+  );
+}
+
+function ExamCard({
+  exam,
+  badge,
+  badgeColor,
+  onClick,
+}: {
+  exam: Exam;
+  badge: string;
+  badgeColor: "success" | "warning";
+  onClick: () => void;
+}) {
+  return (
+    <div
+      onClick={onClick}
+      className="cursor-pointer rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 hover:bg-[var(--surface-hover)] transition"
+    >
+      <div className="flex justify-between items-start mb-2">
+        <div>
+          <p className="font-semibold text-[var(--fg)]">{exam.courseName}</p>
+          <p className="text-sm text-[var(--muted)]">{exam.courseCode}</p>
         </div>
+        <span
+          className={`text-xs px-2 py-1 rounded-lg ${
+            badgeColor === "success"
+              ? "bg-[var(--success-bg)] text-[var(--success)]"
+              : "bg-[var(--warning-bg)] text-[var(--warning)]"
+          }`}
+        >
+          {badge}
+        </span>
+      </div>
+
+      <div className="text-sm text-[var(--muted)] space-y-1">
+        <p>📍 {exam.location}</p>
+        <p>🕐 {exam.startTime} - {exam.endTime}</p>
+        {exam.students && <p>👥 {exam.students.length} סטודנטים</p>}
       </div>
     </div>
   );

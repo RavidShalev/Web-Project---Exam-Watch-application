@@ -13,10 +13,23 @@ export default function AddExamPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
-      <AddExamForm onSuccess={triggerRefresh} />
-      <UploadExamCsv onSuccess={triggerRefresh} />
-      <ExamsTable refreshKey={refreshKey} />
+    <div className="min-h-screen bg-[var(--surface)] px-4 py-8 sm:py-12">
+      <div className="max-w-6xl mx-auto space-y-14">
+        {/* ===== Add Exam Form ===== */}
+        <section>
+          <AddExamForm onSuccess={triggerRefresh} />
+        </section>
+
+        {/* ===== Upload Exams CSV ===== */}
+        <section>
+          <UploadExamCsv onSuccess={triggerRefresh} />
+        </section>
+
+        {/* ===== Exams Table ===== */}
+        <section>
+          <ExamsTable refreshKey={refreshKey} />
+        </section>
+      </div>
     </div>
   );
 }

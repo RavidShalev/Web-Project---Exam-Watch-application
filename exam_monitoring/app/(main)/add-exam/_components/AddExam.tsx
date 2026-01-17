@@ -89,186 +89,194 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
   };
 
   return (
-    <div className="mt-10 flex justify-center">
+    <div className="mt-10 flex justify-center px-4">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-lg space-y-5 rounded-xl border border-border bg-bg p-8 shadow-md"
+        className="
+          w-full max-w-2xl
+          rounded-3xl
+          bg-[var(--bg)]
+          border border-[var(--border)]
+          shadow-sm
+          p-6 sm:p-10
+          space-y-8
+        "
       >
-        <h2 className="mb-4 text-center text-2xl font-semibold text-fg">
+        <h2 className="text-center text-2xl sm:text-3xl font-bold text-[var(--fg)]">
           הוספת מבחן
         </h2>
 
-        {/* Course Name */}
-        <div>
-          <label className="mb-1 block text-sm font-medium text-muted">
-            שם הקורס
-          </label>
-          <input
-            type="text"
-            name="courseName"
-            value={formData.courseName}
-            onChange={handleChange}
-            className="w-full rounded-md border border-border bg-bg px-3 py-2 text-fg
-                       focus:outline-none focus:ring-2 focus:ring-accent"
-          />
-        </div>
-
-        {/* Course Code */}
-        <div>
-          <label className="mb-1 block text-sm font-medium text-muted">
-            קוד הקורס
-          </label>
-          <input
-            type="number"
-            name="courseCode"
-            value={formData.courseCode}
-            onChange={(e) => {
-              const value = e.target.value;
-              if (/^\d*$/.test(value)) {
-                setFormData((prev) => ({
-                  ...prev,
-                  courseCode: value,
-                }));
-              }
-            }}
-            className="w-full rounded-md border border-border bg-bg px-3 py-2 text-fg
-                       focus:outline-none focus:ring-2 focus:ring-accent"
-          />
-        </div>
-
-        {/* Date */}
-        <div>
-          <label className="mb-1 block text-sm font-medium text-muted">
-            תאריך
-          </label>
-          <input
-            type="date"
-            name="date"
-            value={formData.date}
-            onChange={handleChange}
-            className="w-full rounded-md border border-border bg-bg px-3 py-2 text-fg
-                       focus:outline-none focus:ring-2 focus:ring-accent"
-          />
-        </div>
-
-        {/* Times */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="mb-1 block text-sm font-medium text-muted">
-              שעת התחלה
-            </label>
+        <div className="grid gap-5">
+          <Field label="שם הקורס">
             <input
-              type="time"
-              name="startTime"
-              value={formData.startTime}
+              type="text"
+              name="courseName"
+              value={formData.courseName}
               onChange={handleChange}
-              className="w-full rounded-md border border-border bg-bg px-3 py-2 text-fg
-                         focus:outline-none focus:ring-2 focus:ring-accent"
+              className="input-field"
             />
-          </div>
+          </Field>
 
-          <div>
-            <label className="mb-1 block text-sm font-medium text-muted">
-              שעת סיום
-            </label>
+          <Field label="קוד הקורס">
             <input
-              type="time"
-              name="endTime"
-              value={formData.endTime}
-              min={formData.startTime || undefined}
-              onChange={handleChange}
-              className="w-full rounded-md border border-border bg-bg px-3 py-2 text-fg
-                         focus:outline-none focus:ring-2 focus:ring-accent"
-            />
-          </div>
-        </div>
-
-        {/* Location */}
-        <div>
-          <label className="mb-1 block text-sm font-medium text-muted">
-            כיתה
-          </label>
-          <input
-            type="text"
-            name="location"
-            value={formData.location}
-            onChange={handleChange}
-            className="w-full rounded-md border border-border bg-bg px-3 py-2 text-fg
-                       focus:outline-none focus:ring-2 focus:ring-accent"
-          />
-        </div>
-
-        {/* Supervisors */}
-        <div>
-          <label className="mb-1 block text-sm font-medium text-muted">
-            תעודות זהות של משגיחים (מופרדות בפסיק)
-          </label>
-          <input
-            type="text"
-            name="supervisors"
-            value={formData.supervisors}
-            onChange={handleChange}
-            placeholder="10000001, 10000002"
-            className="w-full rounded-md border border-border bg-bg px-3 py-2 text-fg
-                       focus:outline-none focus:ring-2 focus:ring-accent"
-          />
-        </div>
-
-        {/* Lecturers */}
-        <div>
-          <label className="mb-1 block text-sm font-medium text-muted">
-            תעודות זהות של מרצים (מופרדות בפסיק)
-          </label>
-          <input
-            type="text"
-            name="lecturers"
-            value={formData.lecturers}
-            onChange={handleChange}
-            placeholder="10000001, 10000002"
-            className="w-full rounded-md border border-border bg-bg px-3 py-2 text-fg
-                       focus:outline-none focus:ring-2 focus:ring-accent"
-          />
-        </div>
-
-        {/* Rules */}
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-muted">
-            חוקים לבחינה
-          </label>
-
-          {[
-            { key: "calculator", label: "מחשבון" },
-            { key: "computer", label: "מחשב" },
-            { key: "headphones", label: "אוזניות" },
-            { key: "openBook", label: "חומר פתוח" },
-          ].map(({ key, label }) => (
-            <label
-              key={key}
-              className="flex items-center gap-2 text-sm text-fg"
-            >
-              <input
-                type="checkbox"
-                checked={rules[key as keyof typeof rules]}
-                onChange={(e) =>
-                  setRules((prev) => ({
+              type="number"
+              name="courseCode"
+              value={formData.courseCode}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (/^\d*$/.test(value)) {
+                  setFormData((prev) => ({
                     ...prev,
-                    [key]: e.target.checked,
-                  }))
+                    courseCode: value,
+                  }));
                 }
-                className="accent-accent"
+              }}
+              className="input-field"
+            />
+          </Field>
+
+          <Field label="תאריך">
+            <input
+              type="date"
+              name="date"
+              value={formData.date}
+              onChange={handleChange}
+              className="input-field"
+            />
+          </Field>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Field label="שעת התחלה">
+              <input
+                type="time"
+                name="startTime"
+                value={formData.startTime}
+                onChange={handleChange}
+                className="input-field"
               />
-              {label}
+            </Field>
+
+            <Field label="שעת סיום">
+              <input
+                type="time"
+                name="endTime"
+                min={formData.startTime || undefined}
+                value={formData.endTime}
+                onChange={handleChange}
+                className="input-field"
+              />
+            </Field>
+          </div>
+
+          <Field label="כיתה">
+            <input
+              type="text"
+              name="location"
+              value={formData.location}
+              onChange={handleChange}
+              className="input-field"
+            />
+          </Field>
+
+          <Field label="תעודות זהות של משגיחים">
+            <input
+              type="text"
+              name="supervisors"
+              value={formData.supervisors}
+              onChange={handleChange}
+              placeholder="10000001, 10000002"
+              className="input-field"
+            />
+          </Field>
+
+          <Field label="תעודות זהות של מרצים">
+            <input
+              type="text"
+              name="lecturers"
+              value={formData.lecturers}
+              onChange={handleChange}
+              placeholder="10000001, 10000002"
+              className="input-field"
+            />
+          </Field>
+
+          <div className="space-y-3">
+            <label className="text-sm font-medium text-[var(--muted)]">
+              חוקים לבחינה
             </label>
-          ))}
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {[
+                { key: "calculator", label: "מחשבון" },
+                { key: "computer", label: "מחשב" },
+                { key: "headphones", label: "אוזניות" },
+                { key: "openBook", label: "חומר פתוח" },
+              ].map(({ key, label }) => (
+                <label
+                  key={key}
+                  className="
+                    flex items-center gap-2
+                    rounded-xl
+                    border border-[var(--border)]
+                    bg-[var(--surface)]
+                    px-3 py-2
+                    text-sm
+                    cursor-pointer
+                    hover:bg-[var(--surface-hover)]
+                    transition
+                  "
+                >
+                  <input
+                    type="checkbox"
+                    checked={rules[key as keyof typeof rules]}
+                    onChange={(e) =>
+                      setRules((prev) => ({
+                        ...prev,
+                        [key]: e.target.checked,
+                      }))
+                    }
+                  />
+                  {label}
+                </label>
+              ))}
+            </div>
+          </div>
         </div>
 
         <button
           type="submit"
-          className="w-full rounded-md bg-accent py-2 font-medium text-white hover:opacity-90 transition"
+          className="
+            w-full
+            rounded-2xl
+            bg-[var(--accent)]
+            py-3
+            font-semibold
+            text-white
+            hover:brightness-110
+            active:scale-[0.99]
+            transition
+          "
         >
           הוספת בחינה
         </button>
       </form>
+    </div>
+  );
+}
+
+function Field({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="space-y-1.5">
+      <label className="text-sm font-medium text-[var(--muted)]">
+        {label}
+      </label>
+      {children}
     </div>
   );
 }

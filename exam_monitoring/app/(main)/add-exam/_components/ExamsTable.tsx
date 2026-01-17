@@ -84,21 +84,22 @@ export default function ExamsTable({ refreshKey }: ExamsTableProps) {
 
   if (loading) {
     return (
-      <p className="mt-10 text-center text-fg">
+      <p className="mt-10 text-center text-[var(--muted)]">
         טוען מבחנים…
       </p>
     );
   }
 
   return (
-    <div dir="rtl" className="mt-10">
-      <h3 className="mb-4 text-lg font-semibold text-fg text-right">
+    <div dir="rtl" className="mt-10 space-y-4">
+      <h3 className="text-lg sm:text-xl font-bold text-[var(--fg)]">
         רשימת מבחנים קיימים
       </h3>
 
-      <div className="overflow-x-auto rounded-lg border border-border bg-bg">
-        <table className="w-full border-collapse text-sm text-right text-fg">
-          <thead className="bg-border/40">
+      {/* ================= DESKTOP TABLE ================= */}
+      <div className="hidden sm:block overflow-x-auto rounded-2xl border border-[var(--border)] bg-[var(--bg)]">
+        <table className="min-w-full text-sm text-right">
+          <thead className="bg-[var(--surface-hover)] text-[var(--muted)] font-semibold">
             <tr>
               {[
                 "שם הקורס",
@@ -112,7 +113,7 @@ export default function ExamsTable({ refreshKey }: ExamsTableProps) {
               ].map((title) => (
                 <th
                   key={title}
-                  className="p-2 border border-border font-semibold text-fg"
+                  className="px-4 py-3 border-b border-[var(--border)] whitespace-nowrap"
                 >
                   {title}
                 </th>
@@ -120,23 +121,31 @@ export default function ExamsTable({ refreshKey }: ExamsTableProps) {
             </tr>
           </thead>
 
-          <tbody>
+          <tbody className="divide-y divide-[var(--border)]">
             {exams.map((exam) => (
               <tr
                 key={exam._id}
-                className="hover:bg-border/20 transition-colors"
+                className="transition hover:bg-[var(--surface-hover)]"
               >
-                <td className="p-2 border border-border">
-                  <div className="flex items-center justify-between">
+                <td className="px-4 py-3 font-medium text-[var(--fg)]">
+                  <div className="flex items-start justify-between gap-3">
                     <span>{showOrDash(exam.courseName)}</span>
 
-                    <div className="ml-6 flex flex-col gap-1">
+                    <div className="flex flex-col gap-1 shrink-0">
                       <button
                         type="button"
                         onClick={() =>
                           (window.location.href = `/edit-exam/${exam._id}`)
                         }
-                        className="rounded bg-accent px-2 py-1 text-xs text-white hover:opacity-90"
+                        className="
+                          rounded-lg
+                          bg-[var(--accent)]
+                          px-2 py-1
+                          text-xs
+                          font-semibold
+                          text-white
+                          hover:brightness-110
+                        "
                       >
                         ערוך
                       </button>
@@ -144,7 +153,15 @@ export default function ExamsTable({ refreshKey }: ExamsTableProps) {
                       <button
                         type="button"
                         onClick={() => handleDelete(exam._id)}
-                        className="rounded bg-red-600 px-2 py-1 text-xs text-white hover:opacity-90"
+                        className="
+                          rounded-lg
+                          bg-[var(--danger)]
+                          px-2 py-1
+                          text-xs
+                          font-semibold
+                          text-white
+                          hover:brightness-110
+                        "
                       >
                         מחק
                       </button>
@@ -152,39 +169,99 @@ export default function ExamsTable({ refreshKey }: ExamsTableProps) {
                   </div>
                 </td>
 
-                <td className="p-2 border border-border">
-                  {showOrDash(exam.courseCode)}
-                </td>
+                <td className="px-4 py-3">{showOrDash(exam.courseCode)}</td>
+                <td className="px-4 py-3">{showOrDash(exam.date)}</td>
 
-                <td className="p-2 border border-border">
-                  {showOrDash(exam.date)}
-                </td>
-
-                <td className="p-2 border border-border">
+                <td className="px-4 py-3 whitespace-nowrap">
                   {exam.startTime && exam.endTime
                     ? `${exam.startTime} - ${exam.endTime}`
                     : "—"}
                 </td>
 
-                <td className="p-2 border border-border">
+                <td className="px-4 py-3 max-w-[220px] truncate">
                   {showOrDash(exam.lecturers)}
                 </td>
 
-                <td className="p-2 border border-border">
+                <td className="px-4 py-3 max-w-[220px] truncate">
                   {showOrDash(exam.supervisors)}
                 </td>
 
-                <td className="p-2 border border-border">
-                  {showOrDash(exam.location)}
-                </td>
-
-                <td className="p-2 border border-border">
-                  {showOrDash(exam.status)}
-                </td>
+                <td className="px-4 py-3">{showOrDash(exam.location)}</td>
+                <td className="px-4 py-3">{showOrDash(exam.status)}</td>
               </tr>
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* ================= MOBILE CARDS ================= */}
+      <div className="sm:hidden space-y-3">
+        {exams.map((exam) => (
+          <div
+            key={exam._id}
+            className="
+              rounded-2xl
+              border border-[var(--border)]
+              bg-[var(--surface)]
+              p-4
+              space-y-2
+            "
+          >
+            <div className="flex justify-between items-start gap-3">
+              <div>
+                <div className="font-semibold text-[var(--fg)]">
+                  {showOrDash(exam.courseName)}
+                </div>
+                <div className="text-sm text-[var(--muted)]">
+                  קוד: {showOrDash(exam.courseCode)}
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <button
+                  type="button"
+                  onClick={() =>
+                    (window.location.href = `/edit-exam/${exam._id}`)
+                  }
+                  className="rounded-lg bg-[var(--accent)] px-2 py-1 text-xs font-semibold text-white"
+                >
+                  ערוך
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleDelete(exam._id)}
+                  className="rounded-lg bg-[var(--danger)] px-2 py-1 text-xs font-semibold text-white"
+                >
+                  מחק
+                </button>
+              </div>
+            </div>
+
+            <div className="text-sm text-[var(--muted)]">
+              📅 {showOrDash(exam.date)} · ⏰{" "}
+              {exam.startTime && exam.endTime
+                ? `${exam.startTime} - ${exam.endTime}`
+                : "—"}
+            </div>
+
+            <div className="text-sm">
+              📍 {showOrDash(exam.location)}
+            </div>
+
+            <div className="text-xs text-[var(--muted)]">
+              מרצים: {showOrDash(exam.lecturers)}
+            </div>
+
+            <div className="text-xs text-[var(--muted)]">
+              משגיחים: {showOrDash(exam.supervisors)}
+            </div>
+
+            <div className="text-xs text-[var(--muted)]">
+              סטטוס: {showOrDash(exam.status)}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

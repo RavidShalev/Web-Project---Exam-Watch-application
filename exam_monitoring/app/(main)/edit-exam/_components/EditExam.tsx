@@ -73,30 +73,30 @@ export default function EditExamForm({ exam, examId }: EditExamFormProps) {
   };
 
   return (
-    <div className="min-h-screen flex justify-center px-4 py-10 bg-[var(--surface)]">
+    <div className="min-h-screen bg-[var(--surface)] flex justify-center px-4 py-8 sm:py-12">
       <form
         onSubmit={handleSubmit}
         className="
-          w-full max-w-2xl
+          w-full max-w-3xl
           rounded-3xl
           bg-[var(--bg)]
           border border-[var(--border)]
           shadow-sm
-          p-6 sm:p-8
-          space-y-8
+          p-6 sm:p-10
+          space-y-10
         "
       >
-        <h2 className="text-2xl sm:text-3xl font-bold text-center text-[var(--fg)]">
+        <h2 className="text-center text-2xl sm:text-3xl font-bold text-[var(--fg)]">
           עריכת מבחן
         </h2>
 
-        <div className="grid gap-5">
+        <div className="grid gap-6">
           <Field label="שם הקורס">
             <input
               name="courseName"
               value={formData.courseName}
               onChange={handleChange}
-              className="input"
+              className="input-field"
             />
           </Field>
 
@@ -113,7 +113,7 @@ export default function EditExamForm({ exam, examId }: EditExamFormProps) {
                   }));
                 }
               }}
-              className="input"
+              className="input-field"
             />
           </Field>
 
@@ -123,7 +123,7 @@ export default function EditExamForm({ exam, examId }: EditExamFormProps) {
               name="date"
               value={formData.date}
               onChange={handleChange}
-              className="input"
+              className="input-field"
             />
           </Field>
 
@@ -134,7 +134,7 @@ export default function EditExamForm({ exam, examId }: EditExamFormProps) {
                 name="startTime"
                 value={formData.startTime}
                 onChange={handleChange}
-                className="input"
+                className="input-field"
               />
             </Field>
 
@@ -145,7 +145,7 @@ export default function EditExamForm({ exam, examId }: EditExamFormProps) {
                 min={formData.startTime || undefined}
                 value={formData.endTime}
                 onChange={handleChange}
-                className="input"
+                className="input-field"
               />
             </Field>
           </div>
@@ -155,7 +155,7 @@ export default function EditExamForm({ exam, examId }: EditExamFormProps) {
               name="location"
               value={formData.location}
               onChange={handleChange}
-              className="input"
+              className="input-field"
             />
           </Field>
 
@@ -165,7 +165,7 @@ export default function EditExamForm({ exam, examId }: EditExamFormProps) {
               value={formData.supervisors}
               onChange={handleChange}
               placeholder="10000001, 10000002"
-              className="input"
+              className="input-field"
             />
           </Field>
 
@@ -175,7 +175,7 @@ export default function EditExamForm({ exam, examId }: EditExamFormProps) {
               value={formData.lecturers}
               onChange={handleChange}
               placeholder="10000001, 10000002"
-              className="input"
+              className="input-field"
             />
           </Field>
 
@@ -184,7 +184,7 @@ export default function EditExamForm({ exam, examId }: EditExamFormProps) {
               חוקים לבחינה
             </label>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {[
                 { key: "calculator", label: "מחשבון" },
                 { key: "computer", label: "מחשב" },
@@ -200,6 +200,9 @@ export default function EditExamForm({ exam, examId }: EditExamFormProps) {
                     bg-[var(--surface)]
                     px-3 py-2
                     text-sm
+                    cursor-pointer
+                    hover:bg-[var(--surface-hover)]
+                    transition
                   "
                 >
                   <input
@@ -229,6 +232,8 @@ export default function EditExamForm({ exam, examId }: EditExamFormProps) {
             font-semibold
             text-white
             hover:brightness-110
+            active:scale-[0.99]
+            transition
           "
         >
           שמור שינויים
@@ -246,7 +251,7 @@ function Field({
   children: React.ReactNode;
 }) {
   return (
-    <div className="space-y-1">
+    <div className="space-y-1.5">
       <label className="text-sm font-medium text-[var(--muted)]">
         {label}
       </label>
