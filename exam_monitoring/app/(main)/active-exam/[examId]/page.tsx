@@ -10,6 +10,7 @@ import ReportEvents from "./_components/reportEvents";
 import SmartBotAssistant from "./_components/SmartBotAssistant";
 import CallLecturerModal from "./_components/CallLecturerModal";
 import AddStudentModal from "./_components/AddStudentModal";
+import CommunicationPanel from "./CommunicationPanel";
 
 /**
  * ActiveExamPage
@@ -558,6 +559,14 @@ async function transferStudent(attendanceId: string, targetExamId: string)
           examId={examId}
           onClose={() => setShowAddStudentModal(false)}
           onAdd={addStudentToExam}
+        />
+      )}
+
+      {/* Communication Panel - תקשורת בין משגיחים */}
+      {exam && examId && (
+        <CommunicationPanel
+          examId={examId}
+          currentSupervisorId={sessionStorage.getItem("supervisorId") || ""}
         />
       )}
 
