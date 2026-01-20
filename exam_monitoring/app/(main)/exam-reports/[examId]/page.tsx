@@ -18,6 +18,7 @@ import {
   BarChart3,
   ArrowRight
 } from "lucide-react";
+import { exportToExcel, exportToPDF } from "@/app/lib/exportUtils";
 
 interface Report {
   _id: string;
@@ -41,16 +42,33 @@ export default function ExamReportPage() {
       try {
         const examRes = await fetch(`/api/exams/${examId}`);
         const examData = await examRes.json();
-        setExam(examData);
+        // API returns { success: true, exam: {...} } or just exam directly
+        const fetchedExam = examData.exam || examData;
+        
+        // Debug: Log what we got from API
+        console.log("Fetched exam data from API:", fetchedExam);
+        console.log("Exam fields check:", {
+          courseName: fetchedExam?.courseName,
+          courseCode: fetchedExam?.courseCode,
+          date: fetchedExam?.date,
+          startTime: fetchedExam?.startTime,
+          endTime: fetchedExam?.endTime,
+          location: fetchedExam?.location
+        });
+        
+        setExam(fetchedExam);
 
         const attendanceRes = await fetch(`/api/exams/attendance/${examId}`);
         const attendanceData = await attendanceRes.json();
-        setAttendance(attendanceData);
+        // API might return { attendance: [...] } or just array
+        setAttendance(attendanceData.attendance || attendanceData);
 
         const reportsRes = await fetch(`/api/exams/${examId}/reporting`);
         const reportsData = await reportsRes.json();
         if (reportsData.success) {
           setReports(reportsData.data);
+        } else if (Array.isArray(reportsData)) {
+          setReports(reportsData);
         }
       } catch (error) {
         console.error("Error fetching exam data:", error);
@@ -81,12 +99,48 @@ export default function ExamReportPage() {
     return acc;
   }, {});
 
-  const handleExportPDF = () => {
-    alert("ייצוא ל-PDF - פיצ'ר זה ייבנה בהמשך");
+  const handleExportPDF = async () => {
+    if (!exam) {
+      alert("אין נתוני מבחן לייצוא");
+      return;
+    }
+    
+    // Debug: Check exam data
+    console.log("Exporting PDF with exam data:", exam);
+    
+    try {
+      await exportToPDF({
+        exam,
+        attendance,
+        reports,
+        stats,
+      });
+    } catch (error) {
+      console.error("Error exporting to PDF:", error);
+      alert("אירעה שגיאה בייצוא ל-PDF. נסה שוב.");
+    }
   };
 
   const handleExportExcel = () => {
-    alert("ייצוא ל-Excel - פיצ'ר זה ייבנה בהמשך");
+    if (!exam) {
+      alert("אין נתוני מבחן לייצוא");
+      return;
+    }
+    
+    // Debug: Check exam data
+    console.log("Exporting Excel with exam data:", exam);
+    
+    try {
+      exportToExcel({
+        exam,
+        attendance,
+        reports,
+        stats,
+      });
+    } catch (error) {
+      console.error("Error exporting to Excel:", error);
+      alert("אירעה שגיאה בייצוא ל-Excel. נסה שוב.");
+    }
   };
 
   if (loading) {
