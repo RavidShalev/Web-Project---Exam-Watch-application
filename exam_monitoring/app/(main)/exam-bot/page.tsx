@@ -40,6 +40,7 @@ export default function ExamBotPage() {
   const router = useRouter();
 
   useEffect(() => {
+    // Client-side guard: only supervisors can access the bot page
     const storedUser = sessionStorage.getItem("currentUser");
     if (!storedUser) return router.push("/");
     const user = JSON.parse(storedUser);
@@ -48,10 +49,12 @@ export default function ExamBotPage() {
   }, [router]);
 
   useEffect(() => {
+    // Keep the latest message in view when new messages arrive
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   useEffect(() => {
+    // UX: start with the input focused so the user can type immediately
     inputRef.current?.focus();
   }, []);
 
@@ -71,6 +74,7 @@ export default function ExamBotPage() {
     setError(null);
 
     try {
+      // Send the question + a minimal chat history for context (role/content only)
       const response = await fetch("/api/exam-bot", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -99,6 +103,7 @@ export default function ExamBotPage() {
     }
   };
 
+  // Wait for the auth check to finish to avoid rendering a flash of the UI
   if (isAuthorized === null) return null;
 
   return (
