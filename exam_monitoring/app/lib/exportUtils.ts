@@ -52,8 +52,6 @@ export function exportToExcel(data: ExportData) {
   // Create new workbook
   const workbook = XLSX.utils.book_new();
   
-  // Note: xlsx library doesn't support RTL at workbook level, but we'll set it at cell level
-
   // Sheet 1: General summary
   const summaryData: (string | number)[][] = [
     ['דוח מבחן - סיכום כללי'],
