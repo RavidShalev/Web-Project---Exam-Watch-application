@@ -185,9 +185,11 @@ const SYSTEM_PROMPT = `אתה בוט עוזר למשגיחי בחינות במכ
 - "זה מצב לא פשוט, אבל אתה מתמודד איתו יפה"`;
 
 
+// API Route: POST /api/exam-bot
+// Receives a question from supervisor and returns AI-based response with college procedures
 export async function POST(request: NextRequest) {
   try {
-    // Check for API key
+    // Check API key - essential for security (not exposed in browser)
     if (!GEMINI_API_KEY) {
       return NextResponse.json(
         { error: "Gemini API key not configured. Add GEMINI_API_KEY to .env.local" },
@@ -195,8 +197,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Read input from client: current question + conversation history
     const { message, history } = await request.json();
 
+    // Validation: message text is required
     if (!message) {
       return NextResponse.json(
         { error: "Message is required" },
@@ -204,7 +208,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Build conversation history for Gemini
+    // Build conversation history in Gemini format
+    // Start with SYSTEM_PROMPT (procedures) + opening response
     const contents = [
       {
         role: "user",
@@ -216,7 +221,7 @@ export async function POST(request: NextRequest) {
       }
     ];
 
-    // Add conversation history if exists
+    // Add previous conversation history (if exists) - allows bot to understand context
     if (history && Array.isArray(history)) {
       for (const msg of history) {
         contents.push({
@@ -232,7 +237,9 @@ export async function POST(request: NextRequest) {
       parts: [{ text: message }]
     });
 
-    // Call Gemini API
+    // Call Gemini API with parameters:
+    // - temperature: 0.7 (moderate creativity)
+    // - maxOutputTokens: 1024 (maximum response length)
     const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
       method: "POST",
       headers: {
@@ -249,6 +256,7 @@ export async function POST(request: NextRequest) {
       }),
     });
 
+    // Handle API errors
     if (!response.ok) {
       const errorData = await response.json();
       console.error("Gemini API error:", errorData);
@@ -260,14 +268,14 @@ export async function POST(request: NextRequest) {
 
     const data = await response.json();
     
-    
-    // Extract the response text
+    // Extract text from Gemini response (complex JSON structure)
     const aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || 
       "מצטער, לא הצלחתי לעבד את הבקשה. נסה שוב.";
 
     return NextResponse.json({ response: aiResponse });
 
   } catch (error) {
+    // Handle general errors (network, parsing, etc.)
     console.error("Chat API error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
