@@ -1,18 +1,37 @@
 "use client";
 
 import { Exam } from "@/types/examtypes";
-import ExamTimer from "./examTimer";
+import ExamTimer from "./_components/examTimer";
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import AttendanceList from "./attendanceList";
+import AttendanceList from "./_components/attendanceList";
 import { AttendanceRow } from "@/types/attendance";
-import ReportEvents from "./reportEvents";
-import SmartBotAssistant from "./SmartBotAssistant";
-import CallLecturerModal from "./CallLecturerModal";
-import AddStudentModal from "./AddStudentModal";
+import ReportEvents from "./_components/reportEvents";
+import SmartBotAssistant from "./_components/SmartBotAssistant";
+import CallLecturerModal from "./_components/CallLecturerModal";
+import AddStudentModal from "./_components/AddStudentModal";
 
-
+/**
+ * ActiveExamPage
+ * This page displays the active exam interface for supervisors, including
+ * exam timer, attendance list, reporting options, and various modals for
+ * managing the exam.
+ * 
+ * Responsibilities:
+ * - Fetch and display exam details and attendance list
+ * - Handle real-time exam actions (presence, absence, finish exam)
+ * - Manage exam timing (add time globally or per student)
+ * - Handle student-related events (toilet breaks, reports, transfers)
+ * - Allow calling and canceling lecturer assistance
+ * 
+ * Architechture:
+ * - Acts as a central controller page
+ * - UI is split into smaller components under _components
+ * - API calls are handled here to keep components focused on presentation
+ * 
+ */
 export default function ActiveExamPage() {
+  // Hooks
   const [exam, setExam] = useState<Exam | null>(null);
   const [attendance, setAttendance] = useState<AttendanceRow[]>([]);
   const { examId } = useParams<{ examId: string }>();
@@ -22,8 +41,9 @@ export default function ActiveExamPage() {
   const [showAddStudentModal, setShowAddStudentModal]=useState(false);
   const [availableExams, setAvailableExams] = useState<{ _id: string; location: string }[]>([]);
   const [minutes, setMinutes] = useState("");
-  const router = useRouter();
+  const router = useRouter(); //used for navigating after finishing exam
 
+  // fetch available exams when examId changes
   useEffect(() => {
   if (!examId) return;
 
@@ -42,21 +62,21 @@ export default function ActiveExamPage() {
   fetchAvailableClasses();
 }, [examId]);
 
-
+// Functions to handle attendance status updates- change status to present
   async function makePresent(attendanceId: string) {
     await fetch(`/api/exams/attendance/updateRecord/${attendanceId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ attendanceStatus: "present" }),
     });
-
+ // Update local attendance state after marking the student as present
     setAttendance(prev =>
       prev.map(r =>
         r._id === attendanceId ? { ...r, attendanceStatus: "present" } : r
       )
     );
   }
-
+// change status to absent
   async function makeAbsent(attendanceId: string) {
     await fetch(`/api/exams/attendance/updateRecord/${attendanceId}`, {
       method: "PATCH",
@@ -70,7 +90,7 @@ export default function ActiveExamPage() {
       )
     );
   }
-
+// finish exam for specific student
   async function finishExamForStudent(attendanceId: string) {
     const record = attendance.find(r => r._id === attendanceId);
     if (record?.isOnToilet) {
@@ -91,6 +111,7 @@ export default function ActiveExamPage() {
     );
   }
 
+  // Functions to handle reporting
   async function saveGeneralReport(data: {
     examId: string;
     eventType: string;
@@ -104,7 +125,7 @@ export default function ActiveExamPage() {
     });
     return res.json();
   }
-
+// save report for specific student
   async function saveReport(data: {
     examId: string;
     studentId: string;
@@ -122,7 +143,7 @@ export default function ActiveExamPage() {
     );
     return res.json();
   }
-
+// update toilet time status
   async function updateToiletTime(attendanceId: string) {
     const record = attendance.find(r => r._id === attendanceId);
     if (!record) return;
@@ -147,7 +168,7 @@ export default function ActiveExamPage() {
       )
     );
   }
-
+// add time to exam
   async function handleAddTime() {
     const minutesToAdd = parseInt(minutes, 10);
     if (isNaN(minutesToAdd) || minutesToAdd <= 0) {
@@ -169,7 +190,7 @@ export default function ActiveExamPage() {
     setMinutes("");
     setShowAddTimeModal(false);
   }
-
+// add student to exam
   async function addStudentToExam(studentIdNumber: string) {
     const res = await fetch(`/api/exams/attendance/addNewAttendance`, {
       method: "POST",
@@ -190,7 +211,7 @@ export default function ActiveExamPage() {
 
     setAttendance(prev => [...prev, data.attendance]);
   }
-
+// transfer student to another active exam (same course)
 async function transferStudent(attendanceId: string, targetExamId: string) 
 {
   const res = await fetch("/api/exams/attendance/transfer", {
@@ -220,7 +241,7 @@ async function transferStudent(attendanceId: string, targetExamId: string)
 }
 
 
-
+// add time for specific student
   async function handleAddTimeForStudent(
     attendanceId: string,
     minutesToAdd: number
@@ -239,7 +260,7 @@ async function transferStudent(attendanceId: string, targetExamId: string)
       )
     );
   }
-
+// finish entire exam
   async function finishExam() {
     const active = attendance.filter(a => a.attendanceStatus === "present");
     if (active.length > 0) {
@@ -259,12 +280,15 @@ async function transferStudent(attendanceId: string, targetExamId: string)
 
     router.push("/home");
   }
-
+// call lecturer function
   async function handleCallLecturer() {
     if (!exam) return;
 
+    // lecturer can be either an ID string or an full object
     type LecturerRef = string | { _id: string; idNumber?: string; name?: string };
+    // get lecturers from the exam (or empty array if none)
     const lecturers = (exam as Exam & { lecturers?: LecturerRef[] }).lecturers || [];
+    // Ensure all lecturers have the same object structure
     const lecturersArray = lecturers.map((l: LecturerRef) =>
       typeof l === 'string' ? { _id: l } : l
     );
@@ -307,7 +331,7 @@ async function transferStudent(attendanceId: string, targetExamId: string)
       alert("אירעה שגיאה בקריאה למרצה");
     }
   }
-
+// cancel lecturer call function
   async function handleCancelLecturerCall() {
     if (!exam) return;
 
@@ -342,7 +366,7 @@ async function transferStudent(attendanceId: string, targetExamId: string)
       alert("אירעה שגיאה בביטול הקריאה");
     }
   }
-
+// Fetch exam and attendance data on component mount and when examId changes
   useEffect(() => {
     if (!examId) return;
     
@@ -359,6 +383,7 @@ async function transferStudent(attendanceId: string, targetExamId: string)
     return () => clearInterval(interval);
   }, [examId]);
 
+  // Fetch attendance data
   useEffect(() => {
     if (!examId) return;
     fetch(`/api/exams/attendance/${examId}`)

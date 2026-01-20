@@ -12,6 +12,14 @@ type props = {
   }) => Promise<void>;
 };
 
+/**
+ * ReportEvents
+ * Modal component used to report general events during an active exam.
+ * 
+ * Responsibilities:
+ * - Collect event type and description from the user 
+ * - Close the modal after successful submission or cancellation
+ */
 export default function ReportEvents({
   attendanceRecord,
   onClose,

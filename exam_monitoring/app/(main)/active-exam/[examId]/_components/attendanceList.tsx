@@ -23,6 +23,16 @@ type props = {
   availableExams: {_id: string; location:string;}[]
 };
 
+/**
+ * AttemdanceList
+ * Component to display and manage the attendance list for an active exam.
+ * 
+ * Responsibilities:
+ * - Display attendance records in a table or card format
+ * - Provide actions for marking attendance, reporting issues, adding time, and transferring students
+ * - Handle opening and closing of modals for various actions
+ * 
+*/
 export default function AttemdanceList({
   attendance,
   makePresent,
@@ -48,6 +58,7 @@ export default function AttemdanceList({
   return (
     <>
       {/* ================= DESKTOP TABLE ================= */}
+      {/* block: shows the element (display: block) -> will show on screens sm and larger (640px and up) */}
       <div className="hidden sm:block overflow-x-auto rounded-xl border border-[var(--border)] bg-[var(--bg)]">
         <table className="min-w-full text-sm text-right">
           <thead className="bg-[var(--surface-hover)] text-[var(--muted)] font-semibold">
@@ -181,6 +192,7 @@ export default function AttemdanceList({
       </div>
 
       {/* ================= MOBILE CARDS ================= */}
+      {/* hidden: hides the element (display: none) -> will hide on screens sm and larger (640px and up) */}
       <div className="sm:hidden space-y-4">
         {attendance.map(record => (
           <div

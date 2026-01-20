@@ -8,7 +8,15 @@ type Props = {
   onAdd: (studentIdNumber: string) => Promise<void>;
 };
 
-// Modal for adding a new student to the exam
+/**
+ * AddStudentModal
+ * Modal component used to add a new student to an active exam.
+ * 
+ * Responsibilities:
+ * - Collect student ID number from the user
+ * - Validate input before submission
+ * - Close the modal after successful submission or cancellation
+ */
 export default function AddStudentModal({ examId, onClose, onAdd }: Props) {
   const [idNumber, setIdNumber] = useState("");
   const [loading, setLoading] = useState(false);
@@ -26,9 +34,11 @@ export default function AddStudentModal({ examId, onClose, onAdd }: Props) {
   }
 
   return (
+    //fixed: positions the modal relative to the viewport (not the page layout)
+    //z-50: ensures the modal appears above all other page elements
     <div
       className="
-        fixed inset-0 z-50
+        fixed inset-0 z-50 
         flex items-center justify-center
         bg-black/40 dark:bg-black/60
         px-3

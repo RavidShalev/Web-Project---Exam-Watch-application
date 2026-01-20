@@ -17,6 +17,16 @@ interface CallLecturerModalProps {
   onSuccess: () => void;
 }
 
+/**
+ * CallLecturerModal
+ * Modal component used to call a lecturer to an active exam.
+ * 
+ * Responsibilities:
+ * - Display a list of lecturers assigned to the exam
+ * - Allow selection of a lecturer to call
+ * - Allow canceling an active lecturer call
+ * 
+ */
 export default function CallLecturerModal({
   examId,
   lecturers,

@@ -10,6 +10,16 @@ type Props = {
   onTransfer: (targetExamId: string) => Promise<void>;
 };
 
+/**
+ * 
+ * TransferStudentModal
+ * Modal component used to transfer a student to another exam. (same exam different location)
+ * 
+ * Responsibilities:
+ * - Display a list of available exams to transfer the student to
+ * - Allow selection of a target exam
+ * - Close the modal after successful submission or cancellation
+ */
 export default function TransferStudentModal({
   attendanceRecord,
   availableExams,

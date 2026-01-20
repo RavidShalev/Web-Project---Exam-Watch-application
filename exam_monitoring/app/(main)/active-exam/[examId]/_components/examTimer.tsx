@@ -1,18 +1,29 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getRemainingTime, RemainingTime } from "../../../lib/TimeUtils";
+import { getRemainingTime, RemainingTime } from "../../../../lib/TimeUtils";
 
 type ExamTimerProps = {
   duration: number;
   startTime: string;
 };
 
+/**
+ * ExamTimer
+ * Component to display a countdown timer for an active exam.
+ * 
+ * Responsibilities:
+ * - Calculate remaining time based on exam start time and duration
+ * - Update the timer every second
+ * - Format and display the remaining time in HH:MM:SS format
+ * 
+ */ 
 export default function ExamTimer({ duration, startTime }: ExamTimerProps) {
   const [remainingTime, setRemainingTime] = useState<RemainingTime>(
     getRemainingTime(startTime, duration)
   );
 
+  // Update remaining time every second
   useEffect(() => {
     const interval = setInterval(() => {
       setRemainingTime(getRemainingTime(startTime, duration));

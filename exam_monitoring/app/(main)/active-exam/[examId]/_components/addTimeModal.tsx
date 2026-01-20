@@ -8,6 +8,16 @@ type props = {
   onSave: (minuteToAdd: number) => Promise<void>;
 };
 
+/**
+ * AddTimeModal
+ * Modal component used to add extra time for a specific student during an exam.
+ * 
+ * Responsibilities:
+ * - Collect the number of minutes to add from the user
+ * - Validate input before submission
+ * - Close the modal after successful submission or cancellation
+ * 
+*/
 export default function AddTimeModal({
   attendanceRecord,
   onClose,
