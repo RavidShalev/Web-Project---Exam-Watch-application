@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="he" dir="rtl" suppressHydrationWarning>
       
-      <body className={`${heebo.className} transition-colors duration-300`}>
+      <body className={`${heebo.className} transition-colors duration-300`} suppressHydrationWarning>
         
         <Providers>
           {children}
