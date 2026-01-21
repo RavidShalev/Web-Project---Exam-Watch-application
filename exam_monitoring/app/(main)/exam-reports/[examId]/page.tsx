@@ -18,7 +18,7 @@ import {
   BarChart3,
   ArrowRight
 } from "lucide-react";
-import { exportToExcel, exportToPDF } from "@/app/lib/exportUtils";
+import { exportToPDF } from "@/app/lib/exportUtils";
 
 interface Report {
   _id: string;
@@ -121,27 +121,6 @@ export default function ExamReportPage() {
     }
   };
 
-  const handleExportExcel = () => {
-    if (!exam) {
-      alert("אין נתוני מבחן לייצוא");
-      return;
-    }
-    
-    // Debug: Check exam data
-    console.log("Exporting Excel with exam data:", exam);
-    
-    try {
-      exportToExcel({
-        exam,
-        attendance,
-        reports,
-        stats,
-      });
-    } catch (error) {
-      console.error("Error exporting to Excel:", error);
-      alert("אירעה שגיאה בייצוא ל-Excel. נסה שוב.");
-    }
-  };
 
   if (loading) {
     return (
@@ -171,14 +150,6 @@ export default function ExamReportPage() {
           </div>
           
           <div className="flex gap-2">
-            <button
-              onClick={handleExportExcel}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white hover:opacity-90 transition"
-              style={{ backgroundColor: "var(--success)" }}
-            >
-              <Download size={16} />
-              Excel
-            </button>
             <button
               onClick={handleExportPDF}
               className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white hover:opacity-90 transition"
