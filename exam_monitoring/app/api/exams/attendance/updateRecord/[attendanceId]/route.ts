@@ -18,17 +18,21 @@ export async function PATCH(
             // if changing to present – set start time
             if (attendanceStatus === "present") {
             updateData.startTime = new Date();
+            updateData.isOnToilet = false;
             }
 
             // if changing to absent – clear times
             if (attendanceStatus === "absent") {
             updateData.startTime = null;
             updateData.endTime = null;
+            updateData.isOnToilet = false;
             }
 
+            // if changing to finished – set end time
             if(attendanceStatus==="finished")
             {
                 updateData.endTime=new Date();
+                updateData.isOnToilet = false;
             }
             // update the attendance record
             const updatedAttendance = await Attendance.findByIdAndUpdate(

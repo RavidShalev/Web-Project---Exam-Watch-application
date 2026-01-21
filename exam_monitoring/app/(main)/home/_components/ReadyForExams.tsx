@@ -1,10 +1,17 @@
 "use client";
 
-import { useState } from 'react';
-import { Calculator, Book, Smartphone, Headphones, MapPin, CheckCircle, Circle } from 'lucide-react';
-import { Exam, IconType } from '@/types/examtypes';
+import { useState, useEffect } from "react";
+import {
+  Calculator,
+  Book,
+  Smartphone,
+  Headphones,
+  MapPin,
+  CheckCircle,
+  Circle,
+} from "lucide-react";
+import { Exam, IconType } from "@/types/examtypes";
 
-// Connect text to actual icon components
 const iconMap: Record<IconType, any> = {
   calculator: Calculator,
   book: Book,
@@ -14,29 +21,50 @@ const iconMap: Record<IconType, any> = {
 
 type ReadyForExamsProps = {
   exam: Exam;
-  onStartExam?: () => void;
+  onStartExam?: () => Promise<void> | void;
 };
 
-export default function ReadyForExams({ exam, onStartExam }: ReadyForExamsProps) {
+export default function ReadyForExams({
+  exam,
+  onStartExam,
+}: ReadyForExamsProps) {
   const [checklist, setChecklist] = useState(exam.checklist);
+  const [now, setNow] = useState(Date.now());
+  const [starting, setStarting] = useState(false);
 
-  // change the isDone status of an item in the checklist
+  // real-time time check (opens button automatically)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setNow(Date.now());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const FIVE_MINUTES = 5 * 60 * 1000;
+
+  // build exam start time from "HH:mm"
+  const [hours, minutes] = exam.startTime.split(":").map(Number);
+  const examDate = new Date();
+  examDate.setHours(hours, minutes, 0, 0);
+  const examStartTime = examDate.getTime();
+
+  const canStartByTime = now >= examStartTime - FIVE_MINUTES;
+
+  // checklist logic
   const toggleItem = (id: string) => {
-    setChecklist(prevChecklist =>
-      prevChecklist.map(item =>
+    setChecklist((prev) =>
+      prev.map((item) =>
         item.id === id ? { ...item, isDone: !item.isDone } : item
       )
     );
   };
 
-  // return true if all items in the checklist are done, else false
-  const allDone = checklist.every(item => item.isDone);
-
+  const allDone = checklist.every((item) => item.isDone);
+  const canStartExam = allDone && canStartByTime && !starting;
 
   return (
-    // detailed card with exam info
     <div className="flex flex-col gap-6 p-4 w-full bg-[var(--bg)] min-h-screen">
-      
       <div className="bg-[var(--surface)] p-6 rounded-2xl shadow-sm border border-[var(--border)]">
         <h1 className="text-2xl font-bold mb-4 text-center text-[var(--fg)]">
           איזור מוכנות לקראת המבחן הקרב
@@ -47,19 +75,17 @@ export default function ReadyForExams({ exam, onStartExam }: ReadyForExamsProps)
       </div>
 
       <div className="flex bg-[var(--accent)/10] p-3 rounded-full text-[var(--accent)] items-center justify-center gap-2">
-        {/* sign of location */}
         <MapPin size={32} />
         <span>{exam.location}</span>
       </div>
 
-      {/* rules of the exam */}
+      {/* rules */}
       <div>
         <h3 className="text-lg font-semibold mb-2 text-[var(--fg)]">
           כללי המבחן:
         </h3>
 
         <div className="flex gap-4 overflow-x-auto pb-2 justify-center">
-          {/* for each rule checks if allowed and color it in green, if not allowed in red */}
           {exam.rules.map((rule) => {
             const IconComponent = iconMap[rule.icon];
             return (
@@ -67,8 +93,8 @@ export default function ReadyForExams({ exam, onStartExam }: ReadyForExamsProps)
                 key={rule.id}
                 className={`flex flex-col items-center justify-center min-w-[80px] h-20 rounded-xl border-2 ${
                   rule.allowed
-                    ? 'bg-green-500/10 border-green-500/30 text-green-600'
-                    : 'bg-red-500/10 border-red-500/30 text-red-600'
+                    ? "bg-green-500/10 border-green-500/30 text-green-600"
+                    : "bg-red-500/10 border-red-500/30 text-red-600"
                 }`}
               >
                 <IconComponent size={24} />
@@ -79,7 +105,7 @@ export default function ReadyForExams({ exam, onStartExam }: ReadyForExamsProps)
         </div>
       </div>
 
-      {/* checklist for the exam */}
+      {/* checklist */}
       <div>
         <h3 className="text-lg font-semibold mb-2 text-[var(--fg)]">
           צ'ק ליסט:
@@ -92,8 +118,8 @@ export default function ReadyForExams({ exam, onStartExam }: ReadyForExamsProps)
               onClick={() => toggleItem(item.id)}
               className={`flex items-center justify-center p-3 rounded-xl border-2 transition ${
                 item.isDone
-                  ? 'bg-green-500/10 border-green-500/30 text-green-600'
-                  : 'bg-[var(--surface)] border-[var(--border)] text-[var(--fg)] hover:bg-[var(--surface-hover)]'
+                  ? "bg-green-500/10 border-green-500/30 text-green-600"
+                  : "bg-[var(--surface)] border-[var(--border)] text-[var(--fg)] hover:bg-[var(--surface-hover)]"
               }`}
             >
               {item.isDone ? <CheckCircle size={24} /> : <Circle size={24} />}
@@ -103,17 +129,28 @@ export default function ReadyForExams({ exam, onStartExam }: ReadyForExamsProps)
         </div>
       </div>
 
-      {/* button to start the exam */}
+      {/* info message */}
+      {!canStartByTime && (
+        <p className="text-sm text-center text-[var(--muted)]">
+          ניתן להתחיל את המבחן החל מ־5 דקות לפני שעת ההתחלה
+        </p>
+      )}
+
+      {/* start exam */}
       <button
-        disabled={!allDone}
-        onClick={onStartExam}
+        disabled={!canStartExam}
+        onClick={async () => {
+          if (starting) return;
+          setStarting(true);
+          await onStartExam?.();
+        }}
         className={`mt-6 w-full py-3 rounded-xl font-semibold text-white transition ${
-          allDone
-            ? 'bg-[var(--accent)] hover:opacity-90'
-            : 'bg-[var(--border)] cursor-not-allowed'
+          canStartExam
+            ? "bg-[var(--accent)] hover:opacity-90"
+            : "bg-[var(--border)] cursor-not-allowed"
         }`}
       >
-        התחל מבחן
+        {starting ? "מתחיל מבחן..." : "התחל מבחן"}
       </button>
     </div>
   );

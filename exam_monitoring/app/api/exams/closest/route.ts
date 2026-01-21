@@ -39,17 +39,33 @@ export async function GET(req: Request) {
         }).lean();
 
         const now = new Date();
-        
-        const upcomingExams = exams
-        .map((exam) => ({
-            // attach also the examDateTime for easier sorting later
+        const THIRTY_MINUTES = 30 * 60 * 1000;
+
+        const examsWithDate = exams.map((exam) => ({
             ...exam,
             examDateTime: buildExamDateAndTime(exam.date, exam.startTime),
-        }))
-        // filter only exams that are in the future, in case there is any exam with status 
-        // "scheduled" but date already passed
-        .filter((exam) => exam.examDateTime > now)
-        .sort((a, b) => a.examDateTime.getTime() - b.examDateTime.getTime());
+        }));
+
+        const examInTimeWindow = examsWithDate.find((exam) => {
+            const examTime = exam.examDateTime.getTime();
+            const nowTime = now.getTime();
+
+            return (
+                nowTime >= examTime - THIRTY_MINUTES &&
+                nowTime <= examTime + THIRTY_MINUTES
+            );
+        });
+
+        if (examInTimeWindow) {
+            return NextResponse.json({ closestExam: examInTimeWindow });
+        }
+
+        const upcomingExams = examsWithDate
+            // filter only exams that are in the future, in case there is any exam with status 
+            // "scheduled" but date already passed
+            .filter((exam) => exam.examDateTime > now)
+            .sort((a, b) => a.examDateTime.getTime() - b.examDateTime.getTime());
+
         // return the closest exam or null if none found
         const closestExam = upcomingExams.length > 0 ? upcomingExams[0] : null;
 

@@ -65,15 +65,17 @@ export default function ActiveExamPage() {
 
 // Functions to handle attendance status updates- change status to present
   async function makePresent(attendanceId: string) {
-    await fetch(`/api/exams/attendance/updateRecord/${attendanceId}`, {
+    const res=await fetch(`/api/exams/attendance/updateRecord/${attendanceId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ attendanceStatus: "present" }),
     });
+    const data = await res.json();
  // Update local attendance state after marking the student as present
     setAttendance(prev =>
       prev.map(r =>
-        r._id === attendanceId ? { ...r, attendanceStatus: "present" } : r
+        r._id === attendanceId
+        ? { ...data.updatedAttendance, studentId: r.studentId, isOnToilet: false, } : r
       )
     );
   }
@@ -156,6 +158,7 @@ export default function ActiveExamPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ isOnToilet: newStatus }),
     });
+    
 
     await saveReport({
       examId,
