@@ -106,7 +106,6 @@ export async function exportToPDF(data: ExportData) {
             <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">זמן התחלה</th>
             <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">זמן סיום</th>
             <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">זמן נוסף</th>
-            <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">בשירותים</th>
           </tr>
         </thead>
         <tbody>
@@ -127,7 +126,6 @@ export async function exportToPDF(data: ExportData) {
                 <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">${record.startTime ? new Date(record.startTime).toLocaleString('he-IL') : ''}</td>
                 <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">${record.endTime ? new Date(record.endTime).toLocaleString('he-IL') : ''}</td>
                 <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">${record.extraTimeMinutes || 0}</td>
-                <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">${record.isOnToilet ? 'כן' : 'לא'}</td>
               </tr>
             `;
           }).join('')}
