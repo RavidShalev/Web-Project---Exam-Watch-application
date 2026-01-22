@@ -5,7 +5,7 @@ interface Report {
   _id: string;
   eventType: string;
   description: string;
-  timestamp: string;
+  createdAt: string | Date;
   supervisorId?: { name: string };
   studentId?: { name: string; idNumber: string };
 }
@@ -151,6 +151,27 @@ export async function exportToPDF(data: ExportData) {
         <tbody>
           ${reports.map((report, idx) => {
             const bgColor = idx % 2 === 0 ? '#fff8dc' : '#ffffff';
+            const formatDateTime = (timestamp: string | Date): string => {
+              try {
+                const date = timestamp instanceof Date ? timestamp : new Date(timestamp);
+                if (isNaN(date.getTime())) {
+                  return '';
+                }
+                const dateStr = date.toLocaleDateString('he-IL', { 
+                  day: '2-digit', 
+                  month: '2-digit', 
+                  year: 'numeric' 
+                });
+                const timeStr = date.toLocaleTimeString('he-IL', { 
+                  hour: '2-digit', 
+                  minute: '2-digit',
+                  hour12: false 
+                });
+                return `${dateStr} ${timeStr}`;
+              } catch {
+                return '';
+              }
+            };
             return `
               <tr style="background-color: ${bgColor};">
                 <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">${report.eventType}</td>
@@ -158,7 +179,7 @@ export async function exportToPDF(data: ExportData) {
                 <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">${report.studentId?.name || ''}</td>
                 <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">${report.studentId?.idNumber || ''}</td>
                 <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">${report.supervisorId?.name || ''}</td>
-                <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">${new Date(report.timestamp).toLocaleString('he-IL')}</td>
+                <td style="border: 1px solid #ddd; padding: 6px; text-align: right;">${formatDateTime(report.createdAt)}</td>
               </tr>
             `;
           }).join('')}
