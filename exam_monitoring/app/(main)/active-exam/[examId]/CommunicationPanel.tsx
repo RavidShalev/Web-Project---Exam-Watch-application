@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { Send, Users, AlertCircle, MessageSquare, Clock } from "lucide-react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { Send, Users, AlertCircle, MessageSquare, Clock, Wifi, WifiOff } from "lucide-react";
+import { useP2PChat, P2PMessage } from "@/app/lib/useP2PChat";
 
 type Message = {
   _id: string;
@@ -14,6 +15,7 @@ type Message = {
   messageType: "message" | "status_update" | "emergency";
   createdAt: string;
   readBy?: Array<{ userId: string; readAt: string }>;
+  isP2P?: boolean;
 };
 
 type SupervisorStatus = {
@@ -31,6 +33,8 @@ type SupervisorStatus = {
 type CommunicationPanelProps = {
   examId: string;
   currentSupervisorId: string;
+  supervisorName?: string;
+  supervisorIdNumber?: string;
 };
 
 const statusLabels: Record<string, string> = {
@@ -50,6 +54,8 @@ const statusColors: Record<string, string> = {
 export default function CommunicationPanel({
   examId,
   currentSupervisorId,
+  supervisorName = "משגיח",
+  supervisorIdNumber = "",
 }: CommunicationPanelProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [statuses, setStatuses] = useState<SupervisorStatus[]>([]);
@@ -58,6 +64,30 @@ export default function CommunicationPanel({
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"messages" | "status">("messages");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // P2P Chat Hook - handles peer-to-peer messaging
+  const handleP2PMessage = useCallback((message: P2PMessage) => {
+    setMessages((prev) => {
+      // Avoid duplicates
+      if (prev.some((m) => m._id === message._id)) {
+        return prev;
+      }
+      return [...prev, message as Message];
+    });
+  }, []);
+
+  const {
+    isConnected: isP2PConnected,
+    connectedPeers,
+    sendP2PMessage,
+    error: p2pError,
+  } = useP2PChat({
+    examId,
+    supervisorId: currentSupervisorId,
+    supervisorName,
+    supervisorIdNumber,
+    onMessage: handleP2PMessage,
+  });
 
   // Fetch messages and statuses
   useEffect(() => {
@@ -132,6 +162,16 @@ export default function CommunicationPanel({
       return;
     }
 
+    // Send via P2P if connected
+    if (isP2PConnected) {
+      const p2pMessage = sendP2PMessage(newMessage.trim(), "message");
+      // Add to local messages immediately
+      setMessages((prev) => [...prev, p2pMessage as Message]);
+      setNewMessage("");
+      return;
+    }
+
+    // Fallback to server if P2P not available
     try {
       const res = await fetch(`/api/exams/${examId}/messages`, {
         method: "POST",
@@ -189,6 +229,14 @@ export default function CommunicationPanel({
 
     const emergencyMessage = "🚨 התראה: דרושה תשומת לב מיידית!";
     
+    // Send via P2P if connected
+    if (isP2PConnected) {
+      const p2pMessage = sendP2PMessage(emergencyMessage, "emergency");
+      setMessages((prev) => [...prev, p2pMessage as Message]);
+      return;
+    }
+
+    // Fallback to server
     try {
       const res = await fetch(`/api/exams/${examId}/messages`, {
         method: "POST",
@@ -243,6 +291,17 @@ export default function CommunicationPanel({
             <div className="flex items-center gap-2">
               <Users className="w-5 h-5 text-[var(--accent)]" />
               <h3 className="font-bold">תקשורת משגיחים</h3>
+              {/* P2P Connection Status Indicator */}
+              <div className="flex items-center gap-1" title={isP2PConnected ? `P2P מחובר (${connectedPeers.length} משגיחים)` : "מתחבר לרשת P2P..."}>
+                {isP2PConnected ? (
+                  <Wifi className="w-4 h-4 text-green-500" />
+                ) : (
+                  <WifiOff className="w-4 h-4 text-yellow-500 animate-pulse" />
+                )}
+                <span className="text-xs text-[var(--muted)]">
+                  {isP2PConnected ? "P2P" : "..."}
+                </span>
+              </div>
             </div>
             <button
               onClick={() => setIsOpen(false)}

@@ -43,13 +43,23 @@ export default function ActiveExamPage() {
   const [availableExams, setAvailableExams] = useState<{ _id: string; location: string }[]>([]);
   const [minutes, setMinutes] = useState("");
   const [currentSupervisorId, setCurrentSupervisorId] = useState<string>(""); // P2P communication
+  const [supervisorName, setSupervisorName] = useState<string>(""); // For P2P
+  const [supervisorIdNumber, setSupervisorIdNumber] = useState<string>(""); // For P2P
   const router = useRouter(); //used for navigating after finishing exam
 
   // טעינת supervisorId מ-sessionStorage בצד הלקוח בלבד (למניעת SSR errors)
   useEffect(() => {
     const supervisorId = sessionStorage.getItem("supervisorId");
+    const name = sessionStorage.getItem("userName");
+    const idNumber = sessionStorage.getItem("userIdNumber");
     if (supervisorId) {
       setCurrentSupervisorId(supervisorId);
+    }
+    if (name) {
+      setSupervisorName(name);
+    }
+    if (idNumber) {
+      setSupervisorIdNumber(idNumber);
     }
   }, []);
 
@@ -579,6 +589,8 @@ async function transferStudent(attendanceId: string, targetExamId: string)
         <CommunicationPanel
           examId={examId}
           currentSupervisorId={currentSupervisorId}
+          supervisorName={supervisorName}
+          supervisorIdNumber={supervisorIdNumber}
         />
       )}
 
