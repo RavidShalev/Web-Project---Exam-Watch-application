@@ -64,15 +64,22 @@ export default function CommunicationPanel({
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"messages" | "status">("messages");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  // Keep a ref to P2P messages so they persist across polling
+  const p2pMessagesRef = useRef<Message[]>([]);
 
   // P2P Chat Hook - handles peer-to-peer messaging
   const handleP2PMessage = useCallback((message: P2PMessage) => {
+    const msgWithP2P = { ...message, isP2P: true } as Message;
+    // Save to ref so it persists across polling
+    if (!p2pMessagesRef.current.some((m) => m._id === message._id)) {
+      p2pMessagesRef.current = [...p2pMessagesRef.current, msgWithP2P];
+    }
     setMessages((prev) => {
       // Avoid duplicates
       if (prev.some((m) => m._id === message._id)) {
         return prev;
       }
-      return [...prev, message as Message];
+      return [...prev, msgWithP2P];
     });
   }, []);
 
@@ -99,7 +106,15 @@ export default function CommunicationPanel({
         const messagesRes = await fetch(`/api/exams/${examId}/messages`);
         const messagesData = await messagesRes.json();
         if (messagesData.success) {
-          setMessages(messagesData.messages || []);
+          const serverMessages = messagesData.messages || [];
+          // Use ref to get P2P messages - this is more reliable than state closure
+          const serverMessageIds = new Set(serverMessages.map((m: Message) => m._id));
+          // Filter P2P messages from ref that don't exist in server response
+          const uniqueP2PMessages = p2pMessagesRef.current.filter((m) => !serverMessageIds.has(m._id));
+          // Combine server messages with unique P2P messages and sort by date
+          const allMessages = [...serverMessages, ...uniqueP2PMessages];
+          allMessages.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+          setMessages(allMessages);
         }
 
         // Fetch supervisor statuses
@@ -151,12 +166,12 @@ export default function CommunicationPanel({
     if (!newMessage.trim()) {
       return; // אין הודעה לשלוח
     }
-    
+
     if (!examId) {
       alert("שגיאה: מזהה מבחן חסר");
       return;
     }
-    
+
     if (!currentSupervisorId) {
       alert("שגיאה: לא זוהה משתמש. נא להתחבר מחדש.");
       return;
@@ -165,8 +180,11 @@ export default function CommunicationPanel({
     // Send via P2P if connected
     if (isP2PConnected) {
       const p2pMessage = sendP2PMessage(newMessage.trim(), "message");
+      const msgWithP2P = { ...p2pMessage, isP2P: true } as Message;
+      // Save to ref so it persists across polling
+      p2pMessagesRef.current = [...p2pMessagesRef.current, msgWithP2P];
       // Add to local messages immediately
-      setMessages((prev) => [...prev, p2pMessage as Message]);
+      setMessages((prev) => [...prev, msgWithP2P]);
       setNewMessage("");
       return;
     }
@@ -201,7 +219,7 @@ export default function CommunicationPanel({
 
   async function handleStatusChange(newStatus: "available" | "busy" | "on_break" | "away") {
     setCurrentStatus(newStatus);
-    
+
     try {
       await fetch(`/api/exams/${examId}/supervisor-status`, {
         method: "POST",
@@ -221,14 +239,14 @@ export default function CommunicationPanel({
       alert("שגיאה: מזהה מבחן חסר");
       return;
     }
-    
+
     if (!currentSupervisorId) {
       alert("שגיאה: לא זוהה משתמש. נא להתחבר מחדש.");
       return;
     }
 
     const emergencyMessage = "🚨 התראה: דרושה תשומת לב מיידית!";
-    
+
     // Send via P2P if connected
     if (isP2PConnected) {
       const p2pMessage = sendP2PMessage(emergencyMessage, "emergency");
@@ -315,21 +333,19 @@ export default function CommunicationPanel({
           <div className="flex border-b border-[var(--border)]">
             <button
               onClick={() => setActiveTab("messages")}
-              className={`flex-1 p-3 text-sm font-semibold ${
-                activeTab === "messages"
-                  ? "border-b-2 border-[var(--accent)] text-[var(--accent)]"
-                  : "text-[var(--muted)] hover:text-[var(--fg)]"
-              }`}
+              className={`flex-1 p-3 text-sm font-semibold ${activeTab === "messages"
+                ? "border-b-2 border-[var(--accent)] text-[var(--accent)]"
+                : "text-[var(--muted)] hover:text-[var(--fg)]"
+                }`}
             >
               הודעות
             </button>
             <button
               onClick={() => setActiveTab("status")}
-              className={`flex-1 p-3 text-sm font-semibold ${
-                activeTab === "status"
-                  ? "border-b-2 border-[var(--accent)] text-[var(--accent)]"
-                  : "text-[var(--muted)] hover:text-[var(--fg)]"
-              }`}
+              className={`flex-1 p-3 text-sm font-semibold ${activeTab === "status"
+                ? "border-b-2 border-[var(--accent)] text-[var(--accent)]"
+                : "text-[var(--muted)] hover:text-[var(--fg)]"
+                }`}
             >
               סטטוס משגיחים
             </button>
@@ -346,22 +362,20 @@ export default function CommunicationPanel({
                 messages.map((msg) => {
                   const isMine = msg.senderId._id === currentSupervisorId;
                   const isEmergency = msg.messageType === "emergency";
-                  
+
                   return (
                     <div
                       key={msg._id}
-                      className={`flex flex-col ${
-                        isMine ? "items-end" : "items-start"
-                      }`}
+                      className={`flex flex-col ${isMine ? "items-end" : "items-start"
+                        }`}
                     >
                       <div
-                        className={`rounded-xl p-3 max-w-[80%] ${
-                          isMine
-                            ? "bg-[var(--accent)] text-white"
-                            : isEmergency
+                        className={`rounded-xl p-3 max-w-[80%] ${isMine
+                          ? "bg-[var(--accent)] text-white"
+                          : isEmergency
                             ? "bg-red-100 text-red-900 border-2 border-red-500"
                             : "bg-[var(--surface-hover)]"
-                        }`}
+                          }`}
                       >
                         {!isMine && (
                           <div className="text-xs font-semibold mb-1">
@@ -372,9 +386,8 @@ export default function CommunicationPanel({
                           {msg.message}
                         </div>
                         <div
-                          className={`text-xs mt-1 ${
-                            isMine ? "text-white/70" : "text-[var(--muted)]"
-                          }`}
+                          className={`text-xs mt-1 ${isMine ? "text-white/70" : "text-[var(--muted)]"
+                            }`}
                         >
                           {formatTime(msg.createdAt)}
                         </div>
@@ -395,15 +408,14 @@ export default function CommunicationPanel({
                 statuses.map((status) => {
                   const isMe = status.supervisorId._id === currentSupervisorId;
                   const lastSeenText = formatTime(status.lastSeen);
-                  
+
                   return (
                     <div
                       key={status._id}
-                      className={`p-3 rounded-lg border ${
-                        isMe
-                          ? "bg-[var(--accent)]/10 border-[var(--accent)]"
-                          : "bg-[var(--surface-hover)] border-[var(--border)]"
-                      }`}
+                      className={`p-3 rounded-lg border ${isMe
+                        ? "bg-[var(--accent)]/10 border-[var(--accent)]"
+                        : "bg-[var(--surface-hover)] border-[var(--border)]"
+                        }`}
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
@@ -444,11 +456,10 @@ export default function CommunicationPanel({
                   <button
                     key={status}
                     onClick={() => handleStatusChange(status)}
-                    className={`px-3 py-1 rounded-lg text-xs font-semibold ${
-                      currentStatus === status
-                        ? `${statusColors[status]} text-white`
-                        : "bg-[var(--surface-hover)] text-[var(--fg)]"
-                    }`}
+                    className={`px-3 py-1 rounded-lg text-xs font-semibold ${currentStatus === status
+                      ? `${statusColors[status]} text-white`
+                      : "bg-[var(--surface-hover)] text-[var(--fg)]"
+                      }`}
                   >
                     {statusLabels[status]}
                   </button>
