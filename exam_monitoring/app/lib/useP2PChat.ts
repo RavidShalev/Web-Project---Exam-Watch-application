@@ -1,7 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import Peer, { DataConnection } from "peerjs";
+import type { DataConnection } from "peerjs";
+
+// PeerJS will be dynamically imported to avoid SSR issues
+type PeerType = import("peerjs").default;
 
 // Types for P2P messages
 export type P2PMessage = {
@@ -54,7 +57,7 @@ export function useP2PChat({
   const [myPeerId, setMyPeerId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const peerRef = useRef<Peer | null>(null);
+  const peerRef = useRef<PeerType | null>(null);
   const connectionsRef = useRef<Map<string, DataConnection>>(new Map());
   const registeredRef = useRef(false);
 
@@ -222,84 +225,98 @@ export function useP2PChat({
       return;
     }
 
-    const peerId = generatePeerId();
-    
-    // Create new Peer instance using public PeerJS server
-    const peer = new Peer(peerId, {
-      debug: 2,
-      // Using public PeerJS cloud server (free)
-      // For production, consider self-hosting a PeerServer
-    });
+    // Dynamic import of PeerJS to avoid SSR issues
+    let peer: PeerType | null = null;
+    let isMounted = true;
 
-    peerRef.current = peer;
+    const initPeer = async () => {
+      // Dynamically import PeerJS (only works in browser)
+      const { default: Peer } = await import("peerjs");
+      
+      if (!isMounted) return;
 
-    peer.on("open", async (id) => {
-      console.log("P2P: Connected with peer ID:", id);
-      setMyPeerId(id);
-      setIsConnected(true);
-      setError(null);
+      const peerId = generatePeerId();
+      
+      // Create new Peer instance using public PeerJS server
+      peer = new Peer(peerId, {
+        debug: 2,
+        // Using public PeerJS cloud server (free)
+        // For production, consider self-hosting a PeerServer
+      });
 
-      // Register with signaling server and get existing peers
-      if (!registeredRef.current) {
-        registeredRef.current = true;
-        const existingPeers = await registerPeer(id);
+      peerRef.current = peer;
+
+      peer.on("open", async (id) => {
+        console.log("P2P: Connected with peer ID:", id);
+        setMyPeerId(id);
+        setIsConnected(true);
+        setError(null);
+
+        // Register with signaling server and get existing peers
+        if (!registeredRef.current) {
+          registeredRef.current = true;
+          const existingPeers = await registerPeer(id);
+          
+          // Connect to all existing peers
+          existingPeers.forEach((peerInfo: PeerInfo) => {
+            if (peerInfo.peerId !== id) {
+              connectToPeer(peerInfo.peerId);
+            }
+          });
+          
+          setConnectedPeers(existingPeers.filter((p: PeerInfo) => p.peerId !== id));
+        }
+      });
+
+      // Handle incoming connections
+      peer.on("connection", (conn) => {
+        console.log("P2P: Incoming connection from:", conn.peer);
         
-        // Connect to all existing peers
-        existingPeers.forEach((peerInfo: PeerInfo) => {
-          if (peerInfo.peerId !== id) {
-            connectToPeer(peerInfo.peerId);
-          }
+        conn.on("open", () => {
+          connectionsRef.current.set(conn.peer, conn);
         });
+
+        conn.on("data", (data) => {
+          handleIncomingData(data as P2PDataPayload);
+        });
+
+        conn.on("close", () => {
+          connectionsRef.current.delete(conn.peer);
+        });
+      });
+
+      peer.on("error", (err) => {
+        console.error("P2P Error:", err);
+        setError(err.message || "P2P connection error");
         
-        setConnectedPeers(existingPeers.filter((p: PeerInfo) => p.peerId !== id));
-      }
-    });
-
-    // Handle incoming connections
-    peer.on("connection", (conn) => {
-      console.log("P2P: Incoming connection from:", conn.peer);
-      
-      conn.on("open", () => {
-        connectionsRef.current.set(conn.peer, conn);
+        // Attempt to reconnect on certain errors
+        if (err.type === "network" || err.type === "server-error") {
+          setTimeout(() => {
+            if (peerRef.current) {
+              peerRef.current.reconnect();
+            }
+          }, 5000);
+        }
       });
 
-      conn.on("data", (data) => {
-        handleIncomingData(data as P2PDataPayload);
-      });
-
-      conn.on("close", () => {
-        connectionsRef.current.delete(conn.peer);
-      });
-    });
-
-    peer.on("error", (err) => {
-      console.error("P2P Error:", err);
-      setError(err.message || "P2P connection error");
-      
-      // Attempt to reconnect on certain errors
-      if (err.type === "network" || err.type === "server-error") {
+      peer.on("disconnected", () => {
+        console.log("P2P: Disconnected from server");
+        setIsConnected(false);
+        
+        // Try to reconnect
         setTimeout(() => {
-          if (peerRef.current) {
+          if (peerRef.current && !peerRef.current.destroyed) {
             peerRef.current.reconnect();
           }
-        }, 5000);
-      }
-    });
+        }, 3000);
+      });
+    };
 
-    peer.on("disconnected", () => {
-      console.log("P2P: Disconnected from server");
-      setIsConnected(false);
-      
-      // Try to reconnect
-      setTimeout(() => {
-        if (peerRef.current && !peerRef.current.destroyed) {
-          peerRef.current.reconnect();
-        }
-      }, 3000);
-    });
+    initPeer();
 
     // Cleanup on unmount
     return () => {
+      isMounted = false;
       unregisterPeer();
       connectionsRef.current.forEach((conn) => conn.close());
       connectionsRef.current.clear();

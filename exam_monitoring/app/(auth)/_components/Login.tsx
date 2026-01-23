@@ -63,6 +63,9 @@ function Login() {
 
     // שמירת userId לכל התפקידים (לשימוש בתקשורת P2P ועוד)
     sessionStorage.setItem("supervisorId", user._id);
+    // שמירת שם ות.ז. עבור P2P
+    sessionStorage.setItem("userName", user.name || "משגיח");
+    sessionStorage.setItem("userIdNumber", user.idNumber || "");
 
     // Store authenticated user data in sessionStorage
     sessionStorage.setItem("currentUser", JSON.stringify(user));
