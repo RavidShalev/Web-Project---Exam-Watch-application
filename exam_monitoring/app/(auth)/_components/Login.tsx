@@ -61,9 +61,8 @@ function Login() {
     // On success, data contains user info
     const user = data;
 
-    if (user.role === "supervisor") {
-      sessionStorage.setItem("supervisorId", user._id);
-    }
+    // שמירת userId לכל התפקידים (לשימוש בתקשורת P2P ועוד)
+    sessionStorage.setItem("supervisorId", user._id);
 
     // Store authenticated user data in sessionStorage
     sessionStorage.setItem("currentUser", JSON.stringify(user));

@@ -118,7 +118,19 @@ export default function CommunicationPanel({
   }, [messages]);
 
   async function sendMessage() {
-    if (!newMessage.trim() || !examId || !currentSupervisorId) return;
+    if (!newMessage.trim()) {
+      return; // אין הודעה לשלוח
+    }
+    
+    if (!examId) {
+      alert("שגיאה: מזהה מבחן חסר");
+      return;
+    }
+    
+    if (!currentSupervisorId) {
+      alert("שגיאה: לא זוהה משתמש. נא להתחבר מחדש.");
+      return;
+    }
 
     try {
       const res = await fetch(`/api/exams/${examId}/messages`, {
@@ -131,6 +143,11 @@ export default function CommunicationPanel({
         }),
       });
 
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "שגיאה בשליחת ההודעה");
+      }
+
       const data = await res.json();
       if (data.success) {
         setNewMessage("");
@@ -138,7 +155,7 @@ export default function CommunicationPanel({
       }
     } catch (error) {
       console.error("Error sending message:", error);
-      alert("שגיאה בשליחת ההודעה");
+      alert(error instanceof Error ? error.message : "שגיאה בשליחת ההודעה");
     }
   }
 
@@ -160,12 +177,20 @@ export default function CommunicationPanel({
   }
 
   async function sendEmergencyAlert() {
-    if (!examId || !currentSupervisorId) return;
+    if (!examId) {
+      alert("שגיאה: מזהה מבחן חסר");
+      return;
+    }
+    
+    if (!currentSupervisorId) {
+      alert("שגיאה: לא זוהה משתמש. נא להתחבר מחדש.");
+      return;
+    }
 
     const emergencyMessage = "🚨 התראה: דרושה תשומת לב מיידית!";
     
     try {
-      await fetch(`/api/exams/${examId}/messages`, {
+      const res = await fetch(`/api/exams/${examId}/messages`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -174,9 +199,14 @@ export default function CommunicationPanel({
           messageType: "emergency",
         }),
       });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "שגיאה בשליחת התראה");
+      }
     } catch (error) {
       console.error("Error sending emergency alert:", error);
-      alert("שגיאה בשליחת התראה");
+      alert(error instanceof Error ? error.message : "שגיאה בשליחת התראה");
     }
   }
 

@@ -42,7 +42,16 @@ export default function ActiveExamPage() {
   const [showAddStudentModal, setShowAddStudentModal]=useState(false);
   const [availableExams, setAvailableExams] = useState<{ _id: string; location: string }[]>([]);
   const [minutes, setMinutes] = useState("");
+  const [currentSupervisorId, setCurrentSupervisorId] = useState<string>(""); // P2P communication
   const router = useRouter(); //used for navigating after finishing exam
+
+  // טעינת supervisorId מ-sessionStorage בצד הלקוח בלבד (למניעת SSR errors)
+  useEffect(() => {
+    const supervisorId = sessionStorage.getItem("supervisorId");
+    if (supervisorId) {
+      setCurrentSupervisorId(supervisorId);
+    }
+  }, []);
 
   // fetch available exams when examId changes
   useEffect(() => {
@@ -566,10 +575,10 @@ async function transferStudent(attendanceId: string, targetExamId: string)
       )}
 
       {/* Communication Panel - תקשורת בין משגיחים */}
-      {exam && examId && (
+      {exam && examId && currentSupervisorId && (
         <CommunicationPanel
           examId={examId}
-          currentSupervisorId={sessionStorage.getItem("supervisorId") || ""}
+          currentSupervisorId={currentSupervisorId}
         />
       )}
 
