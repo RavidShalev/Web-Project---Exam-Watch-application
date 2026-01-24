@@ -184,7 +184,24 @@ export default function LecturerDashboard() {
                 className="bg-[var(--surface)] p-5 rounded-xl border border-[var(--border)] hover:shadow-md transition-shadow"
               >
                 <h3 className="text-lg font-bold text-[var(--fg)]">{exam.courseName}</h3>
-                <p className="text-xs text-[var(--muted)]">קוד: {exam.courseCode}</p>
+                <p className="text-xs text-[var(--muted)] mb-3">קוד: {exam.courseCode}</p>
+                
+                <div className="grid grid-cols-2 gap-2 text-sm text-[var(--muted)]">
+                  <div className="flex items-center gap-2">
+                    <Calendar size={14} />
+                    {exam.date}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Clock size={14} />
+                    {exam.startTime} - {exam.endTime}
+                  </div>
+                  {exam.location && (
+                    <div className="flex items-center gap-2 col-span-2">
+                      <MapPin size={14} />
+                      {exam.location}
+                    </div>
+                  )}
+                </div>
               </div>
             ))}
           </div>
