@@ -28,6 +28,7 @@
 - [מבנה הפרויקט](#-מבנה-הפרויקט)
 - [תפקידי משתמשים](#-תפקידי-משתמשים)
 - [תכונות מתקדמות](#-תכונות-מתקדמות)
+- [API Reference](#-api-reference)
 - [API חיצוני](#-api-חיצוני)
 
 ---
@@ -41,7 +42,7 @@
 - ✅ מעקב נוכחות בזמן אמת
 - ✅ דיווח אירועים מיידי
 - ✅ גישה מהירה לנהלי בחינות באמצעות AI
-- ✅ תקשורת בין משגיחים במהלך הבחינה
+- ✅ תקשורת P2P בין משגיחים במהלך הבחינה
 - ✅ התראות חכמות ואוטומטיות
 
 ---
@@ -72,10 +73,11 @@
 - 🤖 **בוט AI חכם** למענה על שאלות בזמן אמת
 - 🚽 מעקב יציאה לשירותים
 - ➕ הוספת זמן לסטודנטים עם התאמות
-- 💬 **תקשורת בין משגיחים** - הודעות ועדכוני סטטוס
+- 💬 **תקשורת P2P בין משגיחים** - הודעות ישירות בזמן אמת
 - 🔔 **עוזר חכם (SmartBotAssistant)** - התראות והנחיות במהלך הבחינה
 - 🔄 העברת סטודנטים בין כיתות
 - 📞 קריאה למרצה
+- ➕ הוספת סטודנט למבחן
 
 ### 👨‍🏫 למרצים (Lecturer)
 - 📈 צפייה במבחנים פעילים בזמן אמת
@@ -99,10 +101,11 @@
 | **Backend** | Next.js API Routes, Node.js |
 | **Database** | MongoDB Atlas, Mongoose ODM |
 | **AI** | Google Gemini API (בוט הבחינות) |
+| **P2P Communication** | PeerJS (WebRTC) |
 | **Auth** | bcryptjs (הצפנת סיסמאות) |
 | **Icons** | Lucide React |
 | **Export** | jsPDF, SheetJS (xlsx) |
-| **Real-time** | Polling-based updates (כל 10 שניות) |
+| **Real-time** | P2P + Polling-based fallback |
 | **Deployment** | Vercel |
 
 ---
@@ -269,7 +272,9 @@ exam_monitoring/
 │   ├── lib/                     # 📁 פונקציות עזר ושירותים
 │   │   ├── db.js                # חיבור ל-MongoDB
 │   │   ├── auditLogger.ts       # לוגים לפעולות
-│   │   └── TimeUtils.ts         # פונקציות זמן
+│   │   ├── TimeUtils.ts         # פונקציות זמן
+│   │   ├── useP2PChat.ts        # 🆕 Hook לתקשורת P2P (PeerJS)
+│   │   └── exportUtils.ts       # ייצוא PDF/Excel
 │   │
 │   ├── models/                  # 📁 Mongoose Models (Database Schemas)
 │   │   ├── Users.ts             # סכמת משתמשים
@@ -281,22 +286,24 @@ exam_monitoring/
 │   │   ├── AuditAction.ts       # טיפוסי פעולות
 │   │   ├── Communication.ts     # סכמת הודעות בין משגיחים
 │   │   ├── SupervisorStatus.ts  # סכמת סטטוס משגיח
+│   │   ├── P2PPeer.ts           # 🆕 P2P peer discovery
 │   │   └── ExamCsvRow.ts        # טיפוס שורת CSV
 │   │
 │   ├── layout.tsx               # Layout ראשי של האפליקציה
 │   ├── providers.tsx            # Context Providers (Theme)
 │   └── globals.css              # סגנונות CSS גלובליים
 │
+├── public/                      # 📁 קבצים סטטיים (תמונות, favicon)
+│
 ├── types/                       # 📁 TypeScript Type Definitions
 │   ├── examtypes.ts             # טיפוסי מבחן
 │   └── attendance.ts            # טיפוסי נוכחות
 │
-├── public/                      # 📁 קבצים סטטיים (תמונות, favicon)
-│
 ├── package.json                 # תלויות ו-scripts
 ├── tsconfig.json                # הגדרות TypeScript
 ├── tailwind.config.ts           # הגדרות Tailwind CSS
-└── next.config.ts               # הגדרות Next.js
+├── next.config.ts               # הגדרות Next.js
+└── REQUIREMENTS.md              # מסמך דרישות
 ```
 
 ---
@@ -306,45 +313,106 @@ exam_monitoring/
 | תפקיד | הרשאות |
 |-------|--------|
 | **Admin** | גישה מלאה - ניהול משתמשים, מבחנים, צפייה בלוגים, מפת כיתות |
-| **Supervisor** | השגחה על מבחנים, דיווח אירועים, שימוש בבוט, תקשורת עם משגיחים |
-| **Lecturer** | צפייה במבחנים, קבלת התראות, צפייה בדוחות |
+| **Supervisor** | השגחה על מבחנים, דיווח אירועים, שימוש בבוט, תקשורת P2P |
+| **Lecturer** | צפייה במבחנים, קבלת התראות, צפייה בדוחות, ייצוא נתונים |
 | **Student** | צפייה במבחנים אישיים, נהלים |
 
 ---
 
 ## 🔔 תכונות מתקדמות
 
-### 💬 תקשורת בין משגיחים (CommunicationPanel)
-- שליחת הודעות בזמן אמת בין משגיחים באותו מבחן
+### 💬 תקשורת P2P בין משגיחים (CommunicationPanel + useP2PChat)
+- **WebRTC P2P** - תקשורת ישירה בין משגיחים ללא עיכוב
+- **Signaling Server** - שרת גילוי peers דרך `/api/exams/[examId]/p2p-peers`
+- שליחת הודעות בזמן אמת
 - צפייה בסטטוס משגיחים (זמין, עסוק, בהפסקה)
 - עדכון מיקום המשגיח בכיתה
+- **Fallback לשרת** - במקרה שה-P2P לא זמין
 
 ### 🤖 עוזר חכם (SmartBotAssistant)
-- התראות אוטומטיות במהלך הבחינה
+- התראות אוטומטיות במהלך הבחינה (5 דקות, 15 דקות לפני סיום)
 - סיכום ביניים של מצב הנוכחות
 - התראות על זמן שנותר
-- שאלות מהירות לבוט AI
+- מעקב על סטודנטים בשירותים
+- Check-ins תקופתיים (בדיקת נוכחות, חומרים מותרים)
+- שאלות מהירות לבוט AI (Gemini)
+- התראות קוליות (ניתן לכיבוי)
 
 ### 🚨 דיווח אירועים
 - דיווח כללי על אירועים במבחן
 - דיווח ספציפי לסטודנט (איחור, יציאה, חשד להעתקה)
 - תיעוד אוטומטי ב-Audit Log
+- שליחת התראות למרצה
+
+### 📊 ייצוא דוחות
+- ייצוא ל-PDF עם כל פרטי המבחן
+- ייצוא ל-Excel (xlsx)
+- סטטיסטיקות מפורטות
+
+---
+
+## 🔌 API Reference
+
+### Authentication
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/login` | התחברות למערכת |
+
+### Users
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/users` | קבלת כל המשתמשים |
+| POST | `/api/users` | יצירת משתמש חדש |
+
+### Exams
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/exams` | קבלת כל המבחנים |
+| POST | `/api/exams` | יצירת מבחן חדש |
+| GET | `/api/exams/[examId]` | קבלת מבחן ספציפי |
+| PUT | `/api/exams/[examId]` | עדכון מבחן |
+| DELETE | `/api/exams/[examId]` | מחיקת מבחן |
+| PATCH | `/api/exams/[examId]` | עדכון חלקי |
+
+### P2P Communication
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/exams/[examId]/p2p-peers` | קבלת peers פעילים |
+| POST | `/api/exams/[examId]/p2p-peers` | רישום peer חדש |
+| DELETE | `/api/exams/[examId]/p2p-peers` | הסרת peer |
+
+### Messages (Fallback)
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/exams/[examId]/messages` | קבלת הודעות |
+| POST | `/api/exams/[examId]/messages` | שליחת הודעה |
+
+### AI Bot
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/exam-bot` | שליחת שאלה ל-Gemini AI |
 
 ---
 
 ## 🤖 API חיצוני
 
 ### Google Gemini AI
-המערכת משתמשת ב-**Google Gemini API** עבור בוט הבחינות החכם:
+המערכת משתמשת ב-**Google Gemini 2.0 Flash API** עבור בוט הבחינות החכם:
 - מענה על שאלות בזמן אמת על נהלי בחינות
-- תמיכה בעברית
-- מבוסס על נוהל בחינות רשמי (אק-007-ע19)
+- תמיכה מלאה בעברית
+- מבוסס על נוהל בחינות רשמי של מכללת בראודה (אק-007-ע19)
+- סגנון ידידותי ותומך למשגיחים
+
+### PeerJS (WebRTC)
+- תקשורת P2P ישירה בין משגיחים
+- שימוש בשרת PeerJS הציבורי (חינמי)
+- Fallback אוטומטי לשרת במקרה של כשל
 
 ---
 
 ## 👨‍💻 צוות הפיתוח
 
-פותח במסגרת קורס **טכנולוגיות אינטרנט מתקדמות** במכללת בראודה להנדסה.
+פותח במסגרת קורס **טכנולוגיות אינטרנט מתקדמות (WEB)** במכללת בראודה להנדסה.
 
 ---
 
