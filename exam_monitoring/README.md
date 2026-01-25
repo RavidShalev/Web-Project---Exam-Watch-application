@@ -6,8 +6,11 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
 ![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green?style=for-the-badge&logo=mongodb)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-3-38B2AC?style=for-the-badge&logo=tailwind-css)
+![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?style=for-the-badge&logo=vercel)
 
 **מערכת מקיפה לניהול והשגחה על בחינות במכללת בראודה להנדסה**
+
+### 🌐 [צפה באתר החי](https://web-project-exam-watch-application.vercel.app/)
 
 [🚀 התחלה מהירה](#-התחלה-מהירה) • [📖 תיעוד](#-תכונות-עיקריות) • [🛠️ טכנולוגיות](#️-טכנולוגיות)
 
@@ -18,11 +21,13 @@
 ## 📋 תוכן עניינים
 
 - [אודות הפרויקט](#-אודות-הפרויקט)
+- [Demo חי](#-demo-חי)
 - [תכונות עיקריות](#-תכונות-עיקריות)
 - [טכנולוגיות](#️-טכנולוגיות)
 - [התחלה מהירה](#-התחלה-מהירה)
 - [מבנה הפרויקט](#-מבנה-הפרויקט)
 - [תפקידי משתמשים](#-תפקידי-משתמשים)
+- [תכונות מתקדמות](#-תכונות-מתקדמות)
 - [API חיצוני](#-api-חיצוני)
 
 ---
@@ -36,6 +41,18 @@
 - ✅ מעקב נוכחות בזמן אמת
 - ✅ דיווח אירועים מיידי
 - ✅ גישה מהירה לנהלי בחינות באמצעות AI
+- ✅ תקשורת בין משגיחים במהלך הבחינה
+- ✅ התראות חכמות ואוטומטיות
+
+---
+
+## 🌐 Demo חי
+
+האפליקציה זמינה באופן מקוון:
+
+**🔗 [https://web-project-exam-watch-application.vercel.app/](https://web-project-exam-watch-application.vercel.app/)**
+
+> המערכת מתארחת ב-Vercel עם חיבור ל-MongoDB Atlas
 
 ---
 
@@ -45,7 +62,8 @@
 - 📊 לוח בקרה עם סטטיסטיקות בזמן אמת
 - 👥 ניהול משתמשים (רישום, עריכה, מחיקה)
 - 📝 יצירת מבחנים ידנית או באמצעות CSV
-- 📋 צפייה בלוגים של פעילות המערכת
+- 📋 צפייה בלוגים של פעילות המערכת (Audit Logs)
+- 🗺️ מפת כיתות עם שיבוץ משגיחים
 
 ### 👁️ למשגיחים (Supervisor)
 - ⏱️ שעון מבחן עם ספירה לאחור
@@ -54,6 +72,10 @@
 - 🤖 **בוט AI חכם** למענה על שאלות בזמן אמת
 - 🚽 מעקב יציאה לשירותים
 - ➕ הוספת זמן לסטודנטים עם התאמות
+- 💬 **תקשורת בין משגיחים** - הודעות ועדכוני סטטוס
+- 🔔 **עוזר חכם (SmartBotAssistant)** - התראות והנחיות במהלך הבחינה
+- 🔄 העברת סטודנטים בין כיתות
+- 📞 קריאה למרצה
 
 ### 👨‍🏫 למרצים (Lecturer)
 - 📈 צפייה במבחנים פעילים בזמן אמת
@@ -80,6 +102,8 @@
 | **Auth** | bcryptjs (הצפנת סיסמאות) |
 | **Icons** | Lucide React |
 | **Export** | jsPDF, SheetJS (xlsx) |
+| **Real-time** | Polling-based updates (כל 10 שניות) |
+| **Deployment** | Vercel |
 
 ---
 
@@ -149,12 +173,13 @@ exam_monitoring/
 │   │   ├── active-exam/         # 📁 מסך מבחן פעיל
 │   │   │   └── [examId]/        # Dynamic route - לפי ID מבחן
 │   │   │       ├── page.tsx              # דף המבחן הפעיל
+│   │   │       ├── CommunicationPanel.tsx # פאנל תקשורת בין משגיחים
 │   │   │       └── _components/          # רכיבי מבחן פעיל
 │   │   │           ├── examTimer.tsx         # טיימר מבחן
 │   │   │           ├── attendanceList.tsx    # רשימת נוכחות
-│   │   │           ├── reportModal.tsx       # מודל דיווח
-│   │   │           ├── reportEvents.tsx      # דיווחי אירועים
-│   │   │           ├── SmartBotAssistant.tsx # עוזר AI
+│   │   │           ├── reportModal.tsx       # מודל דיווח כללי
+│   │   │           ├── reportEvents.tsx      # דיווחי אירועים לסטודנט
+│   │   │           ├── SmartBotAssistant.tsx # עוזר AI חכם עם התראות
 │   │   │           ├── CallLecturerModal.tsx # קריאה למרצה
 │   │   │           ├── AddStudentModal.tsx   # הוספת סטודנט
 │   │   │           ├── addTimeModal.tsx      # הוספת זמן
@@ -217,7 +242,9 @@ exam_monitoring/
 │   │   │   │   ├── route.ts     # GET, PUT, PATCH, DELETE
 │   │   │   │   ├── addTime/
 │   │   │   │   ├── call-lecturer/
-│   │   │   │   └── reporting/
+│   │   │   │   ├── reporting/
+│   │   │   │   ├── messages/    # הודעות בין משגיחים
+│   │   │   │   └── supervisor-status/ # סטטוס משגיחים
 │   │   │   ├── activate/
 │   │   │   ├── activeByCourse/
 │   │   │   ├── attendance/
@@ -252,6 +279,8 @@ exam_monitoring/
 │   │   ├── Report.ts            # סכמת דיווחים
 │   │   ├── AuditLog.ts          # סכמת לוגים
 │   │   ├── AuditAction.ts       # טיפוסי פעולות
+│   │   ├── Communication.ts     # סכמת הודעות בין משגיחים
+│   │   ├── SupervisorStatus.ts  # סכמת סטטוס משגיח
 │   │   └── ExamCsvRow.ts        # טיפוס שורת CSV
 │   │
 │   ├── layout.tsx               # Layout ראשי של האפליקציה
@@ -276,10 +305,30 @@ exam_monitoring/
 
 | תפקיד | הרשאות |
 |-------|--------|
-| **Admin** | גישה מלאה - ניהול משתמשים, מבחנים, צפייה בלוגים |
-| **Supervisor** | השגחה על מבחנים, דיווח אירועים, שימוש בבוט |
+| **Admin** | גישה מלאה - ניהול משתמשים, מבחנים, צפייה בלוגים, מפת כיתות |
+| **Supervisor** | השגחה על מבחנים, דיווח אירועים, שימוש בבוט, תקשורת עם משגיחים |
 | **Lecturer** | צפייה במבחנים, קבלת התראות, צפייה בדוחות |
 | **Student** | צפייה במבחנים אישיים, נהלים |
+
+---
+
+## 🔔 תכונות מתקדמות
+
+### 💬 תקשורת בין משגיחים (CommunicationPanel)
+- שליחת הודעות בזמן אמת בין משגיחים באותו מבחן
+- צפייה בסטטוס משגיחים (זמין, עסוק, בהפסקה)
+- עדכון מיקום המשגיח בכיתה
+
+### 🤖 עוזר חכם (SmartBotAssistant)
+- התראות אוטומטיות במהלך הבחינה
+- סיכום ביניים של מצב הנוכחות
+- התראות על זמן שנותר
+- שאלות מהירות לבוט AI
+
+### 🚨 דיווח אירועים
+- דיווח כללי על אירועים במבחן
+- דיווח ספציפי לסטודנט (איחור, יציאה, חשד להעתקה)
+- תיעוד אוטומטי ב-Audit Log
 
 ---
 
@@ -306,6 +355,8 @@ exam_monitoring/
 ---
 
 <div align="center">
+
+**🌐 [צפה באתר החי](https://web-project-exam-watch-application.vercel.app/)**
 
 **⭐ אם הפרויקט עזר לך, אל תשכח לתת כוכב! ⭐**
 
