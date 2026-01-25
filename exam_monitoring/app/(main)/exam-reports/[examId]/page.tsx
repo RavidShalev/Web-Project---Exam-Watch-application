@@ -24,7 +24,7 @@ interface Report {
   _id: string;
   eventType: string;
   description: string;
-  timestamp: string;
+  createdAt: string;
   supervisorId?: { name: string };
   studentId?: { name: string; idNumber: string };
 }
@@ -325,7 +325,7 @@ export default function ExamReportPage() {
                         )}
 
                         <p className="text-xs text-muted mt-2">
-                          {new Date(report.timestamp).toLocaleString('he-IL')}
+                          {new Date(report.createdAt).toLocaleString('he-IL')}
                         </p>
                       </div>
                     </div>
