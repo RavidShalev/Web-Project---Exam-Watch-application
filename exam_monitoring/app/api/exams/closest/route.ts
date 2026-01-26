@@ -6,7 +6,7 @@ import Exam from "../../../models/Exams";
 function buildExamDateAndTime(date: string, time: string): Date {
   const [year, month, day] = date.split("-").map(Number);
   const [hour, minute] = time.split(":").map(Number);
-  return new Date(year, month - 1, day, hour, minute, 0);
+  return new Date(year, month - 1, day, hour- 2, minute, 0);
 }
 
 // checks if two dates are on the same calendar day (server local time)
