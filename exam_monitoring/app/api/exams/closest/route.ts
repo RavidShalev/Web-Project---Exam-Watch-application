@@ -7,15 +7,23 @@ function buildExamDateAndTime(date: string, time: string): Date {
     return new Date(`${date}T${time}:00`);
 }
 
+// checks if two dates are on the same calendar day
+function isSameDay(d1: Date, d2: Date): boolean {
+    return (
+        d1.getFullYear() === d2.getFullYear() &&
+        d1.getMonth() === d2.getMonth() &&
+        d1.getDate() === d2.getDate()
+    );
+}
+
 // API Route: GET /api/exams/closest
 export async function GET(req: Request) {
     try {
-        // connect to the database, if already connected, does nothing
         await dbConnect();
 
         const { searchParams } = new URL(req.url);
         const supervisorId = searchParams.get("supervisorId");
-        // if no supervisorId provided, return error 400
+
         if (!supervisorId) {
             return NextResponse.json(
                 { message: "Missing supervisorId parameter" },
@@ -23,53 +31,47 @@ export async function GET(req: Request) {
             );
         }
 
-        // first check if there is any active exam for the supervisor
-        const activeExam = await Exam.find({
+        // active exam always wins
+        const activeExam = await Exam.findOne({
             supervisors: supervisorId,
-            status: { $in: ["active"] },
+            status: "active",
         }).lean();
-        if (activeExam.length > 0) {
-            return NextResponse.json({ closestExam: activeExam[0] });
+
+        if (activeExam) {
+            return NextResponse.json({ closestExam: activeExam });
         }
 
-        // find all exams where the supervisor is assigned and the exam is scheduled
+        // scheduled exams for this supervisor
         const exams = await Exam.find({
             supervisors: supervisorId,
-            status: { $in: ["scheduled"] },
+            status: "scheduled",
         }).lean();
 
         const now = new Date();
         const THIRTY_MINUTES = 30 * 60 * 1000;
 
-        const examsWithDate = exams.map((exam) => ({
-            ...exam,
-            examDateTime: buildExamDateAndTime(exam.date, exam.startTime),
-        }));
+        const examsWithDate = exams.map((exam) => {
+            const examDateTime = buildExamDateAndTime(exam.date, exam.startTime);
+            return { ...exam, examDateTime };
+        });
 
-        const examInTimeWindow = examsWithDate.find((exam) => {
-            const examTime = exam.examDateTime.getTime();
-            const nowTime = now.getTime();
+        // only exams from TODAY
+        const todayExams = examsWithDate.filter((exam) =>
+            isSameDay(exam.examDateTime, now)
+        );
 
-            return (
-                nowTime >= examTime - THIRTY_MINUTES &&
-                nowTime <= examTime + THIRTY_MINUTES
-            );
+        // only exams in ±30 minutes window
+        const examInTimeWindow = todayExams.find((exam) => {
+            const diff = exam.examDateTime.getTime() - now.getTime();
+            return Math.abs(diff) <= THIRTY_MINUTES;
         });
 
         if (examInTimeWindow) {
             return NextResponse.json({ closestExam: examInTimeWindow });
         }
 
-        const upcomingExams = examsWithDate
-            // filter only exams that are in the future, in case there is any exam with status 
-            // "scheduled" but date already passed
-            .filter((exam) => exam.examDateTime > now)
-            .sort((a, b) => a.examDateTime.getTime() - b.examDateTime.getTime());
-
-        // return the closest exam or null if none found
-        const closestExam = upcomingExams.length > 0 ? upcomingExams[0] : null;
-
-        return NextResponse.json({ closestExam });
+        // nothing relevant right now
+        return NextResponse.json({ closestExam: null });
     } catch (err) {
         return NextResponse.json(
             { message: err instanceof Error ? err.message : "Unknown server error" },
