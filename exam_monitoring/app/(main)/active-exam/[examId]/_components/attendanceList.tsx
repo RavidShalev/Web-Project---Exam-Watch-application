@@ -76,7 +76,7 @@ export default function AttemdanceList({
           </thead>
 
           <tbody className="divide-y divide-[var(--border)]">
-            {attendance.map(record => (
+            {Array.isArray(attendance) &&attendance.map(record => (
               <tr
                 key={record._id}
                 className="transition hover:bg-[var(--surface-hover)]"
@@ -194,7 +194,7 @@ export default function AttemdanceList({
       {/* ================= MOBILE CARDS ================= */}
       {/* hidden: hides the element (display: none) -> will hide on screens sm and larger (640px and up) */}
       <div className="sm:hidden space-y-4">
-        {attendance.map(record => (
+        {Array.isArray(attendance) &&attendance.map(record => (
           <div
             key={record._id}
             className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 space-y-3"
