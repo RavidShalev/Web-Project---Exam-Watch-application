@@ -1,20 +1,29 @@
 import { NextResponse } from "next/server";
 import dbConnect from "../../../lib/db";
 import Exam from "../../../models/Exams";
+import { fromZonedTime  } from "date-fns-tz";
 
-// ✅ builds a Date object from date and time strings (safer than ISO string parsing)
+//build exam datetime in UTC from Israel local time
 function buildExamDateAndTime(date: string, time: string): Date {
-  const [year, month, day] = date.split("-").map(Number);
-  const [hour, minute] = time.split(":").map(Number);
-  return new Date(year, month - 1, day, hour-2, minute, 0);
+  const localDateTime = `${date} ${time}:00`;
+  return fromZonedTime(localDateTime, "Asia/Jerusalem");
 }
 
-// checks if two dates are on the same calendar day (server local time)
-function isSameDay(d1: Date, d2: Date): boolean {
+// checks if two dates are on the same calendar day in Israel time
+function isSameDayInIsrael(d1: Date, d2: Date): boolean {
+  const tz = "Asia/Jerusalem";
+
+  const d1Local = new Date(
+    d1.toLocaleString("en-US", { timeZone: tz })
+  );
+  const d2Local = new Date(
+    d2.toLocaleString("en-US", { timeZone: tz })
+  );
+
   return (
-    d1.getFullYear() === d2.getFullYear() &&
-    d1.getMonth() === d2.getMonth() &&
-    d1.getDate() === d2.getDate()
+    d1Local.getFullYear() === d2Local.getFullYear() &&
+    d1Local.getMonth() === d2Local.getMonth() &&
+    d1Local.getDate() === d2Local.getDate()
   );
 }
 
@@ -33,7 +42,7 @@ export async function GET(req: Request) {
       );
     }
 
-    // 1) Active exam always wins (no time checks)
+    // Active exam always wins
     const activeExam = await Exam.findOne({
       supervisors: supervisorId,
       status: "active",
@@ -43,7 +52,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ closestExam: activeExam });
     }
 
-    // 2) Scheduled exams for this supervisor
+    // Scheduled exams for this supervisor
     const exams = await Exam.find({
       supervisors: supervisorId,
       status: "scheduled",
@@ -52,29 +61,27 @@ export async function GET(req: Request) {
     const now = new Date();
     const THIRTY_MINUTES = 30 * 60 * 1000;
 
-    
-    console.log("NOW(local):", now.toString(), "| NOW(ISO):", now.toISOString());
-    console.log("Scheduled exams found:", exams.length);
 
     const examsWithDate = exams.map((exam: any) => ({
       ...exam,
       examDateTime: buildExamDateAndTime(exam.date, exam.startTime),
     }));
 
-    // Only exams from TODAY
+    // Only exams from TODAY (Israel time)
     const todayExams = examsWithDate.filter((exam: any) =>
-      isSameDay(exam.examDateTime, now)
+      isSameDayInIsrael(exam.examDateTime, now)
     );
 
     // Only exams in ±30 minutes window
     const examInTimeWindow = todayExams.find((exam: any) => {
-      const diffMinutes = (exam.examDateTime.getTime() - now.getTime()) / 60000;
+      const diffMinutes =
+        (exam.examDateTime.getTime() - now.getTime()) / 60000;
 
       console.log(
         "Checking exam:",
         exam.courseName,
-        "| examDateTime(local):",
-        exam.examDateTime.toString(),
+        "| exam time (Israel):",
+        exam.examDateTime.toLocaleString("en-US", { timeZone: "Asia/Jerusalem" }),
         "| diffMinutes:",
         Math.round(diffMinutes)
       );
