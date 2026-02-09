@@ -2,6 +2,11 @@ import { NextResponse } from "next/server";
 import dbConnect from "../../../../lib/db";
 import Exam from "../../../../models/Exams";
 
+/**
+ * GET /api/exams/[examId]/related-active
+ * Returns all active exams of the same course as the given exam.
+ * Used to find parallel/ongoing exams by course code.
+ */
 export async function GET(req: Request,  { params }: { params: Promise<{ examId: string }>}) {
   try {
     await dbConnect();

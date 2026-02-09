@@ -4,7 +4,9 @@ import Communication from "../../../../../../models/Communication";
 
 /**
  * POST /api/exams/[examId]/messages/[messageId]/read
- * Mark a message as read by a supervisor
+ *
+ * Marks a message as read by a specific user.
+ * If the user already read the message, no action is taken.
  */
 export async function POST(
   req: Request,

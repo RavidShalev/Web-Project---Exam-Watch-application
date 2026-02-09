@@ -4,7 +4,19 @@ import dbConnect from "../../../../lib/db";
 import Exam from "../../../../models/Exams";
 import "../../../../models/Users";
 
-// API Route to get exam by ID with populated lecturers, supervisors, and students
+/**
+ * GET /api/exams/[examId]
+ *
+ * Returns full exam details by ID.
+ * Includes populated lecturers, supervisors, and students.
+ *
+ * Params:
+ * - examId (MongoDB ObjectId)
+ *
+ * Response:
+ * - success: boolean
+ * - exam: Exam object with populated relations
+ */
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ examId: string }> }

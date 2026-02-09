@@ -5,6 +5,10 @@ import Exam from "../../../../models/Exams";
 import User from "../../../../models/Users";
 import { logAuditEvent, logAuditAction } from "../../../../lib/auditLogger";
 
+/**
+ * POST /api/attendance/transfer
+ * Transfers a student from one active exam to another and creates a new attendance record.
+ */
 export async function POST(req: Request) {
   try {
     await dbConnect();

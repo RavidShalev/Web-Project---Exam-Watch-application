@@ -2,7 +2,12 @@ import { NextResponse } from "next/server";
 import dbConnect from "../../../lib/db";
 import Exam from "../../../models/Exams";
 
-// API Route: GET all exams from the db
+/**
+ * GET /api/exams
+ *
+ * Returns all exams from the database
+ * with populated lecturers and supervisors.
+ */
 export async function GET() {
   try {
 

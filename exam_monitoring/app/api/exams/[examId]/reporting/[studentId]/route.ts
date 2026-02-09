@@ -3,6 +3,12 @@ import dbConnect from "../../../../../lib/db";
 import Report from "../../../../../models/Report";
 import {logAuditEvent} from "../../../../../lib/auditLogger";
 
+/**
+ * POST /api/exams/[examId]/students/[studentId]/report
+ *
+ * Creates a new incident report for a specific student during an exam.
+ * The report is submitted by a supervisor and logged in the audit system.
+ */
 export async function POST(
   req: Request,
   context: { params: Promise<{ examId: string; studentId: string }> }

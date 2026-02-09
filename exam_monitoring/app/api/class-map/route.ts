@@ -29,7 +29,19 @@ type ClassroomDTO = {
   calledLecturer?: string | null;
 };
 
-
+/**
+ * GET /api/class-map
+ *
+ * Returns upcoming exam classrooms.
+ * Results are filtered based on user role (supervisor / lecturer).
+ *
+ * Headers:
+ * - x-user-role
+ * - x-user-id
+ *
+ * Response:
+ * Array of ClassroomDTO objects
+ */
 export async function GET(req: Request) {
   await dbConnect();
 

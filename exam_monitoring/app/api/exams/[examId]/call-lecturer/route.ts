@@ -5,8 +5,12 @@ import User from "../../../../models/Users";
 import mongoose from "mongoose";
 import { logAuditEvent } from "../../../../lib/auditLogger";
 
-// API Route: POST /api/exams/[examId]/call-lecturer
-// Marks a lecturer as called/assigned to the classroom
+/**
+ * POST /api/exams/[examId]/call-lecturer
+ * Marks a lecturer as called to the exam classroom
+ * and logs the action if triggered by a supervisor.
+ *
+ */
 export async function POST(
   req: Request,
   { params }: { params: Promise<{ examId: string }> }
@@ -112,9 +116,11 @@ export async function POST(
     );
   }
 }
-
-// API Route: DELETE /api/exams/[examId]/call-lecturer
-// Removes the lecturer call (allows lecturer to dismiss or supervisor to cancel)
+/** 
+ * DELETE /api/exams/[examId]/call-lecturer
+ * Cancels the lecturer call (by lecturer or supervisor)
+ * and logs the action in the audit log if needed.
+ */
 export async function DELETE(
   req: Request,
   { params }: { params: Promise<{ examId: string }> }

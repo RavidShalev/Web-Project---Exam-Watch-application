@@ -2,7 +2,11 @@ import { NextResponse } from "next/server";
 import dbConnect from "../../../../lib/db";
 import Attendance from "@/app/models/Attendance";
 
-// GET /api/exams/:examId/attendance
+/**
+ * GET /api/exams/[examId]/attendance
+ * Returns attendance records for a specific exam,
+ * including populated student details (name and ID number).
+ */
 export async function GET(
     req: Request,
     {params}: {params: Promise<{examId: string}>}

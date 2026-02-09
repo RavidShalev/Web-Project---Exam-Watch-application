@@ -5,7 +5,9 @@ import { logAuditEvent } from "../../../../lib/auditLogger";
 
 /**
  * GET /api/exams/[examId]/messages
- * Get all messages for an exam
+ *
+ * Returns all messages related to a specific exam.
+ * Messages are sorted by creation time (oldest first) and include sender details.
  */
 export async function GET(
   req: Request,
@@ -40,7 +42,10 @@ export async function GET(
 
 /**
  * POST /api/exams/[examId]/messages
- * Send a new message
+ *
+ * Creates a new message for an exam.
+ * The sender is automatically marked as having read their own message.
+ * An audit log entry is created for the action.
  */
 export async function POST(
   req: Request,

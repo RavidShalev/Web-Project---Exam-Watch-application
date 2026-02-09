@@ -9,7 +9,11 @@ import bcrypt from "bcryptjs";
 const MAX_LOGIN_ATTEMPTS = 5;
 const LOCK_TIME = 30 * 60 * 1000; // 30 minutes in milliseconds
 
-// API Route: POST /api/login
+/**
+ * POST /api/login
+ * Authenticates a user by ID number and password.
+ * Includes account lockout after multiple failed login attempts.
+ */
 export async function POST(req: Request) {
   try {
     await dbConnect();

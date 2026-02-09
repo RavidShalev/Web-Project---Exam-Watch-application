@@ -3,7 +3,10 @@ import dbConnect from "../../../../lib/db";
 import Report from "../../../../models/Report";
 import {logAuditEvent} from "../../../../lib/auditLogger";
 
-// GET /api/exams/[examId]/reporting - Get all reports for an exam
+/**
+ * GET /api/exams/[examId]/reporting
+ * Returns all incident and event reports related to a specific exam.
+ */
 export async function GET(
   req: Request,
   context: { params: Promise<{ examId: string }> }
@@ -36,7 +39,11 @@ export async function GET(
   }
 }
 
-// POST /api/exams/[examId] - Report a general exam event
+/**
+ * POST /api/exams/[examId]/reporting
+ * Creates a general exam report (not tied to a specific student),
+ * submitted by a supervisor and logged in the audit system.
+ */
 export async function POST( req: Request, context: { params: Promise<{ examId: string; }> })
 {
   try {

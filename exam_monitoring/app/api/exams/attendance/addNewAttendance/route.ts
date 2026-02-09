@@ -5,6 +5,12 @@ import Exam from "../../../../models/Exams";
 import User from "../../../../models/Users";
 import { logAuditEvent, logAuditAction } from "../../../../lib/auditLogger";
 
+
+/**
+ * POST /api/exams/attendance
+ * Adds a student to an exam’s attendance list by student ID number.
+ * Creates a new attendance record and logs the action.
+ */
 export async function POST(req: Request) {
   try {
     await dbConnect();

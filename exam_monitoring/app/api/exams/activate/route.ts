@@ -4,6 +4,14 @@ import Exam from "../../../models/Exams";
 import Attendance from "../../../models/Attendance";
 import { logAuditEvent, logAuditAction } from "../../../lib/auditLogger";
 
+/**
+ * POST /api/exams/activate
+ * Activates a scheduled exam:
+ * - Sets exam status to "active"
+ * - Stores actual start time
+ * - Initializes attendance records for all students
+ * - Writes audit logs (exam started)
+ */
 export async function POST(req: Request) {
     try {
         // connect to the database, if already connected, does nothing

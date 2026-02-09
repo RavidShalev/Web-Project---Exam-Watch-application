@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "../../lib/db";
 import Procedure from "../../models/Procedure";
 
+/**
+ * GET /api/procedures
+ * Returns exam procedures, optionally filtered by user role.
+ */
 export async function GET(request: NextRequest) {
   try {
     // connect to DB

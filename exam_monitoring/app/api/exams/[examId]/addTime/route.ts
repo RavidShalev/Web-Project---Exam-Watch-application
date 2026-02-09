@@ -3,7 +3,12 @@ import dbConnect from "../../../../lib/db";
 import Exam from "../../../../models/Exams";
 import {logAuditEvent} from "../../../../lib/auditLogger";
 
-// API route to add time to an exam's duration
+/**
+ * PATCH /api/exams/[examId]/add-time
+ *
+ * Adds extra minutes to an exam duration
+ * and logs the action in the audit log.
+ */
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ examId: string }> }

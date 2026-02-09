@@ -5,7 +5,14 @@ import User from "../../../models/Users";
 import mongoose from "mongoose";
 import {logAuditEvent} from "../../../lib/auditLogger";
 
-// API Route: GET, DELETE, PUT exam by ID
+/**
+ * GET    /api/exams/[examId]   - Get full exam details (with lecturers, supervisors, students)
+ * PUT    /api/exams/[examId]   - Update exam details and assignments
+ * DELETE /api/exams/[examId]   - Delete an exam
+ * PATCH  /api/exams/[examId]   - Mark exam as finished
+ *
+ * Includes validation, role-based user mapping, and audit logging.
+ */
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ examId: string }> }

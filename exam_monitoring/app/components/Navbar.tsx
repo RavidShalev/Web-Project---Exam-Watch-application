@@ -14,6 +14,11 @@ type CurrentUser = {
   username?: string; // for backward compatibility
 };
 
+/**
+ * Navbar component.
+ * Displays role-based navigation links, user info, logout, and theme toggle.
+ * Supports responsive (mobile/desktop) layout.
+ */
 const Navbar = () => {
   const [clicked, setClicked] = useState(false);
   const router = useRouter();

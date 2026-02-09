@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import mongoose from "mongoose";
 import dbConnect from "../../../lib/db";
 
+/**
+ * GET /api/exams?studentId=...
+ * Returns all exams in which the given student is registered.
+ */
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url); // Take the URL of the request and extract query parameters
   const studentId = searchParams.get('studentId'); // Get the value of studentId from the query string

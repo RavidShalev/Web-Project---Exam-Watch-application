@@ -8,7 +8,20 @@ type UserDoc = {
   idNumber: string;
 };
 
-// API route to handle CSV file upload and extract student ID numbers
+/**
+ * POST /api/admin/exams/[examId]/upload-students-csv
+ *
+ * Uploads a CSV file and assigns students to an exam.
+ * Extracts student ID numbers from the CSV and links existing users to the exam.
+ *
+ * Request:
+ * - multipart/form-data with a "file" field (CSV)
+ *
+ * Response:
+ * - success: boolean
+ * - added: number of students added
+ * - missing: list of ID numbers not found in the system
+ */
 export async function POST(
   req: Request,
   { params }: { params: Promise<{ examId: string }> }

@@ -27,7 +27,11 @@ function isSameDayInIsrael(d1: Date, d2: Date): boolean {
   );
 }
 
-// API Route: GET /api/exams/closest?supervisorId=...
+/**
+ * GET /api/exams/closest?supervisorId=...
+ * Returns the active exam for a supervisor, or the closest scheduled exam
+ * today within a ±30 minute window (Israel time).
+ */
 export async function GET(req: Request) {
   try {
     await dbConnect();
@@ -76,15 +80,6 @@ export async function GET(req: Request) {
     const examInTimeWindow = todayExams.find((exam: any) => {
       const diffMinutes =
         (exam.examDateTime.getTime() - now.getTime()) / 60000;
-
-      console.log(
-        "Checking exam:",
-        exam.courseName,
-        "| exam time (Israel):",
-        exam.examDateTime.toLocaleString("en-US", { timeZone: "Asia/Jerusalem" }),
-        "| diffMinutes:",
-        Math.round(diffMinutes)
-      );
 
       return Math.abs(diffMinutes) <= 30;
     });

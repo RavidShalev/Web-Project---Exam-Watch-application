@@ -185,8 +185,14 @@ const SYSTEM_PROMPT = `אתה בוט עוזר למשגיחי בחינות במכ
 - "זה מצב לא פשוט, אבל אתה מתמודד איתו יפה"`;
 
 
-// API Route: POST /api/exam-bot
-// Receives a question from supervisor and returns AI-based response with college procedures
+/**
+ * POST /api/exam-bot
+ *
+ * AI-powered exam assistant for supervisors.
+ * Receives a question + chat history and returns
+ * guidance based on official college exam procedures
+ * using the Gemini API.
+ */
 export async function POST(request: NextRequest) {
   try {
     // Check API key - essential for security (not exposed in browser)

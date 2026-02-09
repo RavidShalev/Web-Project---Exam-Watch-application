@@ -4,7 +4,11 @@ import User from "../../models/Users";
 import bcrypt from "bcryptjs"; 
 
 
-// API Route: POST /api/users - Create new user
+/**
+ * /api/users
+ * POST – Create a new user (password is hashed).
+ * GET  – Retrieve all users (admin only, without passwords).
+ */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();

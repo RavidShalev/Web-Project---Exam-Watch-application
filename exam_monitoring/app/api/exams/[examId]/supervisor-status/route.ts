@@ -4,7 +4,7 @@ import SupervisorStatus from "../../../../models/SupervisorStatus";
 
 /**
  * GET /api/exams/[examId]/supervisor-status
- * Get status of all supervisors for an exam
+ * Returns the latest status of all supervisors assigned to the exam.
  */
 export async function GET(
   req: Request,
@@ -39,7 +39,8 @@ export async function GET(
 
 /**
  * POST /api/exams/[examId]/supervisor-status
- * Update supervisor status
+ * Creates or updates the real-time status of a supervisor
+ * (e.g. location, activity) during the exam.
  */
 export async function POST(
   req: Request,

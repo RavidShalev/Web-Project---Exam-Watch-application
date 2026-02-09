@@ -106,7 +106,18 @@ type LecturerKey = (typeof lecturerKeys)[number];
 const isNonEmptyString = (v: unknown): v is string =>
   typeof v === "string" && v.trim() !== "";
 
-// API route to handle CSV file upload and process exam data
+/**
+ * POST /api/exams/upload-csv
+ *
+ * Uploads a CSV file and creates multiple exams in the database.
+ * Parses exam details, lecturers (by ID number), rules, and times.
+ *
+ * Notes:
+ * - Dates are normalized to YYYY-MM-DD
+ * - Times are normalized to HH:MM
+ * - Lecturers are matched by idNumber
+ * - Exams are created with default checklist and status "scheduled"
+ */
 export async function POST(req: Request) {
   try {
     // Reading the uploaded file from the request

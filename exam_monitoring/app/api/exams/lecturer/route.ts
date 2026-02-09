@@ -2,7 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "../../../lib/db";
 import Exam from "../../../models/Exams";
 
-// GET /api/exams/lecturer?lecturerId=xxx
+/**
+ * GET /api/exams/lecturer?lecturerId=...
+ * Returns all exams assigned to a specific lecturer,
+ * sorted by date and start time.
+ */
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);

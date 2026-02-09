@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import dbConnect from "../../../../../lib/db";
 import Attendance from "@/app/models/Attendance";
 
+/**
+ * PATCH /api/attendance/[attendanceId]/toilet
+ * Toggles a student's toilet status (in / out).
+ */
 export async function PATCH(
   req: Request,
   { params }: { params: Promise<{ attendanceId: string }> }

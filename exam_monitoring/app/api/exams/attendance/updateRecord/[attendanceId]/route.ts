@@ -2,7 +2,10 @@ import { NextResponse } from "next/server";
 import dbConnect from "../../../../../lib/db";
 import Attendance from "@/app/models/Attendance";
 
-
+/**
+ * PATCH /api/attendance/[attendanceId]
+ * Updates a student's attendance status (present, absent, finished) and related timestamps.
+ */
 export async function PATCH(
     req: Request,
     {params}: {params: Promise<{attendanceId: string}>})
