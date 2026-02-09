@@ -15,6 +15,20 @@ interface Procedure {
   phase: string;
 }
 
+
+/**
+ * ProceduresPage
+ * Role-based procedures page displaying exam guidelines and regulations.
+ *
+ * Responsibilities:
+ * - Determine the current user role from session storage
+ * - Restrict access for unauthorized roles (e.g., admins)
+ * - Fetch exam procedures from the server based on user role
+ * - Organize procedures by exam phase (before, during, after)
+ * - Allow users to switch between phases using tab navigation
+ * - Render procedure guidelines using reusable ProcedureCard components
+ * - Display appropriate loading and empty states
+ */
 export default function ProceduresPage() {
   const router = useRouter();
   const [procedures, setProcedures] = useState<Procedure[]>([]);

@@ -23,6 +23,20 @@ interface FieldErrors {
   password?: string;
 }
 
+/**
+ * RegisterUserPage
+ * Administrative page for creating new users in the system.
+ *
+ * Responsibilities:
+ * - Provide a structured, multi-section registration form for new users
+ * - Handle real-time field validation with clear user feedback
+ * - Enforce input constraints (ID number, email, phone, password rules)
+ * - Display password strength indicator for improved security awareness
+ * - Support multiple user roles (student, supervisor, lecturer, admin)
+ * - Handle form submission, loading, success, and error states
+ * - Prevent submission when validation errors exist
+ * - Improve UX with accessibility considerations and visual cues
+ */
 export default function RegisterUserPage() {
   const [formData, setFormData] = useState({
     idNumber: "",

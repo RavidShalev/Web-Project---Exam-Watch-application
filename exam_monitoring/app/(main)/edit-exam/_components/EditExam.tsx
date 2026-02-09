@@ -10,6 +10,19 @@ type EditExamFormProps = {
   examId: string;
 };
 
+/**
+ * EditExamForm
+ * Form component used to edit an existing exam.
+ *
+ * Responsibilities:
+ * - Initialize the form with existing exam data
+ * - Allow updating exam details such as course info, date, time, and location
+ * - Manage and update exam rules (calculator, computer, headphones, open book)
+ * - Validate required fields and input formats before submission
+ * - Submit updated exam data to the server
+ * - Handle scheduling conflicts and server-side errors
+ * - Redirect the user after a successful update
+ */
 export default function EditExamForm({ exam, examId }: EditExamFormProps) {
   const [formData, setFormData] = useState<ExamFormData>(exam);
   const [rules, setRules] = useState(exam.rules);

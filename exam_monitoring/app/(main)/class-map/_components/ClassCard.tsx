@@ -1,9 +1,20 @@
-import type { Classroom } from "../data/classRoomType";
+import type { Classroom } from "../../../../types/classRoomType";
 
 type Props = {
   classroom: Classroom;
 };
 
+/**
+ * ClassCard
+ * Presentational component used to display the status of a classroom during an exam.
+ *
+ * Responsibilities:
+ * - Display basic classroom and exam information (class name, course, date)
+ * - Indicate the number of assigned supervisors
+ * - Visually highlight classrooms with missing supervisors
+ * - List assigned supervisors or show a warning when none are assigned
+ * - Display the called lecturer when applicable
+ */
 const ClassCard = ({ classroom }: Props) => {
   const hasSupervisors = classroom.supervisors.length > 0;
 

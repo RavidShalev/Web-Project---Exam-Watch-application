@@ -2,8 +2,19 @@
 
 import { useEffect, useState } from "react";
 import ClassGrid from "./_components/ClassGrid";
-import type { Classroom } from "./data/classRoomType";
+import type { Classroom } from "../../../types/classRoomType";
 
+
+/**
+ * ClassMapPage
+ * Page component used to display the classroom map for the current user.
+ *
+ * Responsibilities:
+ * - Retrieve the current user information from session storage
+ * - Fetch accessible classroom data based on user role and identity
+ * - Maintain and manage the classrooms state
+ * - Render a visual grid of classrooms using the ClassGrid component
+ */
 const ClassMapPage = () => {
   const [classrooms, setClassrooms] = useState<Classroom[]>([]);
 

@@ -29,6 +29,20 @@ interface Report {
   studentId?: { name: string; idNumber: string };
 }
 
+/**
+ * ExamReportPage
+ * Administrative report page providing a comprehensive overview of a completed exam.
+ *
+ * Responsibilities:
+ * - Fetch and display core exam details (course, date, time, location)
+ * - Retrieve and present student attendance data
+ * - Retrieve and display incident and supervisor reports
+ * - Calculate and present key exam statistics (attendance, absence, completion rate)
+ * - Group and summarize reports by event type
+ * - Provide a full detailed log of all reports during the exam
+ * - Support exporting the full exam report to a PDF document
+ * - Handle loading and error states gracefully
+ */
 export default function ExamReportPage() {
   const [exam, setExam] = useState<Exam | null>(null);
   const [attendance, setAttendance] = useState<AttendanceRow[]>([]);

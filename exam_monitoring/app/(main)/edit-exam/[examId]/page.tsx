@@ -12,6 +12,19 @@ type PageProps = {
   }>;
 };
 
+/**
+ * EditExamPage
+ * Admin page for editing an existing exam and managing its registered students.
+ *
+ * Responsibilities:
+ * - Retrieve the exam ID from route parameters
+ * - Fetch and initialize exam data for editing
+ * - Display and manage the exam edit form
+ * - Fetch and display students registered for the exam
+ * - Allow bulk student registration via CSV upload
+ * - Refresh student data after successful updates
+ * - Handle loading and error states gracefully
+ */
 export default function EditExamPage({ params }: PageProps) {
   const [examId, setExamId] = useState<string | null>(null);
   const [exam, setExam] = useState<ExamFormData | null>(null);

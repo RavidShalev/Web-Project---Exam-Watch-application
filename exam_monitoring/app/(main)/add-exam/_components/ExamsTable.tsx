@@ -43,6 +43,19 @@ const showOrDash = (value: unknown): string => {
   return "—";
 };
 
+
+/**
+ * ExamsTable
+ * Table and card component used to display and manage existing exams.
+ *
+ * Responsibilities:
+ * - Fetch and display the list of exams from the server
+ * - Render exams in a responsive layout (table for desktop, cards for mobile)
+ * - Display formatted exam details with graceful fallbacks for missing data
+ * - Allow exam deletion with user confirmation
+ * - Allow navigation to the exam edit page
+ * - Refresh displayed data when the refresh key changes
+ */
 export default function ExamsTable({ refreshKey }: ExamsTableProps) {
   const [exams, setExams] = useState<Exam[]>([]);
   const [loading, setLoading] = useState(true);
@@ -97,6 +110,7 @@ export default function ExamsTable({ refreshKey }: ExamsTableProps) {
       </h3>
 
       {/*  DESKTOP TABLE */}
+      {/* show in desktop view as table */}
       <div className="hidden sm:block overflow-x-auto rounded-2xl border border-[var(--border)] bg-[var(--bg)]">
         <table className="min-w-full text-sm text-right">
           <caption className="sr-only">רשימת מבחנים קיימים במערכת</caption>
@@ -199,6 +213,7 @@ export default function ExamsTable({ refreshKey }: ExamsTableProps) {
       </div>
 
       {/* ================= MOBILE CARDS ================= */}
+      {/* show in mobile view as cards */}
       <div className="sm:hidden space-y-3">
         {exams.map((exam) => (
           <div

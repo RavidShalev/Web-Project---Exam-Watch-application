@@ -2,12 +2,26 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import ReadyForExams from "./_components/ReadyForExams";
+import ReadyForExams from "./_components/SupervisorDashboard";
 import StudentDashboard from "./_components/StudentDashboard"; 
 import LecturerDashboard from "./_components/LecturerDashboard";
 import AdminDashboard from "./_components/AdminDashboard";
 import { Exam } from "@/types/examtypes";
 
+
+/**
+ * HomePage
+ * Central entry page that routes users to the appropriate dashboard based on their role.
+ *
+ * Responsibilities:
+ * - Determine the current user role from session storage
+ * - Render the correct dashboard for each role (admin, lecturer, student, supervisor)
+ * - For supervisors, fetch the closest upcoming or active exam
+ * - Automatically redirect supervisors to an active exam when applicable
+ * - Provide a pre-exam readiness flow for supervisors before starting an exam
+ * - Trigger exam activation and navigation to the active exam page
+ * - Handle global loading and empty states gracefully
+ */
 export default function HomePage() {
   const [exam, setExam] = useState<Exam | null>(null);
   const [loading, setLoading] = useState(true);

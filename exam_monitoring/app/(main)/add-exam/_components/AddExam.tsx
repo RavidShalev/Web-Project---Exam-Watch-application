@@ -7,6 +7,19 @@ type AddExamFormProps = {
   onSuccess?: () => void;
 };
 
+
+/**
+ * AddExamForm
+ * Form component used to create and submit a new exam.
+ *
+ * Responsibilities:
+ * - Collect exam details such as course name, course code...
+ * - Collect supervisors and lecturers ID numbers
+ * - Validate required fields and input formats before submission
+ * - Prevent exam creation if there is a time and location conflict
+ * - Submit exam data
+ * - Notify parent component on successful exam creation
+ */
 export default function AddExamForm({ onSuccess }: AddExamFormProps) {
   const [formData, setFormData] = useState({
     courseName: "",

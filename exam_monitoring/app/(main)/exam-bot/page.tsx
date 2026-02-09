@@ -27,7 +27,18 @@ const quickActions = [
   { icon: BookOpen, label: "יציאה לשירותים", question: "מה הנהלים לגבי יציאה לשירותים במהלך בחינה?" },
   { icon: Phone, label: "טלפונים ניידים", question: "מה הכללים לגבי טלפונים ניידים בבחינה?" },
 ];
-
+/**
+ * ExamBotPage
+ * Interactive chatbot page designed to assist supervisors during exams.
+ *
+ * Responsibilities:
+ * - Restrict access to authorized supervisor users only
+ * - Provide a real-time chat interface for exam-related questions
+ * - Send user questions and minimal chat history to the server-side exam bot
+ * - Display assistant responses, loading states, and error messages
+ * - Offer predefined quick actions for common exam scenarios
+ * - Maintain smooth chat UX (auto-scroll, input focus, timestamps)
+ */
 export default function ExamBotPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");

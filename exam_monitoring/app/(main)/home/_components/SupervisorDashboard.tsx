@@ -24,6 +24,19 @@ type ReadyForExamsProps = {
   onStartExam?: () => Promise<void> | void;
 };
 
+/**
+ * ReadyForExams
+ * Pre-exam readiness component used by supervisors before starting an exam.
+ *
+ * Responsibilities:
+ * - Display core exam information (course, location, start time)
+ * - Present exam rules visually with allowed / forbidden indicators
+ * - Manage a pre-exam checklist to ensure all preparations are completed
+ * - Track real-time time and enable exam start only within the allowed window
+ * - Enforce business rules for starting an exam (time window + checklist completion)
+ * - Trigger the exam start action when all conditions are met
+ * - Provide clear visual feedback for readiness and blocked states
+ */
 export default function ReadyForExams({
   exam,
   onStartExam,

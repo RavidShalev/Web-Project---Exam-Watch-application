@@ -7,6 +7,17 @@ type UploadExamCsvProps = {
   onSuccess?: () => void;
 };
 
+/**
+ * UploadExamCsv
+ * Component used to upload and process exams from a CSV file.
+ *
+ * Responsibilities:
+ * - Allow the user to select a CSV file from the local filesystem
+ * - Upload the selected file to the server for processing
+ * - Handle loading and error states during the upload process
+ * - Display feedback about the upload result (success or failure)
+ * - Notify parent component after successful CSV processing
+ */
 export default function UploadExamCsv({ onSuccess }: UploadExamCsvProps) {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);

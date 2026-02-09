@@ -56,6 +56,18 @@ const ACTION_TYPES = {
   },
 };
 
+/**
+ * AuditLogsPage
+ * Admin page for viewing and monitoring system audit logs.
+ *
+ * Responsibilities:
+ * - Restrict access to admin users only
+ * - Fetch audit logs from the server with pagination support
+ * - Display logs in chronological order with contextual metadata
+ * - Allow filtering logs by action type
+ * - Support automatic and manual refresh of log data
+ * - Present clear visual indicators for different action severities
+ */
 export default function AuditLogsPage() {
   const router = useRouter();
   const [logs, setLogs] = useState<AuditLog[]>([]);

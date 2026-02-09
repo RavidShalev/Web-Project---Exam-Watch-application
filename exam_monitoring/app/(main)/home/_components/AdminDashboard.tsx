@@ -45,6 +45,19 @@ interface RecentActivity {
   createdAt: string;
 }
 
+/**
+ * AdminDashboard
+ * Administrative dashboard providing a high-level overview of system activity and status.
+ *
+ * Responsibilities:
+ * - Fetch and aggregate system-wide data (exams, users, audit logs)
+ * - Display key statistics about exams and users
+ * - Present currently active exams with quick navigation
+ * - Display upcoming scheduled exams in chronological order
+ * - Show recent system activity from audit logs
+ * - Periodically refresh dashboard data to keep information up to date
+ * - Provide navigation shortcuts to detailed views and management pages
+ */
 export default function AdminDashboard() {
   const router = useRouter();
   const [stats, setStats] = useState<Stats | null>(null);

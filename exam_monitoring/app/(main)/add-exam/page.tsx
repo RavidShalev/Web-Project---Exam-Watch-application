@@ -5,6 +5,17 @@ import AddExamForm from "./_components/AddExam";
 import UploadExamCsv from "./_components/UploadExamCsv";
 import ExamsTable from "./_components/ExamsTable";
 
+
+/**
+ * AddExamPage
+ * Admin page for managing exams in the system.
+ *
+ * Responsibilities:
+ * - Provide an interface for creating a single exam manually
+ * - Allow bulk exam creation via CSV upload
+ * - Display the list of existing exams
+ * - Coordinate data refresh between child components after changes
+ */
 export default function AddExamPage() {
   const [refreshKey, setRefreshKey] = useState(0);
 

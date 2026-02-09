@@ -17,8 +17,18 @@ interface Exam {
 }
 
 /**
- * LecturerDashboard Component
- * Main dashboard for lecturer - shows all their exams
+ * LecturerDashboard
+ * Main dashboard page for lecturers to view and manage their exams.
+ *
+ * Responsibilities:
+ * - Load lecturer information from session storage
+ * - Fetch and display all exams associated with the lecturer
+ * - Categorize exams by status (active, upcoming, finished)
+ * - Present high-level statistics about the lecturer’s exams
+ * - Highlight currently active exams with quick access
+ * - Display upcoming exams with scheduling details
+ * - Provide access to reports for completed exams
+ * - Handle loading and empty states gracefully
  */
 export default function LecturerDashboard() {
   // State variables

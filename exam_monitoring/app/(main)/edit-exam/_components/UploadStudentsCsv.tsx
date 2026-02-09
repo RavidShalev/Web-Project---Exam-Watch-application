@@ -7,6 +7,17 @@ type Props = {
   onSuccess: () => void;
 };
 
+/**
+ * UploadStudentsCsv
+ * Component used to upload and register students for a specific exam via CSV.
+ *
+ * Responsibilities:
+ * - Allow selection of a CSV file containing student data
+ * - Upload the selected file to the server for processing
+ * - Handle loading and error states during the upload process
+ * - Trigger a success callback after successful student registration
+ * - Provide clear user feedback throughout the upload flow
+ */
 export default function UploadStudentsCsv({ examId, onSuccess }: Props) {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);

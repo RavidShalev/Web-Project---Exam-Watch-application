@@ -9,6 +9,18 @@ interface MessageModalProps {
   onClose: () => void;
 }
 
+/**
+ * SendMessageModal
+ * Modal component used to send messages to exam supervisors.
+ *
+ * Responsibilities:
+ * - Display a modal dialog for composing supervisor messages
+ * - Allow selecting a specific supervisor or broadcasting to all supervisors
+ * - Validate message input before sending
+ * - Handle message sending state and user feedback
+ * - Provide accessible modal behavior (focus, labels, dismissal)
+ * - Notify parent component when the modal is closed
+ */
 export default function SendMessageModal({
   examId,
   supervisors,

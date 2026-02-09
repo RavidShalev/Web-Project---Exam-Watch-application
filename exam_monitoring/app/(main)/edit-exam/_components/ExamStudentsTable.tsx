@@ -7,6 +7,16 @@ type Props = {
   students: StudentRow[];
 };
 
+/**
+ * ExamStudentsTable
+ * Presentational component used to display students registered for an exam.
+ *
+ * Responsibilities:
+ * - Display a list of registered students
+ * - Render a responsive layout (table for desktop, cards for mobile)
+ * - Show an empty state message when no students are registered
+ * - Present student name and ID number in a clear and readable format
+ */
 export default function ExamStudentsTable({ students }: Props) {
   if (students.length === 0) {
     return (

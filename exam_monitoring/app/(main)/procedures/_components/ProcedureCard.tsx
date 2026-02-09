@@ -30,6 +30,17 @@ type ProcedureCardProps = {
   icon: string;
 };
 
+/**
+ * ProcedureCard
+ * Presentational component for displaying a single exam procedure or guideline.
+ *
+ * Responsibilities:
+ * - Render a procedure title, section identifier, and descriptive content
+ * - Map procedure icon identifiers from the database to UI icon components
+ * - Display a visual icon to represent the procedure category
+ * - Present content in a clear, readable card layout
+ * - Provide consistent styling and visual hierarchy for procedure listings
+ */
 export default function ProcedureCard({ 
   title, 
   content, 
