@@ -329,7 +329,8 @@ export default function SmartBotAssistant({
 
   // Monitor toilet breaks - alert if someone is out too long
   useEffect(() => {
-    const studentsOnToilet = attendance.filter(a => a.isOnToilet);
+    const safeAttendance = Array.isArray(attendance) ? attendance : [];
+    const studentsOnToilet = safeAttendance.filter(a => a.isOnToilet);
     const currentToiletIds = studentsOnToilet.map(s => s._id).join(",");
     
     // Only alert if the list of students changed (new student went or someone returned)
