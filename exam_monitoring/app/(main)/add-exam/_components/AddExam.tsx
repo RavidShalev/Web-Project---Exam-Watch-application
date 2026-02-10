@@ -82,6 +82,7 @@ export default function AddExamForm({ onSuccess }: AddExamFormProps) {
         ...formData,
         supervisorsTz,
         lecturersTz,
+        rules,
       }),
     });
 
