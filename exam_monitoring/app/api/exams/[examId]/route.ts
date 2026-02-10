@@ -116,8 +116,21 @@ export async function PUT(
       return NextResponse.json({ message: "Exam not found" }, { status: 404 });
     }
 
+    // Default rules structure
+    const defaultRules = [
+      { id: "calculator", label: "מחשבון", icon: "calculator", allowed: false },
+      { id: "computer", label: "מחשב", icon: "book", allowed: false },
+      { id: "headphones", label: "אוזניות", icon: "headphones", allowed: false },
+      { id: "openBook", label: "חומר פתוח", icon: "book", allowed: false },
+    ];
+
+    // If existing rules are empty, use default rules as base
+    const baseRules = existingExam.rules && existingExam.rules.length > 0 
+      ? existingExam.rules 
+      : defaultRules;
+
     // Merge existing rules with updated rules
-    const mergedRules = existingExam.rules.map(
+    const mergedRules = baseRules.map(
       (rule: {
         id: string;
         label: string;
