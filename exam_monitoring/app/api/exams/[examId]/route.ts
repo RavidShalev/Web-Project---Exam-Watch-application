@@ -125,7 +125,8 @@ export async function PUT(
         allowed: boolean;
       }) => ({
         ...rule,
-        allowed: Boolean(rules?.[rule.id]),
+        // Only update if rules object exists and contains this rule id, otherwise keep existing value
+        allowed: rules && rule.id in rules ? Boolean(rules[rule.id]) : rule.allowed,
       })
     );
 
