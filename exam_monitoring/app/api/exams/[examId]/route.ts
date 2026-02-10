@@ -116,12 +116,6 @@ export async function PUT(
       return NextResponse.json({ message: "Exam not found" }, { status: 404 });
     }
 
-    // DEBUG LOGS - check what we receive
-    console.log("=== PUT EXAM DEBUG ===");
-    console.log("Rules from frontend:", JSON.stringify(rules));
-    console.log("Existing rules count:", existingExam.rules?.length);
-    console.log("Existing rules:", JSON.stringify(existingExam.rules));
-
     // Type for rule object
     type RuleType = { id: string; label: string; icon: string; allowed: boolean };
 
@@ -142,9 +136,6 @@ export async function PUT(
         };
       }
     );
-
-    console.log("Merged rules result:", JSON.stringify(mergedRules));
-    console.log("=== END DEBUG ===");
 
     // Check for scheduling conflicts if date, time, or location changed
     const supervisorUsers = Array.isArray(supervisorsTz)
