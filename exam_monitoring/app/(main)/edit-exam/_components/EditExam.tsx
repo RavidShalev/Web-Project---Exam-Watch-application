@@ -25,7 +25,16 @@ type EditExamFormProps = {
  */
 export default function EditExamForm({ exam, examId }: EditExamFormProps) {
   const [formData, setFormData] = useState<ExamFormData>(exam);
-  const [rules, setRules] = useState(exam.rules);
+  
+  // Convert rules array to object format { calculator: true/false, ... }
+  const initialRules = Array.isArray(exam.rules)
+    ? exam.rules.reduce((acc: Record<string, boolean>, rule: any) => {
+        acc[rule.id] = rule.allowed;
+        return acc;
+      }, {})
+    : { calculator: false, computer: false, headphones: false, openBook: false };
+  
+  const [rules, setRules] = useState<Record<string, boolean>>(initialRules);
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

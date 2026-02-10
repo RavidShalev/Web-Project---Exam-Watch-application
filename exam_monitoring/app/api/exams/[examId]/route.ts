@@ -125,7 +125,7 @@ export async function PUT(
         allowed: boolean;
       }) => ({
         ...rule,
-        allowed: Boolean(rules?.[rule.id]),
+        allowed: rules?.[rule.id] !== undefined ? Boolean(rules[rule.id]) : rule.allowed,
       })
     );
 
