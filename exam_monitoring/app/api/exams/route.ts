@@ -209,8 +209,6 @@ export async function POST(req: Request) {
       "מרצים"
     );
 
-    console.log("SUPERVISORS RAW:", body.supervisorsIdNumbers);
-
     const lecturers = await resolveUsersByRole(lecturersIdNumbers, "lecturer");
 
     const supervisorsIdNumbers = normalizeAndValidateIdNumbers(

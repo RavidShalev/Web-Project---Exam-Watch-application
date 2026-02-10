@@ -116,31 +116,22 @@ export async function PUT(
       return NextResponse.json({ message: "Exam not found" }, { status: 404 });
     }
 
-    // Default rules structure
-    const defaultRules = [
-      { id: "calculator", label: "מחשבון", icon: "calculator", allowed: false },
-      { id: "computer", label: "מחשב", icon: "book", allowed: false },
-      { id: "headphones", label: "אוזניות", icon: "headphones", allowed: false },
-      { id: "openBook", label: "חומר פתוח", icon: "book", allowed: false },
-    ];
-
-    // If existing rules are empty, use default rules as base
-    const baseRules = existingExam.rules && existingExam.rules.length > 0 
-      ? existingExam.rules 
-      : defaultRules;
-
-    // Merge existing rules with updated rules
-    const mergedRules = baseRules.map(
-      (rule: {
-        id: string;
-        label: string;
-        icon: string;
-        allowed: boolean;
-      }) => ({
-        ...rule,
-        // Only update if rules object exists and contains this rule id, otherwise keep existing value
-        allowed: rules && rule.id in rules ? Boolean(rules[rule.id]) : rule.allowed,
-      })
+    // Convert existing rules to plain objects and update allowed values
+    const mergedRules = existingExam.rules.map(
+      (rule: { id: string; label: string; icon: string; allowed: boolean; toObject?: () => object }) => {
+        // Convert Mongoose subdocument to plain object
+        const plainRule = typeof rule.toObject === 'function' ? rule.toObject() : { ...rule };
+        
+        // Check if the frontend sent a value for this rule (same id in DB and frontend)
+        const hasUpdate = rules && plainRule.id in rules;
+        
+        return {
+          id: plainRule.id,
+          label: plainRule.label,
+          icon: plainRule.icon,
+          allowed: hasUpdate ? Boolean(rules[plainRule.id]) : plainRule.allowed,
+        };
+      }
     );
 
     // Check for scheduling conflicts if date, time, or location changed
