@@ -47,7 +47,7 @@ export default function ActiveExamPage() {
   const [supervisorIdNumber, setSupervisorIdNumber] = useState<string>(""); // For P2P
   const router = useRouter(); //used for navigating after finishing exam
 
-  // טעינת supervisorId מ-sessionStorage בצד הלקוח בלבד (למניעת SSR errors)
+
   useEffect(() => {
     const supervisorId = sessionStorage.getItem("supervisorId");
     const name = sessionStorage.getItem("userName");
@@ -117,6 +117,10 @@ export default function ActiveExamPage() {
     const record = attendance.find(r => r._id === attendanceId);
     if (record?.isOnToilet) {
       alert("לא ניתן לסמן סיום מבחן לסטודנט שנמצא בשירותים");
+      return;
+    }
+
+    if (!window.confirm(`האם לסמן סיום מבחן עבור ${record?.studentId.name}?`)) {
       return;
     }
 
